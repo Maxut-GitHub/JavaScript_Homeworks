@@ -31,4 +31,4 @@ console.log(drinkStorage.deleteValue("Напиточек")); //удаление 
 
 drinkStorage.addValue("Напиточек", "Вкусный очень"); // сохранение двух напитков
 drinkStorage.addValue("Водичка", "Обычная");
-console.log(drinkStorage.getKeys()); // возврат массива ключей
+console.log(drinkStorage.getKeys()); // возврат ключей
