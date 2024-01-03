@@ -50,19 +50,19 @@ function information_give() {
 	let findName = drinkStorage.getValue(name);
 	if (findName) {
 		alert("Напиток: " + name + "\n" + findName);
-	} else {
+	} else if (name) {
 		alert("Не найдено");
 	}
 }
 
-// удаоение напитка
+// удаление напитка
 function information_delete() {
 	let name = prompt("Какой напиток удалить?");
 	let deleteName = drinkStorage.getValue(name);
 	if (deleteName) {
 		drinkStorage.deleteValue(deleteName);
 		alert("удалено.");
-	} else {
+	} else if (name) {
 		alert("Не найдено");
 	}
 }
@@ -71,7 +71,7 @@ function information_delete() {
 function information_list() {
 	let list = drinkStorage.getKeys();
 	if (list.length != 0) {
-		alert(list);
+		alert(list.join("\n"));
 	} else {
 		alert("Ни одного напитка не найдено.");
 	}
