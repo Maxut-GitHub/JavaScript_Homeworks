@@ -10,7 +10,7 @@ function ObjStorageFunc() {
 		return privateObject[key];
 	};
 	self.deleteValue = function (key) {
-		if (privateObject[key]) {
+		if (key in privateObject) {
 			delete privateObject[key];
 			return true;
 		} else return false;
@@ -22,13 +22,58 @@ function ObjStorageFunc() {
 
 let drinkStorage = new ObjStorageFunc();
 
-drinkStorage.addValue("Напиточек", "Вкусный очень"); // сохранение
+//сохранение напитка
+function information_input() {
+	let name = prompt("Название напитка:");
+	if (!name) {
+		alert("Имя не задано.");
+		return;
+	}
+	let information = confirm("Напиток алкогольный?\nОтмена - НЕТ\nОК - ДА");
+	if (information) {
+		information = "Алкогольный: Да";
+	} else {
+		information = "Алкогольный: Нет";
+	}
+	let recipe = prompt(
+		"Добавьте рецепт:\nОтмена - рецепт не нужен\nОК - сохранить рецепт"
+	);
+	if (recipe) {
+		information = information + " \nРецепт: " + recipe;
+	}
+	drinkStorage.addValue(name, information);
+}
 
-console.log(drinkStorage.getValue("Напиточек")); //отдать значение
+//отдать напиток
+function information_give() {
+	let name = prompt("Какой напиток найти?");
+	let findName = drinkStorage.getValue(name);
+	if (findName) {
+		alert("Напиток: " + name + "\n" + findName);
+	} else {
+		alert("Не найдено");
+	}
+}
 
-console.log(drinkStorage.deleteValue("Напиточек")); //удаление - true
-console.log(drinkStorage.deleteValue("Напиточек")); //удаление несуществующего напитка - false
+// удаоение напитка
+function information_delete() {
+	let name = prompt("Какой напиток удалить?");
+	let deleteName = drinkStorage.getValue(name);
+	if (deleteName) {
+		drinkStorage.deleteValue(deleteName);
+		alert("удалено.");
+	} else {
+		alert("Не найдено");
+	}
+}
 
-drinkStorage.addValue("Напиточек", "Вкусный очень"); // сохранение двух напитков
-drinkStorage.addValue("Водичка", "Обычная");
-console.log(drinkStorage.getKeys()); // возврат массива ключей
+//Перечень напитков
+function information_list() {
+	let list = drinkStorage.getKeys();
+	if (list.length != 0) {
+		alert(list);
+	} else {
+		alert("Ни одного напитка не найдено.");
+	}
+	console.log(list);
+}
