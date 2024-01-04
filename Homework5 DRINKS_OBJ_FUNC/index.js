@@ -29,18 +29,21 @@ function information_input() {
 		alert("Имя не задано.");
 		return;
 	}
-	let information = confirm("Напиток алкогольный?\nОтмена - НЕТ\nОК - ДА");
-	if (information) {
-		information = "Алкогольный: Да";
+	let alcohol = confirm("Напиток алкогольный?\nОтмена - НЕТ\nОК - ДА");
+	if (alcohol) {
+		alcohol = "Алкогольный: Да";
 	} else {
-		information = "Алкогольный: Нет";
+		alcohol = "Алкогольный: Нет";
 	}
 	let recipe = prompt(
 		"Добавьте рецепт:\nОтмена - рецепт не нужен\nОК - сохранить рецепт"
 	);
-	if (recipe) {
-		information = information + " \nРецепт: " + recipe;
+	if (recipe === null) {
+		recipe = "Рецепт отсутствует.";
+	} else {
+		recipe = "Рецепт: " + recipe;
 	}
+	let information = { alcohol: alcohol, recipe: recipe };
 	drinkStorage.addValue(name, information);
 }
 
@@ -49,7 +52,14 @@ function information_give() {
 	let name = prompt("Какой напиток найти?");
 	let findName = drinkStorage.getValue(name);
 	if (findName) {
-		alert("Напиток: " + name + "\n" + findName);
+		alert(
+			"Напиток: " +
+				name +
+				"\n" +
+				findName["alcohol"] +
+				"\n" +
+				findName["recipe"]
+		);
 	} else if (name) {
 		alert("Не найдено");
 	}
@@ -58,9 +68,7 @@ function information_give() {
 // удаление напитка
 function information_delete() {
 	let name = prompt("Какой напиток удалить?");
-	let deleteName = drinkStorage.getValue(name);
-	if (deleteName) {
-		drinkStorage.deleteValue(deleteName);
+	if (drinkStorage.deleteValue(name)) {
 		alert("удалено.");
 	} else if (name) {
 		alert("Не найдено");
