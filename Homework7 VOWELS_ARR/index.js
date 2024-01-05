@@ -1,5 +1,6 @@
 "use strict";
-let string = prompt("Введлите строку");
+// let string = prompt("Введлите строку");
+let string = "  ЫнДо  ФаьБ ол"; // 4
 
 function vowers(anyString) {
 	let count = 0;
@@ -13,4 +14,12 @@ function vowers(anyString) {
 	return count;
 }
 
-alert("Гласных букв в строке: " + vowers(string));
+function vowersForEach(anyString) {}
+function vowersFilter(anyString) {}
+function vowersReduse(anyString) {}
+
+alert(`
+vowersForEach - ${vowersForEach(string)} 
+vowersFilter - ${vowersFilter(string)} 
+vowersReduse - ${vowersReduse(string)}
+`);
