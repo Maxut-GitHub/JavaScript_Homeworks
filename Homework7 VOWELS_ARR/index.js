@@ -1,25 +1,11 @@
 "use strict";
-// let string = prompt("Введлите строку");
-let string = "  ЫнДо  ФаьБ ол"; // 4
-
-function vowers(anyString) {
-	let count = 0;
-	const vowels = "ауоиэыяюеё";
-	for (let letter of anyString) {
-		letter = letter.toLowerCase();
-		if (vowels.indexOf(letter) > -1) {
-			count++;
-		}
-	}
-	return count;
-}
+let string = prompt("Введлите строку");
 
 function vowersForEach(anyString) {
 	let count = 0;
-	const vowels = "ауоиэыяюеё";
 	let arrString = anyString.toLowerCase().split("");
 	arrString.forEach((element) => {
-		if (vowels.indexOf(element) > -1) {
+		if ("ауоиэыяюеё".indexOf(element) > -1) {
 			count++;
 		}
 	});
@@ -27,17 +13,22 @@ function vowersForEach(anyString) {
 }
 
 function vowersFilter(anyString) {
-	const vowels = "ауоиэыяюеё";
 	let arrString = anyString.toLowerCase().split("");
-	let filterString = arrString.filter(function (element) {
-		if (vowels.indexOf(element) > -1) {
-			return true;
-		} else return false;
-	});
+	let filterString = arrString.filter((element) =>
+		"ауоиэыяюеё".includes(element)
+	);
 	return filterString.length;
 }
 
-function vowersReduse(anyString) {}
+function vowersReduse(anyString) {
+	let arrString = anyString.toLowerCase().split("");
+	function vowelsCount(count, element) {
+		if ("ауоиэыяюеё".indexOf(element) > -1) {
+			return ++count;
+		} else return count;
+	}
+	return arrString.reduce(vowelsCount, 0);
+}
 
 alert(`
 vowersForEach - ${vowersForEach(string)}
