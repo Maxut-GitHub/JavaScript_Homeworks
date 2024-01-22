@@ -44,11 +44,10 @@ function dyn_form(arr) {
 	for (let obj of arr) {
 		let formGroup = document.createElement("div");
 		formGroup.className = "form-group";
-		formGroup.style.display = "flex"; //Чтобы было как на образце)
-		formGroup.style.margin = "5px";
-		form.appendChild(formGroup); //<form> <div class="form-group"> </div> </form>
+		formGroup.style.cssText = "display: flex; margin: 5px"; //Чтобы было красиво)
+		form.appendChild(formGroup);
 		let label = document.createElement("label");
-		formGroup.appendChild(label); //<div class="form-group"> <label> </label> </div>
+		formGroup.appendChild(label);
 		label.style.width = "160px";
 		label.htmlFor = obj["name"];
 		label.textContent = obj["label"];
@@ -74,7 +73,7 @@ function dyn_form(arr) {
 				button.type = "submit";
 				button.textContent = obj["caption"];
 				button.style.padding = "3px";
-				label.style.width = "0"; //Чтобы кнопка была слева
+				label.remove(); //кнопке label не нужен
 				formGroup.appendChild(button);
 				break;
 			}
