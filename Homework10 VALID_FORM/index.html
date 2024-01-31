@@ -15,27 +15,27 @@
 		<form>
 			<div class="form-group">
 				<label for="developers">Разработчики:</label>
-				<input type="text" name="developers">
+				<input type="text" name="developers" id="developers" onblur="validDevelopers()">
 			</div>
 			<div class="form-group">
 				<label for="siteName">Название сайта:</label>
-				<input type="text" name="siteName">
+				<input type="text" name="siteName" id="siteName">
 			</div>
 			<div class="form-group">
 				<label for="siteURL">URL сайта:</label>
-				<input type="text" name="siteURL">
+				<input type="text" name="siteURL" id="siteURL">
 			</div>
 			<div class="form-group">
 				<label for="reliaseDate">Дата запуска сайта:</label>
-				<input type="date" name="reliaseDate">
+				<input type="date" name="reliaseDate" id="reliaseDate">
 			</div>
 			<div class="form-group">
 				<label for="visitors">Посетителей в сутки:</label>
-				<input type="text" name="visitors">
+				<input type="text" name="visitors" id="siteName">
 			</div>
 			<div class="form-group">
 				<label for="email">E-mail для связи:</label>
-				<input type="text" name="email">
+				<input type="text" name="email" id="visitors">
 			</div>
 			<div class="form-group">
 				<label for="catalog">Рубрика каталога:</label>
@@ -56,11 +56,11 @@
 			</div>
 			<div class="form-group">
 				<label for="votes">Разрешить отзывы:</label>
-				<input type="checkbox" name="votes">
+				<input type="checkbox" name="votes" id="votes">
 			</div>
 			<div class="form-group">
 				<label for="description">Описание сайта:</label>
-				<textarea name="description"></textarea>
+				<textarea name="description" id="description"></textarea>
 			</div>
 			<button type="submit">Опубликовать</button>
 		</form>
