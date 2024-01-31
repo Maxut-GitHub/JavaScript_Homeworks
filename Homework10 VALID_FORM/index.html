@@ -31,15 +31,15 @@
 			</div>
 			<div class="form-group">
 				<label for="visitors">Посетителей в сутки:</label>
-				<input type="text" name="visitors" id="siteName">
+				<input type="text" name="visitors" id="visitors">
 			</div>
 			<div class="form-group">
 				<label for="email">E-mail для связи:</label>
-				<input type="text" name="email" id="visitors">
+				<input type="text" name="email" id="email">
 			</div>
 			<div class="form-group">
 				<label for="catalog">Рубрика каталога:</label>
-				<select name="catalog">
+				<select name="catalog" id="catalog">
 					<option value="1">здоровье</option>
 					<option value="2">домашний уют</option>
 					<option value="3">бытвая техника</option>
@@ -47,11 +47,11 @@
 			</div>
 			<div class="form-group">
 				<label for="placement">Размещение:</label>
-				<input type="radio" name="placement" value="1">
+				<input type="radio" name="placement" value="1" class="radio">
 				<label for="1">бесплатное</label>
-				<input type="radio" name="placement" value="2">
+				<input type="radio" name="placement" value="2" class="radio">
 				<label for="2">платное</label>
-				<input type="radio" name="placement" value="3">
+				<input type="radio" name="placement" value="3" class="radio">
 				<label for="3">VIP</label>
 			</div>
 			<div class="form-group">
@@ -62,7 +62,7 @@
 				<label for="description">Описание сайта:</label>
 				<textarea name="description" id="description"></textarea>
 			</div>
-			<button type="submit">Опубликовать</button>
+			<button type="submit" onclick="submitButton()">Опубликовать</button>
 		</form>
 	</div>
 
