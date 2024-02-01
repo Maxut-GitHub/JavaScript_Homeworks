@@ -160,9 +160,13 @@ function submitButton() {
 					findErrors[0].parentNode.getElementsByTagName(`input`);
 				inputElWithErrors[0].focus();
 			} catch {
-				let selectElWithErrors =
+				let selectOrTextareaErrors =
 					findErrors[0].parentNode.getElementsByTagName(`select`);
-				selectElWithErrors[0].focus();
+				if (selectOrTextareaErrors[0] === undefined) {
+					selectOrTextareaErrors =
+						findErrors[0].parentNode.getElementsByTagName(`textarea`);
+					selectOrTextareaErrors[0].focus();
+				} else selectOrTextareaErrors[0].focus();
 			}
 		});
 	} else {
