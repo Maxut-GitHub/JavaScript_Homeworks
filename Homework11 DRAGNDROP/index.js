@@ -75,7 +75,7 @@ function dropElementFunk() {
 }
 
 //Координаты картинки - координаты взятия картинки + координаты курсора сейчас = на сколько картинка переместилась.
-function mousemoveFunk(event) {
+function mousemoveFunk() {
 	if (dragElement) {
 		dragElement.style.left = `${imageX - cursorDragX + cursorX}px`;
 		dragElement.style.top = `${imageY - cursorDragY + cursorY}px`;
