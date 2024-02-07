@@ -8,8 +8,10 @@ let imageY;
 let cursorX;
 let cursorY;
 
-//Всего картинок (потом нужно  для z-index)
+//Всего картинок (z-index во время перетаскивания), newZIndex для еще не имеющий ZIndex элементов, currentZIndex - ZIndex текущено элемента.
 let imageCount = 0;
+let newZIndex = 1;
+let currentZIndex;
 
 //Всегда отслеживаю курсор
 window.addEventListener(`mousemove`, mousemoveWindowFunk);
@@ -25,29 +27,34 @@ let dragElement;
 let cursorDragX;
 let cursorDragY;
 
-//Нахожу картинку, даю 4 слушателя, беру координаты картинки и делаю такие же значения для left/top
-let images = document.getElementsByTagName(`img`);
-for (let el of images) {
-	el.addEventListener(`mousedown`, mousedownFunk);
-	el.addEventListener(`mouseup`, dropElementFunk);
-	el.addEventListener(`mousemove`, mousemoveFunk);
-	el.addEventListener(`mouseout`, dropElementFunk);
-	let coordinates = el.getBoundingClientRect();
-	el.style.top = `${coordinates.y}px`;
-	el.style.left = `${coordinates.x}px`;
-}
-//затем даю картинке абсолюную позицию и считаю кол-во картинок для z-index
-for (let el of images) {
-	el.style.position = `absolute`;
-	imageCount++;
-	el.style.cursor = `grab`;
-}
-
+//После полной загрузки страницы, нахожу картинку, даю 4 слушателя, беру координаты картинки и делаю такие же значения для left/top
+window.onload = function findImages() {
+	let images = document.getElementsByTagName(`img`);
+	for (let el of images) {
+		el.addEventListener(`mousedown`, mousedownFunk);
+		el.addEventListener(`mouseup`, dropElementFunk);
+		el.addEventListener(`mousemove`, mousemoveFunk);
+		el.addEventListener(`mouseout`, dropElementFunk);
+		let coordinates = el.getBoundingClientRect();
+		el.style.top = `${coordinates.y}px`;
+		el.style.left = `${coordinates.x}px`;
+	}
+	//затем даю картинке абсолюную позицию и считаю кол-во картинок для z-index
+	for (let el of images) {
+		el.style.position = `absolute`;
+		imageCount++;
+	}
+};
 function mousedownFunk(event) {
 	event = event || window.event;
 	event.preventDefault();
 	dragElement = event.currentTarget;
-	dragElement.style.zIndex = imageCount++;
+
+	if (window.getComputedStyle(dragElement).zIndex === `auto`) {
+		dragElement.style.zIndex = newZIndex++;
+	}
+	currentZIndex = dragElement.style.zIndex;
+	dragElement.style.zIndex = imageCount;
 	let coordinates = dragElement.getBoundingClientRect();
 	imageX = coordinates.x;
 	imageY = coordinates.y;
@@ -61,6 +68,9 @@ function mousedownFunk(event) {
 
 //прекратить тащить. Использую при отпускании или при потере курсора
 function dropElementFunk() {
+	if (dragElement) {
+		dragElement.style.zIndex = currentZIndex;
+	}
 	dragElement = undefined;
 }
 
