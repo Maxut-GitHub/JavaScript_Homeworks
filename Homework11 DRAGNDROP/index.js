@@ -8,7 +8,7 @@ let imageY;
 let cursorX;
 let cursorY;
 
-//Всего картинок (нужно для z-index)
+//Всего картинок (потом нужно  для z-index)
 let imageCount = 0;
 
 //Всегда отслеживаю курсор
