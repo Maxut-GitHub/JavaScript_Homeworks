@@ -8,7 +8,7 @@ let imageY;
 let cursorX;
 let cursorY;
 
-//Всего картинок (z-index во время перетаскивания), newZIndex для еще не имеющий ZIndex элементов, currentZIndex - ZIndex текущено элемента.
+//Всего картинок (z-index во время перетаскивания), newZIndex для еще не имеющий zIndex элементов, currentZIndex - zIndex текущено элемента.
 let imageCount = 0;
 let newZIndex = 1;
 let currentZIndex;
@@ -45,6 +45,8 @@ window.onload = function findImages() {
 		imageCount++;
 	}
 };
+
+//Запоминание Координат картинки и места взятия картинки, изменение курсора, выдача нового zIndex
 function mousedownFunk(event) {
 	event = event || window.event;
 	event.preventDefault();
@@ -55,21 +57,19 @@ function mousedownFunk(event) {
 	}
 	currentZIndex = dragElement.style.zIndex;
 	dragElement.style.zIndex = imageCount;
+	dragElement.style.cursor = `grab`;
 	let coordinates = dragElement.getBoundingClientRect();
 	imageX = coordinates.x;
 	imageY = coordinates.y;
 	cursorDragX = cursorX;
 	cursorDragY = cursorY;
-
-	//проверка (ПОТОМ УБРАТЬ)
-	console.log(`КАРТИНКА Х= ` + imageX + ` Y= ` + imageY);
-	console.log(`КУРСОР   X= ` + cursorX + " Y= " + cursorY);
 }
 
-//прекратить тащить. Использую при отпускании или при потере курсора
+//прекратить тащить и поменять курсор на обычный. Использую при отпускании или при потере курсора
 function dropElementFunk() {
 	if (dragElement) {
 		dragElement.style.zIndex = currentZIndex;
+		dragElement.style.cursor = `default`;
 	}
 	dragElement = undefined;
 }
