@@ -40,6 +40,7 @@ for (let el of images) {
 for (let el of images) {
 	el.style.position = `absolute`;
 	imageCount++;
+	el.style.cursor = `grab`;
 }
 
 function mousedownFunk(event) {
@@ -64,7 +65,7 @@ function dropElementFunk() {
 }
 
 //Координаты картинки - координаты взятия картинки + координаты курсора сейчас = на сколько картинка переместилась.
-function mousemoveFunk() {
+function mousemoveFunk(event) {
 	if (dragElement) {
 		dragElement.style.left = `${imageX - cursorDragX + cursorX}px`;
 		dragElement.style.top = `${imageY - cursorDragY + cursorY}px`;
