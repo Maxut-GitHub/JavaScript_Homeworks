@@ -18,6 +18,8 @@ let dragElement;
 let cursorDragX;
 let cursorDragY;
 
+let bodyElement = document.getElementsByTagName(`body`)[0];
+
 //После полной загрузки страницы, нахожу картинку, даю слушателя mousedown, беру координаты картинки и делаю такие же значения для left/top
 window.onload = function findImages() {
 	let images = document.getElementsByTagName(`img`);
@@ -41,8 +43,10 @@ function mousedownFunk(event) {
 	dragElement = event.currentTarget;
 
 	//добавляю слушателей только при взятии
-	window.addEventListener(`mousemove`, mousemoveFunk);
-	window.addEventListener(`mouseup`, dropElementFunk);
+	bodyElement.addEventListener(`mousemove`, mousemoveFunk);
+	bodyElement.addEventListener(`mouseup`, dropElementFunk);
+	//этот слушатель нужен для проверки курсора за границей body
+	window.addEventListener(`mouseover`, dropElementFunkForWindowEvent);
 
 	dragElement.style.zIndex = imageCount++;
 	dragElement.style.cursor = `grab`;
@@ -53,12 +57,31 @@ function mousedownFunk(event) {
 	cursorDragY = event.clientY;
 }
 
-//прекратить тащить и поменять курсор на обычный. Использую при отпускании или при потере курсора
+//прекратить тащить и поменять курсор на обычный. Использую при отпускании.
 function dropElementFunk(event) {
+	console.log(`%cЭлемент был отпущен`, `color: Lime`);
 	dragElement.style.cursor = `default`;
-	console.log(`Элемент упал, эвент - ` + event.type);
-	window.removeEventListener(`mousemove`, mousemoveFunk);
-	window.removeEventListener(`mouseup`, dropElementFunk);
+	bodyElement.removeEventListener(`mousemove`, mousemoveFunk);
+	bodyElement.removeEventListener(`mouseup`, dropElementFunk);
+	window.removeEventListener(`mouseover`, dropElementFunkForWindowEvent);
+}
+
+//Эта функция смотрит, чтобы координаты курсора не выходили за body (По оси Y, это <=0 и >высоты body. По оси X, это >ширины body и <=0)
+function dropElementFunkForWindowEvent(event) {
+	cursorX = event.clientX;
+	cursorY = event.clientY;
+	if (
+		cursorX >= parseInt(window.getComputedStyle(bodyElement).width) ||
+		cursorX <= 0 ||
+		cursorY <= 0 ||
+		cursorY >= parseInt(window.getComputedStyle(bodyElement).height)
+	) {
+		console.log(`%cКурсор уперся в body`, `color: red`);
+		dragElement.style.cursor = `default`;
+		bodyElement.removeEventListener(`mousemove`, mousemoveFunk);
+		bodyElement.removeEventListener(`mouseup`, dropElementFunk);
+		window.removeEventListener(`mouseover`, dropElementFunkForWindowEvent);
+	}
 }
 
 //Координаты картинки - координаты взятия картинки + координаты курсора сейчас = на сколько картинка переместилась.
