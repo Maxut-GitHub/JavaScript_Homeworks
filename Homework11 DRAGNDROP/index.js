@@ -8,10 +8,8 @@ let imageY;
 let cursorX;
 let cursorY;
 
-//Всего картинок (z-index во время перетаскивания), newZIndex для еще не имеющий zIndex элементов, currentZIndex - zIndex текущено элемента.
+//Всего картинок (для z-index)
 let imageCount = 0;
-let newZIndex = 1;
-let currentZIndex;
 
 //Всегда отслеживаю курсор
 window.addEventListener(`mousemove`, mousemoveWindowFunk);
@@ -39,24 +37,20 @@ window.onload = function findImages() {
 		el.style.top = `${coordinates.y}px`;
 		el.style.left = `${coordinates.x}px`;
 	}
-	//затем даю картинке абсолюную позицию и считаю кол-во картинок для z-index
+	//затем даю картинке абсолюную позицию и считаю кол-во картинок для z-index (На случай, если у каокй-нибудь картинки уже есть z-index вместо `auto`)
 	for (let el of images) {
 		el.style.position = `absolute`;
 		imageCount++;
 	}
 };
 
-//Запоминание Координат картинки и места взятия картинки, изменение курсора, выдача нового zIndex
+//Запоминание Координат картинки и места взятия картинки, изменение курсора.
 function mousedownFunk(event) {
 	event = event || window.event;
 	event.preventDefault();
 	dragElement = event.currentTarget;
 
-	if (window.getComputedStyle(dragElement).zIndex === `auto`) {
-		dragElement.style.zIndex = newZIndex++;
-	}
-	currentZIndex = dragElement.style.zIndex;
-	dragElement.style.zIndex = imageCount;
+	dragElement.style.zIndex = imageCount++;
 	dragElement.style.cursor = `grab`;
 	let coordinates = dragElement.getBoundingClientRect();
 	imageX = coordinates.x;
@@ -67,10 +61,7 @@ function mousedownFunk(event) {
 
 //прекратить тащить и поменять курсор на обычный. Использую при отпускании или при потере курсора
 function dropElementFunk() {
-	if (dragElement) {
-		dragElement.style.zIndex = currentZIndex;
-		dragElement.style.cursor = `default`;
-	}
+	dragElement.style.cursor = `default`;
 	dragElement = undefined;
 }
 
