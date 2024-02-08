@@ -11,13 +11,6 @@ let cursorY;
 //Всего картинок (для z-index)
 let imageCount = 0;
 
-//Всегда отслеживаю курсор
-window.addEventListener(`mousemove`, mousemoveWindowFunk);
-function mousemoveWindowFunk(event) {
-	cursorX = event.clientX;
-	cursorY = event.clientY;
-}
-
 //Какой элемент сейчас тащится
 let dragElement;
 
@@ -25,14 +18,11 @@ let dragElement;
 let cursorDragX;
 let cursorDragY;
 
-//После полной загрузки страницы, нахожу картинку, даю 4 слушателя, беру координаты картинки и делаю такие же значения для left/top
+//После полной загрузки страницы, нахожу картинку, даю слушателя mousedown, беру координаты картинки и делаю такие же значения для left/top
 window.onload = function findImages() {
 	let images = document.getElementsByTagName(`img`);
 	for (let el of images) {
 		el.addEventListener(`mousedown`, mousedownFunk);
-		el.addEventListener(`mouseup`, dropElementFunk);
-		el.addEventListener(`mousemove`, mousemoveFunk);
-		el.addEventListener(`mouseout`, dropElementFunk);
 		let coordinates = el.getBoundingClientRect();
 		el.style.top = `${coordinates.y}px`;
 		el.style.left = `${coordinates.x}px`;
@@ -50,25 +40,33 @@ function mousedownFunk(event) {
 	event.preventDefault();
 	dragElement = event.currentTarget;
 
+	//добавляю слушателей только при взятии
+	window.addEventListener(`mousemove`, mousemoveFunk);
+	window.addEventListener(`mouseup`, dropElementFunk);
+
 	dragElement.style.zIndex = imageCount++;
 	dragElement.style.cursor = `grab`;
 	let coordinates = dragElement.getBoundingClientRect();
 	imageX = coordinates.x;
 	imageY = coordinates.y;
-	cursorDragX = cursorX;
-	cursorDragY = cursorY;
+	cursorDragX = event.clientX;
+	cursorDragY = event.clientY;
 }
 
 //прекратить тащить и поменять курсор на обычный. Использую при отпускании или при потере курсора
-function dropElementFunk() {
+function dropElementFunk(event) {
 	dragElement.style.cursor = `default`;
-	dragElement = undefined;
+	console.log(`Элемент упал, эвент - ` + event.type);
+	window.removeEventListener(`mousemove`, mousemoveFunk);
+	window.removeEventListener(`mouseup`, dropElementFunk);
 }
 
 //Координаты картинки - координаты взятия картинки + координаты курсора сейчас = на сколько картинка переместилась.
-function mousemoveFunk() {
-	if (dragElement) {
-		dragElement.style.left = `${imageX - cursorDragX + cursorX}px`;
-		dragElement.style.top = `${imageY - cursorDragY + cursorY}px`;
-	}
+function mousemoveFunk(event) {
+	event = event || window.event;
+	console.log(`сейчас функция реагирует на ` + event.type);
+	cursorX = event.clientX;
+	cursorY = event.clientY;
+	dragElement.style.left = `${imageX - cursorDragX + cursorX}px`;
+	dragElement.style.top = `${imageY - cursorDragY + cursorY}px`;
 }
