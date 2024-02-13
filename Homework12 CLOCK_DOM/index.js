@@ -47,7 +47,28 @@ function createWatch() {
 		}
 		//Присоединение счетчика времени к часам
 		yellowCircle.appendChild(middleTime);
-		middleTime.style.cssText = `position: absolute; left: ${yellowCircle.offsetWidth / 3.5}px; top: ${yellowCircle.offsetHeight / 4}px; font-size: ${el.value / 9}px; background-color: goldenrod;`
+		middleTime.style.cssText = `position: absolute; left: ${yellowCircle.offsetWidth / 100 * 30}px; top: ${yellowCircle.offsetHeight / 100 * 25}px; font-size: ${el.value / 9}px; background-color: goldenrod;`
+		//СТРЕЛКИ ----------------------------------------------------------------
+		//Секундная стрелка
+		let secondArrow = document.createElement(`div`);
+		secondArrow.style.cssText = `position: absolute; left: ${yellowCenterX / 100 * 99}px; top: ${yellowCenterY / 100 * 10}px; width: ${yellowCircle.offsetWidth / 100}px; height: ${yellowCircle.offsetHeight / 100 * 50}px;
+		background-color: black; border-radius: 20px; transform-origin: 50% 90%; transform: rotate(0); opacity: 30%`
+		body.appendChild(secondArrow)
+		//Секундная стрелка
+		let minuteArrow = document.createElement(`div`);
+		minuteArrow.style.cssText = `position: absolute; left: ${yellowCenterX / 100 * 98}px; top: ${yellowCenterY / 100 * 18}px; width: ${yellowCircle.offsetWidth / 100 * 2}px; height: ${yellowCircle.offsetHeight / 100 * 45}px;
+		background-color: red; border-radius: 20px; transform-origin: 50% 90%; transform: rotate(0);  opacity: 30%`
+		body.appendChild(minuteArrow)
+		//часовая стрелка
+		let hourArrow = document.createElement(`div`);
+		hourArrow.style.cssText = `position: absolute; left: ${yellowCenterX / 100 * 97.5}px; top: ${yellowCenterY / 100 * 48}px; width: ${yellowCircle.offsetWidth / 100 * 3}px; height: ${yellowCircle.offsetHeight / 100 * 29.5}px;
+		background-color: lime; border-radius: 20px; transform-origin: 50% 90%; transform: rotate(0); opacity: 30%`
+		body.appendChild(hourArrow)
+		//ЦЕНТР ЦАСОВ (для удобства позиционирования стрелок) - белая точка
+		let middle = document.createElement(`div`);
+		middle.style.cssText = `position: absolute; left: ${yellowCenterX}px; top: ${yellowCenterY}px; width: 2px; height: 2px;
+		background-color: white; border-radius: 0px;`
+		body.appendChild(middle)
 	}
 }
 
@@ -58,3 +79,4 @@ function currentTime() {
 	middleTime.innerHTML = `${data.getHours()}:${data.getMinutes()}:${data.getSeconds()}`
 }
 
+createWatch()
