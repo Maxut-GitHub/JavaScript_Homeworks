@@ -1,4 +1,5 @@
 "use strict";
+setInterval(currentTime, 1000);
 
 function createWatch() {
 	let el = document.getElementById(`clock-create`);
@@ -44,6 +45,16 @@ function createWatch() {
 
 
 		}
+		//Присоединение счетчика времени к часам
+		yellowCircle.appendChild(middleTime);
+		middleTime.style.cssText = `position: absolute; left: ${yellowCircle.offsetWidth / 3.5}px; top: ${yellowCircle.offsetHeight / 4}px; font-size: ${el.value / 9}px; background-color: goldenrod;`
 	}
+}
+
+//Время посередине часов
+let middleTime = document.createElement(`div`);
+function currentTime() {
+	let data = new Date();
+	middleTime.innerHTML = `${data.getHours()}:${data.getMinutes()}:${data.getSeconds()}`
 }
 
