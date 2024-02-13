@@ -11,6 +11,7 @@ function createWatch() {
 		const radius = parseFloat(el.value / 2.4);
 		//Создание желтого круга и добавление на экран.
 		let yellowCircle = document.createElement(`div`);
+		yellowCircle.classList = `clock`;
 		yellowCircle.style.cssText = `position: absolute; border-radius: 50%; background-color: goldenrod; width: ${el.value}px; height: ${el.value}px;`;
 		let body = document.getElementsByTagName(`body`)[0];
 		body.appendChild(yellowCircle);
@@ -51,18 +52,21 @@ function createWatch() {
 		//СТРЕЛКИ ----------------------------------------------------------------
 		//Секундная стрелка
 		let secondArrow = document.createElement(`div`);
+		secondArrow.classList = `arrow`;
 		secondArrow.style.cssText = `position: absolute; left: ${yellowCenterX / 100 * 99}px; top: ${yellowCenterY / 100 * 10}px; width: ${yellowCircle.offsetWidth / 100}px; height: ${yellowCircle.offsetHeight / 100 * 50}px;
-		background-color: black; border-radius: 20px; transform-origin: 50% 90%; transform: rotate(0); opacity: 30%`
+		background-color: black; border-radius: 20px; transform-origin: 50% 90%; transform: rotate(0); opacity: 70%`
 		body.appendChild(secondArrow)
 		//Секундная стрелка
 		let minuteArrow = document.createElement(`div`);
+		minuteArrow.classList = `arrow`;
 		minuteArrow.style.cssText = `position: absolute; left: ${yellowCenterX / 100 * 98}px; top: ${yellowCenterY / 100 * 18}px; width: ${yellowCircle.offsetWidth / 100 * 2}px; height: ${yellowCircle.offsetHeight / 100 * 45}px;
-		background-color: red; border-radius: 20px; transform-origin: 50% 90%; transform: rotate(0);  opacity: 30%`
+		background-color: black; border-radius: 20px; transform-origin: 50% 90%; transform: rotate(0);  opacity: 70%`
 		body.appendChild(minuteArrow)
 		//часовая стрелка
 		let hourArrow = document.createElement(`div`);
+		hourArrow.classList = `arrow`;
 		hourArrow.style.cssText = `position: absolute; left: ${yellowCenterX / 100 * 97.5}px; top: ${yellowCenterY / 100 * 48}px; width: ${yellowCircle.offsetWidth / 100 * 3}px; height: ${yellowCircle.offsetHeight / 100 * 29.5}px;
-		background-color: lime; border-radius: 20px; transform-origin: 50% 90%; transform: rotate(0); opacity: 30%`
+		background-color: black; border-radius: 20px; transform-origin: 50% 90%; transform: rotate(0); opacity: 70%`
 		body.appendChild(hourArrow)
 		//ЦЕНТР ЦАСОВ (для удобства позиционирования стрелок) - белая точка
 		let middle = document.createElement(`div`);
@@ -72,11 +76,21 @@ function createWatch() {
 	}
 }
 
+
 //Время посередине часов
 let middleTime = document.createElement(`div`);
 function currentTime() {
 	let data = new Date();
+	console.log(data)
 	middleTime.innerHTML = `${data.getHours()}:${data.getMinutes()}:${data.getSeconds()}`
+	//Движение: секундная на 6 градусов в секунду, минутная на 6 градусов в минуту, часовая на 30 градусов в час и на пол градуса в минуту
+	if (document.getElementsByClassName(`clock`)[0]) {
+		let arrows = document.getElementsByClassName(`arrow`)
+		arrows[0].style.transform = `rotate(${data.getSeconds() * 6}deg)`
+		arrows[1].style.transform = `rotate(${data.getMinutes() * 6}deg)`
+		arrows[2].style.transform = `rotate(${(data.getHours() * 30) + (data.getMinutes() / 2)}deg)`
+
+	}
 }
 
 createWatch()
