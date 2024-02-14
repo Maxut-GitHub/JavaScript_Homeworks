@@ -53,12 +53,8 @@ function createWatch() {
 			greenCircle.style.top = Math.round(greenCircleCenterY - greenCircle.offsetHeight / 2) + `px`;
 		}
 
-		//Присоединение счетчика времени к часам
-		yellowCircle.appendChild(middleTime);
-		middleTime.style.cssText = `position: absolute; left: ${yellowCircle.offsetWidth / 100 * 30}px; top: ${yellowCircle.offsetHeight / 100 * 25}px;
-		font-size: ${el.value / 9}px; background-color: ${clockColor};`
-
 		//---------------------------------- СТРЕЛКИ ----------------------------------------------------------------
+		//Каждая стрелка позиционируется так: ((Координаты центра X.Y или ширина.высота часов) / 100 * (100 - "на сколько % подвинуть элемент влево/вниз"))
 		//Секундная стрелка
 		let secondArrow = document.createElement(`div`);
 		secondArrow.classList = `arrow`;
@@ -89,29 +85,31 @@ function createWatch() {
 		height: ${yellowCircle.offsetHeight / 100 * 29.5}px;
 		background-color: ${arrowColor}; border-radius: 20px; transform-origin: 50% 90%; opacity: 70%`
 		body.appendChild(hourArrow)
-		// //ЦЕНТР ЦАСОВ (для удобства позиционирования стрелок) - белая точка
-		// let middle = document.createElement(`div`);
-		// middle.style.cssText = `position: absolute; left: ${yellowCenterX}px; top: ${yellowCenterY}px; width: 2px; height: 2px;
-		// background-color: white; border-radius: 0px;`
-		// body.appendChild(middle)
 
-		//Чтобы стрелки сразу были на нужных местах
+		//Обновление стрелок и времени каждую секунду
+		setInterval(currentTime, 1000);
+		let middleTime = document.createElement(`div`);
+		function currentTime() {
+			let data = new Date();
+			console.log(data)
+			middleTime.innerHTML = `${data.getHours()}:${data.getMinutes()}:${data.getSeconds()}`
+			if (document.getElementsByClassName(`clock`)[0]) {
+				arrowsPosition(data)
+			}
+		}
+
+		//Присоединение счетчика времени к часам
+		yellowCircle.appendChild(middleTime);
+		middleTime.style.cssText = `position: absolute;
+		left: ${yellowCircle.offsetWidth / 100 * 30}px;
+		top: ${yellowCircle.offsetHeight / 100 * 25}px;
+		font-size: ${el.value / 9}px; background-color: ${clockColor};`
+
+		//Чтобы стрелки и время в центре сразу были готовы
 		let data = new Date();
+		middleTime.innerHTML = `${data.getHours()}:${data.getMinutes()}:${data.getSeconds()}`
 		arrows = document.getElementsByClassName(`arrow`)
 		arrowsPosition(data);
-	}
-}
-
-
-//Обновление стрелок и времени каждую секунду
-setInterval(currentTime, 1000);
-let middleTime = document.createElement(`div`);
-function currentTime() {
-	let data = new Date();
-	console.log(data)
-	middleTime.innerHTML = `${data.getHours()}:${data.getMinutes()}:${data.getSeconds()}`
-	if (document.getElementsByClassName(`clock`)[0]) {
-		arrowsPosition(data)
 	}
 }
 
