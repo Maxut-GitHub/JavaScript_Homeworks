@@ -1,0 +1,9 @@
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	background-color: rgb(67, 67, 67);
+}
+.for-clock {
+	padding: 50px;
+}
