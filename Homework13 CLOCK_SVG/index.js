@@ -2,6 +2,12 @@
 
 //Расстояние цифр часов до центра
 const numberDistance = 2.4;
+//Цвет часов
+const clockColor = `goldenrod`;
+//Цвет фона для цифр
+const numberCircleColor = `seagreen`;
+//Цвет стрелок
+const arrowColor = `black`;
 
 function createWatch() {
 	let el = document.getElementById(`clock-create`);
@@ -13,12 +19,11 @@ function createWatch() {
 		//Создаем часы
 		let SVGclock = document.getElementsByTagName(`svg`)[0];
 		SVGclock.style.display = `block`;
-
 		SVGclock.setAttribute(`width`, el.value)
 		SVGclock.setAttribute(`height`, el.value)
-
+		//Желтый круг для часов
 		let yellowCircle = document.createElementNS("http://www.w3.org/2000/svg", 'ellipse');
-		yellowCircle.setAttribute("fill", "yellow");
+		yellowCircle.setAttribute("fill", `${clockColor}`);
 		yellowCircle.setAttribute("rx", el.value / 2);
 		yellowCircle.setAttribute("ry", el.value / 2);
 		yellowCircle.setAttribute("cx", el.value / 2);
@@ -34,7 +39,7 @@ function createWatch() {
 		for (let i = 1; i <= 12; i++) {
 			let greenCircle = document.createElementNS("http://www.w3.org/2000/svg", 'ellipse');
 			SVGclock.appendChild(greenCircle);
-			greenCircle.setAttribute("fill", "green");
+			greenCircle.setAttribute("fill", `${numberCircleColor}`);
 			greenCircle.setAttribute("rx", Math.round(el.value / 18));
 			greenCircle.setAttribute("ry", Math.round(el.value / 18));
 			//Считаем угол и прибавляем 30 градусов для слудующего зеленого круга
