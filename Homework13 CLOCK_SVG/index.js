@@ -8,8 +8,6 @@ const clockColor = `goldenrod`;
 const numberCircleColor = `seagreen`;
 //Цвет стрелок
 const arrowColor = `black`;
-//Массив стрелок
-let arrows;
 
 function createWatch() {
 	let el = document.getElementById(`clock-create`);
@@ -20,7 +18,6 @@ function createWatch() {
 		const radius = parseFloat(el.value / numberDistance);
 		//Создаем часы (убираем display:none для svg)
 		let SVGclock = document.getElementsByTagName(`svg`)[0];
-		SVGclock.classList = `clock`;
 		SVGclock.style.display = `block`;
 		SVGclock.setAttribute(`width`, el.value)
 		SVGclock.setAttribute(`height`, el.value)
@@ -113,28 +110,25 @@ function createWatch() {
 			let data = new Date();
 			console.log(data)
 			middleTime.textContent = `${data.getHours()}:${data.getMinutes()}:${data.getSeconds()}`
-			if (document.getElementsByClassName(`clock`)[0]) {
-				arrowsPosition(data)
-			}
+			arrowsPosition(data)
 		}
 
 		//Присоединение счетчика времени к часам
 		SVGclock.appendChild(middleTime);
-		middleTime.setAttribute("x", yellowCenterX / 100 * 75);
+		middleTime.setAttribute("x", yellowCenterX / 100 * 65);
 		middleTime.setAttribute("y", yellowCenterY / 100 * 65);
 		middleTime.style.fontSize = `${el.value / 10}`;
 
-		//Чтобы стрелки и время в центре сразу были готовы
-		let data = new Date();
-		middleTime.innerHTML = `${data.getHours()}:${data.getMinutes()}:${data.getSeconds()}`
-		arrows = document.getElementsByClassName(`arrow`)
-		arrowsPosition(data);
-	}
-}
+		//Движение: секундная на 6 градусов в секунду, минутная на 6 градусов в минуту, часовая на 30 градусов в час и на 0.5 градуса в минуту
+		//360deg - полный оборот, 60 - секунд в минуте, минут в часе, 12 - кол-во делений на часах.
+		function arrowsPosition(AnyData) {
+			let arrows = document.getElementsByClassName(`arrow`)
+			arrows[0].style.transform = `rotate(${AnyData.getSeconds() * (360 / 60)}deg)`
+			arrows[1].style.transform = `rotate(${AnyData.getMinutes() * (360 / 60)}deg)`
+			arrows[2].style.transform = `rotate(${(AnyData.getHours() * (360 / 12)) + (AnyData.getMinutes() * (360 / 12 / 60))}deg)`
+		}
 
-//Движение: секундная на 6 градусов в секунду, минутная на 6 градусов в минуту, часовая на 30 градусов в час и на пол градуса в минуту
-function arrowsPosition(AnyData) {
-	arrows[0].style.transform = `rotate(${AnyData.getSeconds() * 6}deg)`
-	arrows[1].style.transform = `rotate(${AnyData.getMinutes() * 6}deg)`
-	arrows[2].style.transform = `rotate(${(AnyData.getHours() * 30) + (AnyData.getMinutes() / 2)}deg)`
+		//Чтобы стрелки и время в центре сразу были готовы
+		currentTime()
+	}
 }
