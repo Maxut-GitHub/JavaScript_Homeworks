@@ -16,9 +16,9 @@ function createWatch() {
 		let form = document.getElementsByClassName(`for-clock`)[0];
 		form.style.display = `none`;
 		const radius = parseFloat(el.value / numberDistance);
-		//Создаем часы (убираем display:none для svg)
-		let SVGclock = document.getElementsByTagName(`svg`)[0];
-		SVGclock.style.display = `block`;
+		//Создаем SVG часы и добавляем на часы 
+		let SVGclock = document.createElementNS("http://www.w3.org/2000/svg", `svg`);
+		document.getElementsByTagName(`body`)[0].appendChild(SVGclock);
 		SVGclock.setAttribute(`width`, el.value)
 		SVGclock.setAttribute(`height`, el.value)
 		//Желтый круг для часов
