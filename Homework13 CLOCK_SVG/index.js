@@ -67,7 +67,7 @@ function createWatch() {
 		secondArrow.classList = `arrow`;
 		secondArrow.style.transformOrigin = `${yellowCenterX}px`
 		secondArrow.style.transform = `rotate(0)`
-		secondArrow.setAttribute("stroke", `black`);
+		secondArrow.setAttribute("stroke", `${arrowColor}`);
 		secondArrow.setAttribute("stroke-opacity", 0.7);
 		secondArrow.setAttribute("stroke-width", yellowCircle.getBoundingClientRect().width / 200);
 		secondArrow.setAttribute("stroke-linecap", `round`);
@@ -80,7 +80,7 @@ function createWatch() {
 		let minuteArrow = document.createElementNS("http://www.w3.org/2000/svg", 'line');
 		minuteArrow.classList = `arrow`;
 		minuteArrow.style.transformOrigin = `${yellowCenterX}px`
-		minuteArrow.setAttribute("stroke", `black`);
+		minuteArrow.setAttribute("stroke", `${arrowColor}`);
 		minuteArrow.setAttribute("stroke-opacity", 0.7);
 		minuteArrow.setAttribute("stroke-width", yellowCircle.getBoundingClientRect().width / 90);
 		minuteArrow.setAttribute("stroke-linecap", `round`);
@@ -93,7 +93,7 @@ function createWatch() {
 		let hourArrow = document.createElementNS("http://www.w3.org/2000/svg", 'line');
 		hourArrow.classList = `arrow`;
 		hourArrow.style.transformOrigin = `${yellowCenterX}px`
-		hourArrow.setAttribute("stroke", `black`);
+		hourArrow.setAttribute("stroke", `${arrowColor}`);
 		hourArrow.setAttribute("stroke-opacity", 0.7);
 		hourArrow.setAttribute("stroke-width", yellowCircle.getBoundingClientRect().width / 40);
 		hourArrow.setAttribute("stroke-linecap", `round`);
