@@ -23,7 +23,7 @@ function startGame() {
 	body.appendChild(button);
 	//Поле
 	let field = document.createElement(`div`);
-	field.style.cssText = `width: ${fieldWidth}px; height: ${fieldHeight}px; background-color: #c4b352; border: solid; border-color: black;`
+	field.style.cssText = `width: ${fieldWidth}px; height: ${fieldHeight}px; background-color: #c4b352; border: solid; border-color: black; border-width: 2px`
 	body.appendChild(field);
 	//счет
 	let count = document.createElement(`div`);
@@ -37,16 +37,16 @@ function startGame() {
 	greenBoard.id = `greenBoard`
 	greenBoard.style.cssText = `width: 10px; height: ${BoardSize}px; background-color: green; position: relative;`
 	let greenBoardStatus = {
-		posY: `100px`,
+		posY: 100,
 		speedY: 0,
 	}
 	field.appendChild(greenBoard);
 	//красная ракетка (и ее статус)
 	let redBoard = document.createElement(`div`);
 	redBoard.id = `redBoard`
-	redBoard.style.cssText = `width: 10px; height: ${BoardSize}px; background-color: red; position: relative; left: 784px; top: 0`
+	redBoard.style.cssText = `width: 10px; height: ${BoardSize}px; background-color: red; position: relative; left: 786px; top: 0`
 	let redBoardStatus = {
-		posY: `0px`,
+		posY: 0,
 		speedY: 0,
 	}
 	field.appendChild(redBoard);
@@ -55,16 +55,28 @@ function startGame() {
 	function tick() {
 		function update() {
 
-			redBoard.style.top = parseInt(redBoardStatus.posY) + redBoardStatus.speedY + `px`;
-			redBoardStatus.posY = redBoard.style.top;
+			redBoard.style.top = redBoardStatus.posY + redBoardStatus.speedY + `px`;
+			redBoardStatus.posY = parseInt(redBoard.style.top);
 
-			greenBoard.style.top = parseInt(greenBoardStatus.posY) + greenBoardStatus.speedY + `px`;
-			greenBoardStatus.posY = greenBoard.style.top;
+			greenBoard.style.top = greenBoardStatus.posY + greenBoardStatus.speedY + `px`;
+			greenBoardStatus.posY = parseInt(greenBoard.style.top);
 
-			if (parseInt(greenBoardStatus.posY) > fieldHeight - BoardSize) {
-				greenBoardStatus.posY = (parseInt(greenBoardStatus.posY) - (parseInt(greenBoardStatus.posY) - (fieldHeight - BoardSize)) * boardSpeed) + `px`
+			//Проверка на столкновение с границей поля (зеленая ракетка)
+			if (greenBoardStatus.posY > fieldHeight - BoardSize) {
+				greenBoardStatus.posY = (greenBoardStatus.posY - (greenBoardStatus.posY - (fieldHeight - BoardSize)) * boardSpeed)
+			}
+			if (greenBoardStatus.posY < 0) {
+				greenBoardStatus.posY = 0
+			}
+			//Проверка на столкновение с границей поля (красная ракетка)
+			if (redBoardStatus.posY > fieldHeight - BoardSize * 2) {
+				redBoardStatus.posY = (redBoardStatus.posY - (redBoardStatus.posY - (fieldHeight - BoardSize * 2)) * boardSpeed)
+			}
+			if (redBoardStatus.posY < -BoardSize) {
+				redBoardStatus.posY = -BoardSize
 			}
 		}
+
 		update()
 	}
 
@@ -76,7 +88,6 @@ function startGame() {
 
 	//Начало движения для ракеток
 	function greenBoardMove(event) {
-		console.log(event)
 		if (event.code == `ShiftLeft`) {
 			greenBoardStatus.speedY = -boardSpeed;
 		}
@@ -85,7 +96,6 @@ function startGame() {
 		}
 	}
 	function redBoardMove(event) {
-		console.log(event)
 		if (event.code == `ArrowUp`) {
 			redBoardStatus.speedY = -boardSpeed;
 		}
@@ -111,8 +121,6 @@ function startGame() {
 			redBoardStatus.speedY = 0;
 		}
 	}
-
-
 
 
 }
