@@ -12,15 +12,21 @@ const fieldHeight = 400;
 
 
 
-function startGame() {
-	//60 фпс
-	setInterval(tick, 1000 / 60);
+function createGame() {
+	//Функция для старта игры
+	function start() {
+		console.log(`%cИгра началась! Сработал setInterval`, `color: Lime`);
+		button.style.backgroundColor = `dimgray`
+		button.disabled = true;
+		setInterval(tick, 1000 / 60);
+	}
 	//добавление элементов:
 	let body = document.getElementsByTagName(`body`)[0];
 	//кнопка старта
 	let button = document.createElement(`button`);
 	button.style.cssText = `width: 100px; height: 30px; margin: 0 0 20px 0; background-color: #d1d1d1;`
 	button.textContent = `Старт!`;
+	button.onclick = start;
 	body.appendChild(button);
 	//Поле
 	let field = document.createElement(`div`);
@@ -41,7 +47,7 @@ function startGame() {
 		speedY: 0,
 	}
 	let greenBoardEl = document.createElement(`div`);
-	greenBoardEl.style.cssText = `width: 10px; height: ${greenBoard.height}px; background-color: green; position: relative;`
+	greenBoardEl.style.cssText = `width: 10px; height: ${greenBoard.height}px; background-color: green; position: relative; top: ${fieldHeight / 2 - greenBoard.height}px`
 	field.appendChild(greenBoardEl);
 
 	//красная ракетка
@@ -61,8 +67,8 @@ function startGame() {
 		height: 40,
 		posY: 180,
 		posX: 380,
-		speedY: 0.5,
-		speedX: 0.5,
+		speedY: ballSpeed,
+		speedX: ballSpeed,
 	}
 	let ballEl = document.createElement(`div`);
 	ballEl.style.cssText = `width: 40px; height: 40px; background-color: red; border-radius: 50%; position: absolute; left: 380px; top: 180px;`
@@ -102,6 +108,16 @@ function startGame() {
 			if (ball.posY < 0) {
 				ball.speedY = -ball.speedY;
 				ball.posY = 0;
+			}
+
+			if (ball.posX + ball.width > fieldWidth) {
+				ball.speedX = -ball.speedX;
+				ball.posX = fieldWidth - ball.width;
+			}
+			// вылетел ли мяч левее стены?
+			if (ball.posX < 0) {
+				ball.speedX = -ball.speedX;
+				ball.posX = 0;
 			}
 		}
 
@@ -159,4 +175,4 @@ function startGame() {
 	}
 
 }
-startGame();
+createGame();
