@@ -3,15 +3,13 @@
 //Скорость ракеток
 const boardSpeed = 3;
 
+//Скорость мяча
+const ballSpeed = 3;
+
 //Размер поля
 const fieldWidth = 800;
 const fieldHeight = 400;
 
-//Размер ракеток
-const BoardSize = 100;
-
-//Скорость мяча
-const ballSpeed = 3;
 
 
 function startGame() {
@@ -35,31 +33,29 @@ function startGame() {
 	count.textContent = `0:0`;
 	body.appendChild(count);
 
-	//зеленая ракетка (и ее статус)
-	let greenBoardEl = document.createElement(`div`);
-	greenBoardEl.style.cssText = `width: 10px; height: ${100}px; background-color: green; position: relative;`
+	//зеленая ракетка
 	let greenBoard = {
 		width: 10,
 		height: 100,
 		posY: 100,
 		speedY: 0,
 	}
+	let greenBoardEl = document.createElement(`div`);
+	greenBoardEl.style.cssText = `width: 10px; height: ${greenBoard.height}px; background-color: green; position: relative;`
 	field.appendChild(greenBoardEl);
-	//красная ракетка (и ее статус)
-	let blueBoardEl = document.createElement(`div`);
-	blueBoardEl.style.cssText = `width: 10px; height: ${100}px; background-color: blue; position: relative; left: 786px; top: 0`
+
+	//красная ракетка
 	let blueBoard = {
 		width: 10,
 		height: 100,
 		posY: 0,
 		speedY: 0,
 	}
+	let blueBoardEl = document.createElement(`div`);
+	blueBoardEl.style.cssText = `width: 10px; height: ${blueBoard.height}px; background-color: blue; position: relative; left: 786px; top: 0`
 	field.appendChild(blueBoardEl);
 
 	//Мяч
-	let ballEl = document.createElement(`div`);
-	field.appendChild(ballEl)
-	ballEl.style.cssText = `width: 40px; height: 40px; background-color: red; border-radius: 50%; position: absolute; left: 380px; top: 180px;`
 	let ball = {
 		width: 40,
 		height: 40,
@@ -68,6 +64,10 @@ function startGame() {
 		speedY: 0.5,
 		speedX: 0.5,
 	}
+	let ballEl = document.createElement(`div`);
+	ballEl.style.cssText = `width: 40px; height: 40px; background-color: red; border-radius: 50%; position: absolute; left: 380px; top: 180px;`
+	field.appendChild(ballEl)
+
 	//обновление позиции раз в тик
 	function tick() {
 		function update() {
@@ -79,18 +79,18 @@ function startGame() {
 			greenBoard.posY = parseInt(greenBoardEl.style.top);
 
 			//Проверка на столкновение с границей поля (зеленая ракетка)
-			if (greenBoard.posY > fieldHeight - BoardSize) {
-				greenBoard.posY = (greenBoard.posY - (greenBoard.posY - (fieldHeight - BoardSize)) * boardSpeed)
+			if (greenBoard.posY > fieldHeight - greenBoard.height) {
+				greenBoard.posY = (greenBoard.posY - (greenBoard.posY - (fieldHeight - greenBoard.height)) * boardSpeed)
 			}
 			if (greenBoard.posY < 0) {
 				greenBoard.posY = 0
 			}
 			//Проверка на столкновение с границей поля (красная ракетка)
-			if (blueBoard.posY > fieldHeight - BoardSize * 2) {
-				blueBoard.posY = (blueBoard.posY - (blueBoard.posY - (fieldHeight - BoardSize * 2)) * boardSpeed)
+			if (blueBoard.posY > fieldHeight - blueBoard.height * 2) {
+				blueBoard.posY = (blueBoard.posY - (blueBoard.posY - (fieldHeight - blueBoard.height * 2)) * boardSpeed)
 			}
-			if (blueBoard.posY < -BoardSize) {
-				blueBoard.posY = -BoardSize
+			if (blueBoard.posY < -blueBoard.height) {
+				blueBoard.posY = -blueBoard.height
 			}
 			ballMove()
 			// вылетел ли мяч ниже пола?
