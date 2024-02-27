@@ -4,7 +4,7 @@
 const boardSpeed = 3;
 
 //Скорость мяча
-const ballSpeed = 3;
+const ballSpeed = 5;
 
 //Размер поля
 const fieldWidth = 800;
@@ -22,10 +22,10 @@ function createGame() {
 		ball.speedX = ballSpeed;
 		ball.speedY = ballSpeed;
 		//Рандомное направление для мяча (4 различных направления) --- Math.round(Math.random()) дает 1 или 0. 
-		if (Math.round(Math.random()) === 1) {
+		if (Math.round(Math.random())) {
 			ball.speedX = -ballSpeed;
 		}
-		if (Math.round(Math.random()) === 1) {
+		if (Math.round(Math.random())) {
 			ball.speedY = -ballSpeed;
 		}
 		//Старт таймера, если раундов еще небыло
@@ -59,6 +59,7 @@ function createGame() {
 		width: 10,
 		height: 100,
 		posY: 150,
+		posX: 0,
 		speedY: 0,
 	}
 	let greenBoardEl = document.createElement(`div`);
@@ -70,10 +71,11 @@ function createGame() {
 		width: 10,
 		height: 100,
 		posY: 150,
+		posX: 786,
 		speedY: 0,
 	}
 	let blueBoardEl = document.createElement(`div`);
-	blueBoardEl.style.cssText = `width: 10px; height: ${blueBoard.height}px; background-color: blue; position: absolute; left: 786px; top: ${blueBoard.posY}px`
+	blueBoardEl.style.cssText = `width: 10px; height: ${blueBoard.height}px; background-color: blue; position: absolute; left: ${blueBoard.posX}px; top: ${blueBoard.posY}px`
 	field.appendChild(blueBoardEl);
 
 	//Мяч
@@ -125,20 +127,40 @@ function createGame() {
 				ball.posY = 0;
 			}
 
-			// вылет в левую стенку
+			// вылет в правую стенку
 			if (ball.posX + ball.width > fieldWidth) {
 				ball.speedX = 0
 				ball.speedY = 0
 				ball.posX = fieldWidth - ball.width;
-				countUpdate(`blue`)
+				countUpdate(`greenWin`)
 			}
-			// вылет в правую стенку
+			// вылет в левую стенку
 			if (ball.posX < 0) {
 				ball.speedX = 0
 				ball.speedY = 0
 				ball.posX = 0;
-				countUpdate(`green`)
+				countUpdate(`blueWin`)
 			}
+
+
+
+			//столккновение с зеленой ракеткой
+			if (greenBoard.posY < ball.posY + ball.height && greenBoard.posY + greenBoard.height > ball.posY) {
+				if (ball.posX < greenBoard.width) {
+					ball.speedX = -ball.speedX;
+					ball.posX = greenBoard.width;
+				}
+			}
+
+			//столккновение с синей ракеткой
+			if (blueBoard.posY < ball.posY + ball.height && blueBoard.posY + blueBoard.height > ball.posY) {
+				if (ball.posX + ball.width > blueBoard.posX) {
+					ball.speedX = -ball.speedX;
+					ball.posX = blueBoard.posX - ball.width;
+				}
+			}
+
+
 		}
 
 		update()
@@ -152,36 +174,30 @@ function createGame() {
 
 	//Начало движения для ракеток
 	function greenBoardMove(event) {
-		if (event.code == `ShiftLeft`) {
+		if (event.code === `ShiftLeft`) {
 			greenBoard.speedY = -boardSpeed;
 		}
-		if (event.code == `ControlLeft`) {
+		if (event.code === `ControlLeft`) {
 			greenBoard.speedY = boardSpeed;
 		}
 	}
 	function blueBoardMove(event) {
-		if (event.code == `ArrowUp`) {
+		if (event.code === `ArrowUp`) {
 			blueBoard.speedY = -boardSpeed;
 		}
-		if (event.code == `ArrowDown`) {
+		if (event.code === `ArrowDown`) {
 			blueBoard.speedY = boardSpeed;
 		}
 	}
 
 	//остановка для ракеток
 	function greenBoardStop(event) {
-		if (event.code == `ShiftLeft`) {
-			greenBoard.speedY = 0;
-		}
-		if (event.code == `ControlLeft`) {
+		if (event.code === `ShiftLeft` || event.code === `ControlLeft`) {
 			greenBoard.speedY = 0;
 		}
 	}
 	function blueBoardStop(event) {
-		if (event.code == `ArrowUp`) {
-			blueBoard.speedY = 0;
-		}
-		if (event.code == `ArrowDown`) {
+		if (event.code === `ArrowUp` || event.code === `ArrowDown`) {
 			blueBoard.speedY = 0;
 		}
 	}
@@ -197,10 +213,9 @@ function createGame() {
 	//Подсчет очков
 	function countUpdate(blueOrGreen) {
 		button.disabled = false
-		if (blueOrGreen === `blue`) {
-			console.log(`%c`, `color: Lime`);
+		if (blueOrGreen === `blueWin`) {
 			count.textContent = `${greenCount}:${++blueCount}`
-		} else if (blueOrGreen === `green`) {
+		} else if (blueOrGreen === `greenWin`) {
 			count.textContent = `${++greenCount}:${blueCount}`
 		}
 	}
