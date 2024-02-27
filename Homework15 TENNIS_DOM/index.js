@@ -4,7 +4,7 @@
 const boardSpeed = 3;
 
 //Скорость мяча
-const ballSpeed = 2;
+const ballSpeed = 6;
 
 //Размер поля
 const fieldWidth = 800;
@@ -18,6 +18,9 @@ function createGame() {
 		//мяч в центре
 		ball.posX = fieldWidth / 2 - ball.width / 2;
 		ball.posY = fieldHeight / 2 - ball.height / 2;
+		//ракетки в центре
+		greenBoard.posY = fieldHeight / 2 - greenBoard.height / 2;
+		blueBoard.posY = fieldHeight / 2 - blueBoard.height / 2;
 		//Обновление скорости мяча
 		ball.speedX = ballSpeed;
 		ball.speedY = ballSpeed;
@@ -32,6 +35,11 @@ function createGame() {
 		if (count.textContent === `0:0`) {
 			setInterval(tick, 1000 / 60);
 		}
+		//добавление слушателей
+		document.addEventListener(`keydown`, greenBoardMove);
+		document.addEventListener(`keydown`, blueBoardMove);
+		document.addEventListener(`keyup`, greenBoardStop);
+		document.addEventListener(`keyup`, blueBoardStop);
 	}
 	//добавление элементов:
 	let body = document.getElementsByTagName(`body`)[0];
@@ -54,7 +62,7 @@ function createGame() {
 	count.textContent = `0:0`;
 	body.appendChild(count);
 
-	//зеленая ракетка
+	//зеленая ракетка и его стартовая позиция
 	let greenBoard = {
 		width: 10,
 		height: 100,
@@ -66,7 +74,7 @@ function createGame() {
 	greenBoardEl.style.cssText = `width: 10px; height: ${greenBoard.height}px; background-color: green; position: absolute; top: ${greenBoard.posY}px`
 	field.appendChild(greenBoardEl);
 
-	//красная ракетка
+	//красная ракетка и его стартовая позиция
 	let blueBoard = {
 		width: 10,
 		height: 100,
@@ -78,7 +86,7 @@ function createGame() {
 	blueBoardEl.style.cssText = `width: 10px; height: ${blueBoard.height}px; background-color: blue; position: absolute; left: ${blueBoard.posX}px; top: ${blueBoard.posY}px`
 	field.appendChild(blueBoardEl);
 
-	//Мяч
+	//Мяч и его стартовая позиция
 	let ball = {
 		width: 40,
 		height: 40,
@@ -212,6 +220,13 @@ function createGame() {
 
 	//Подсчет очков
 	function countUpdate(blueOrGreen) {
+		//отключение управления ракеток
+		document.removeEventListener(`keydown`, greenBoardMove);
+		document.removeEventListener(`keydown`, blueBoardMove);
+		document.removeEventListener(`keyup`, greenBoardStop);
+		document.removeEventListener(`keyup`, blueBoardStop);
+		greenBoard.speedY = 0;
+		blueBoard.speedY = 0;
 		button.disabled = false
 		if (blueOrGreen === `blueWin`) {
 			console.log(`%cСиний %cвыйграл этот раунд!`, `color: dodgerblue`, `color: white`);
