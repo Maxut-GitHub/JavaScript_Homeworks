@@ -150,9 +150,7 @@ function createGame() {
 				countUpdate(`blueWin`)
 			}
 
-
-
-			//столккновение с зеленой ракеткой
+			//столккновение мяча с зеленой ракеткой
 			if (greenBoard.posY < ball.posY + ball.height && greenBoard.posY + greenBoard.height > ball.posY) {
 				if (ball.posX < greenBoard.width) {
 					ball.speedX = -ball.speedX;
@@ -160,25 +158,16 @@ function createGame() {
 				}
 			}
 
-			//столккновение с синей ракеткой
+			//столккновение мяча с синей ракеткой
 			if (blueBoard.posY < ball.posY + ball.height && blueBoard.posY + blueBoard.height > ball.posY) {
 				if (ball.posX + ball.width > blueBoard.posX) {
 					ball.speedX = -ball.speedX;
 					ball.posX = blueBoard.posX - ball.width;
 				}
 			}
-
-
 		}
-
 		update()
 	}
-
-	//добавление слушателей
-	document.addEventListener(`keydown`, greenBoardMove);
-	document.addEventListener(`keydown`, blueBoardMove);
-	document.addEventListener(`keyup`, greenBoardStop);
-	document.addEventListener(`keyup`, blueBoardStop);
 
 	//Начало движения для ракеток
 	function greenBoardMove(event) {
