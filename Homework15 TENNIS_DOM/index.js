@@ -11,6 +11,7 @@ const fieldWidth = 800;
 const fieldHeight = 400;
 
 function createGame() {
+	setInterval(tick, 1000 / 60);
 	//Функция для старта игры
 	function start() {
 		console.log(`Раунд начался!`)
@@ -30,10 +31,6 @@ function createGame() {
 		}
 		if (Math.round(Math.random())) {
 			ball.speedY = -ballSpeed;
-		}
-		//Старт таймера, если раундов еще небыло
-		if (count.textContent === `0:0`) {
-			setInterval(tick, 1000 / 60);
 		}
 		//добавление слушателей
 		document.addEventListener(`keydown`, greenBoardMove);
@@ -99,9 +96,9 @@ function createGame() {
 	ballEl.style.cssText = `width: 40px; height: 40px; background-color: red; border-radius: 50%; position: absolute; left: 380px; top: 180px;`
 	field.appendChild(ballEl)
 
-	//обновление позиции раз в тик
+	//обновление позиции раз в тик (Кнопка старта должна быть disabled = true)
 	function tick() {
-		function update() {
+		if (button.disabled === true) {
 
 			blueBoardEl.style.top = blueBoard.posY + blueBoard.speedY + `px`;
 			blueBoard.posY = parseInt(blueBoardEl.style.top);
@@ -139,14 +136,14 @@ function createGame() {
 			if (ball.posX + ball.width > fieldWidth) {
 				ball.speedX = 0
 				ball.speedY = 0
-				ball.posX = fieldWidth - ball.width;
+				ballEl.style.left = fieldWidth - ball.width + `px`;
 				countUpdate(`greenWin`)
 			}
 			// вылет в левую стенку
 			if (ball.posX < 0) {
 				ball.speedX = 0
 				ball.speedY = 0
-				ball.posX = 0;
+				ballEl.style.left = 0;
 				countUpdate(`blueWin`)
 			}
 
@@ -166,7 +163,6 @@ function createGame() {
 				}
 			}
 		}
-		update()
 	}
 
 	//Начало движения для ракеток
@@ -225,6 +221,5 @@ function createGame() {
 			count.textContent = `${++greenCount}:${blueCount}`
 		}
 	}
-
 }
 createGame();
