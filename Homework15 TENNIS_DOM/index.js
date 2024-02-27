@@ -4,7 +4,7 @@
 const boardSpeed = 3;
 
 //Скорость мяча
-const ballSpeed = 5;
+const ballSpeed = 2;
 
 //Размер поля
 const fieldWidth = 800;
@@ -43,7 +43,7 @@ function createGame() {
 	body.appendChild(button);
 	//Поле
 	let field = document.createElement(`div`);
-	field.style.cssText = `width: ${fieldWidth}px; height: ${fieldHeight}px; background-color: #c4b352; border: solid; border-color: black; border-width: 2px; position: absolute`
+	field.style.cssText = `width: ${fieldWidth}px; height: ${fieldHeight}px; background-color: #c4b352; outline: 2px solid black ; position: absolute`
 	body.appendChild(field);
 	//счет
 	let count = document.createElement(`div`);
@@ -71,7 +71,7 @@ function createGame() {
 		width: 10,
 		height: 100,
 		posY: 150,
-		posX: 786,
+		posX: 790,
 		speedY: 0,
 	}
 	let blueBoardEl = document.createElement(`div`);
@@ -214,8 +214,10 @@ function createGame() {
 	function countUpdate(blueOrGreen) {
 		button.disabled = false
 		if (blueOrGreen === `blueWin`) {
+			console.log(`%cСиний %cвыйграл этот раунд!`, `color: dodgerblue`, `color: white`);
 			count.textContent = `${greenCount}:${++blueCount}`
 		} else if (blueOrGreen === `greenWin`) {
+			console.log(`%cЗеленый %cвыйграл этот раунд!`, `color: Lime`, `color: white`);
 			count.textContent = `${++greenCount}:${blueCount}`
 		}
 	}
