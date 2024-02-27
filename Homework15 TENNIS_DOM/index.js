@@ -58,22 +58,22 @@ function createGame() {
 	let greenBoard = {
 		width: 10,
 		height: 100,
-		posY: 100,
+		posY: 150,
 		speedY: 0,
 	}
 	let greenBoardEl = document.createElement(`div`);
-	greenBoardEl.style.cssText = `width: 10px; height: ${greenBoard.height}px; background-color: green; position: relative; top: ${fieldHeight / 2 - greenBoard.height}px`
+	greenBoardEl.style.cssText = `width: 10px; height: ${greenBoard.height}px; background-color: green; position: absolute; top: ${greenBoard.posY}px`
 	field.appendChild(greenBoardEl);
 
 	//красная ракетка
 	let blueBoard = {
 		width: 10,
 		height: 100,
-		posY: 0,
+		posY: 150,
 		speedY: 0,
 	}
 	let blueBoardEl = document.createElement(`div`);
-	blueBoardEl.style.cssText = `width: 10px; height: ${blueBoard.height}px; background-color: blue; position: relative; left: 786px; top: 0`
+	blueBoardEl.style.cssText = `width: 10px; height: ${blueBoard.height}px; background-color: blue; position: absolute; left: 786px; top: ${blueBoard.posY}px`
 	field.appendChild(blueBoardEl);
 
 	//Мяч
@@ -104,14 +104,14 @@ function createGame() {
 				greenBoard.posY = (greenBoard.posY - (greenBoard.posY - (fieldHeight - greenBoard.height)) * boardSpeed)
 			}
 			if (greenBoard.posY < 0) {
-				greenBoard.posY = 0
+				greenBoard.posY = 0;
 			}
-			//Проверка на столкновение с границей поля (красная ракетка)
-			if (blueBoard.posY > fieldHeight - blueBoard.height * 2) {
-				blueBoard.posY = (blueBoard.posY - (blueBoard.posY - (fieldHeight - blueBoard.height * 2)) * boardSpeed)
+			//Проверка на столкновение с границей поля (синяя ракетка)
+			if (blueBoard.posY > fieldHeight - blueBoard.height) {
+				blueBoard.posY = (blueBoard.posY - (blueBoard.posY - (fieldHeight - blueBoard.height)) * boardSpeed)
 			}
-			if (blueBoard.posY < -blueBoard.height) {
-				blueBoard.posY = -blueBoard.height
+			if (blueBoard.posY < 0) {
+				blueBoard.posY = 0;
 			}
 			ballMove()
 			// вылетел ли мяч ниже пола?
