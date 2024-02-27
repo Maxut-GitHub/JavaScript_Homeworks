@@ -10,15 +10,28 @@ const ballSpeed = 3;
 const fieldWidth = 800;
 const fieldHeight = 400;
 
-
-
 function createGame() {
 	//Функция для старта игры
 	function start() {
-		console.log(`%cИгра началась! Сработал setInterval`, `color: Lime`);
-		button.style.backgroundColor = `dimgray`
+		console.log(`Раунд начался!`)
 		button.disabled = true;
-		setInterval(tick, 1000 / 60);
+		//мяч в центре
+		ball.posX = fieldWidth / 2 - ball.width / 2;
+		ball.posY = fieldHeight / 2 - ball.height / 2;
+		//Обновление скорости мяча
+		ball.speedX = ballSpeed;
+		ball.speedY = ballSpeed;
+		//Рандомное направление для мяча (4 различных направления) --- Math.round(Math.random()) дает 1 или 0. 
+		if (Math.round(Math.random()) === 1) {
+			ball.speedX = -ballSpeed;
+		}
+		if (Math.round(Math.random()) === 1) {
+			ball.speedY = -ballSpeed;
+		}
+		//Старт таймера, если раундов еще небыло
+		if (count.textContent === `0:0`) {
+			setInterval(tick, 1000 / 60);
+		}
 	}
 	//добавление элементов:
 	let body = document.getElementsByTagName(`body`)[0];
@@ -34,6 +47,8 @@ function createGame() {
 	body.appendChild(field);
 	//счет
 	let count = document.createElement(`div`);
+	let greenCount = 0;
+	let blueCount = 0;
 	count.style.cssText = `width: 100px; height: 50px; margin: 0 0 20px 0; position: absolute; left: 450px; top: 80px; font-size: 60px;
 	display: flex; justify-content: center; `
 	count.textContent = `0:0`;
@@ -110,14 +125,19 @@ function createGame() {
 				ball.posY = 0;
 			}
 
+			// вылет в левую стенку
 			if (ball.posX + ball.width > fieldWidth) {
-				ball.speedX = -ball.speedX;
+				ball.speedX = 0
+				ball.speedY = 0
 				ball.posX = fieldWidth - ball.width;
+				countUpdate(`blue`)
 			}
-			// вылетел ли мяч левее стены?
+			// вылет в правую стенку
 			if (ball.posX < 0) {
-				ball.speedX = -ball.speedX;
+				ball.speedX = 0
+				ball.speedY = 0
 				ball.posX = 0;
+				countUpdate(`green`)
 			}
 		}
 
@@ -172,6 +192,17 @@ function createGame() {
 		ball.posX += ball.speedX;
 		ballEl.style.top = ball.posY + ball.speedY + "px";
 		ball.posY += ball.speedY;
+	}
+
+	//Подсчет очков
+	function countUpdate(blueOrGreen) {
+		button.disabled = false
+		if (blueOrGreen === `blue`) {
+			console.log(`%c`, `color: Lime`);
+			count.textContent = `${greenCount}:${++blueCount}`
+		} else if (blueOrGreen === `green`) {
+			count.textContent = `${++greenCount}:${blueCount}`
+		}
 	}
 
 }
