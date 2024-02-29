@@ -48,24 +48,20 @@ function createWatch() {
 			ctx.fillStyle = numberCircleColor;
 			ctx.fill();
 			ctx.closePath();
-
 			//Создание текста (цифр)
 			ctx.beginPath();
 			ctx.fillStyle = `black`;
 			ctx.font = `${el.value / 18}px serif`;
-			//Позиция для цифр ОДНОЗНАЧНЫХ 1-9
-			const positionFor1_9_X = greenCircleCenterX - el.value / 70;
-			const positionFor1_9_Y = greenCircleCenterY + el.value / 70;
-			//Позиция для цифр ДВУХЗНАЧНЫХ 10-12
-			const positionFor10_12_X = greenCircleCenterX - el.value / 40;
-			const positionFor10_12_Y = greenCircleCenterY + el.value / 70;
-			if (i <= 9) {
-				ctx.fillText(i, positionFor1_9_X, positionFor1_9_Y);
-			} else {
-				ctx.fillText(i, positionFor10_12_X, positionFor10_12_Y);
-			}
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'middle';
+			ctx.fillText(i, greenCircleCenterX, greenCircleCenterY);
 			ctx.closePath();
 		}
+
+		//---------------------------------- СТРЕЛКИ ----------------------------------------------------------------
+		//Секундная стрелка
+
+
 
 
 
