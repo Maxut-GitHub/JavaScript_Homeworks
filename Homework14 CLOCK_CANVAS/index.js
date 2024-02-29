@@ -13,7 +13,7 @@ const secondArrowSize = 0.9;
 //Длина минутной стрелки
 const minuteArrowSize = 0.75;
 //Длина часовой стрелки
-const hourArrowSize = 0.5;
+const hourArrowSize = 0.45;
 
 
 function createWatch() {
@@ -100,6 +100,10 @@ function createWatch() {
 			ctx.lineTo(ArrowX, ArrowY);
 			ctx.stroke();
 			ctx.closePath();
+			//счетчик времени
+			ctx.font = `${el.value / 10}px serif`;
+			ctx.globalAlpha = 1;
+			ctx.fillText(`${data.getHours()}:${data.getMinutes()}:${data.getSeconds()}`, clockCenterX, clockCenterY / 100 * 60);
 		}
 	}
 }
