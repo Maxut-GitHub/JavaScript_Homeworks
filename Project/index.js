@@ -130,6 +130,9 @@ nextRoom()
 //Проверка полоски здоровья
 function checkHealsbar() {
 	healsbarCurrentHP.style.width = `${player.HP / 10}%`;
+	if (player.HP <= 0) {
+		playerElement.style.backgroundImage = `url(SVGLibrary/player/playerCorpse.svg)`
+	}
 }
 checkHealsbar()
 
