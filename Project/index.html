@@ -4,11 +4,51 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="styles.css" type="text/css" />
+	<link rel="stylesheet" href="cssStyles/stylesForInterface.css" type="text/css" />
+	<link rel="stylesheet" href="cssStyles/stylesForRoom.css" type="text/css" />
+	<link rel="stylesheet" href="cssStyles/stylesOther.css" type="text/css" />
 	<title>Выпускной проект</title>
 </head>
 
 <body>
+	<div id="levelText">level
+		<span id="level">2</span>
+	</div>
+	<div id="gamePanel">
+		<div id="room">
+			<div id="doorTop"></div>
+			<div id="floor"></div>
+			<div id="doorButton"></div>
+		</div>
+		<div id="interface">
+			<div id="lifePanel" class="interface-panel">
+				<div id="healsbar">
+					<div id="HP"></div>
+				</div>
+				<div id="lifeText" class="interface-all-text">Здоровье</div>
+			</div>
+			<div id="weaponPanel" class="inventory interface-panel">
+				<div id="weaponSlot" class="interface-slot"></div>
+				<div id="weaponText" class="interface-all-text">Оружие</div>
+			</div>
+			<div id="bootsPanel" class="inventory interface-panel">
+				<div id="bootsSlot" class="interface-slot"></div>
+				<div id="bootsText" class="interface-all-text">Сапоги</div>
+			</div>
+			<div id="bodyArmorPanel" class="inventory interface-panel">
+				<div id="bodyArmorSlot" class="interface-slot"></div>
+				<div id="bodyArmorText" class="interface-all-text">Нагрудник</div>
+			</div>
+			<div id="helmetPanel" class="inventory interface-panel">
+				<div id="helmetSlot" class="interface-slot"></div>
+				<div id="helmetText" class="interface-all-text">Шлем</div>
+			</div>
+			<div id="menuPanel" class="interface-panel">
+			</div>
+		</div>
+	</div>
+
+
 	<script src="index.js"></script>
 </body>
 

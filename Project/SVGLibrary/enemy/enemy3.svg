@@ -1,0 +1,21 @@
+<svg width="250" height="250" xmlns="http://www.w3.org/2000/svg">
+ <g>
+  <title>Layer 1</title>
+  <rect stroke="null" id="svg_21" height="103.73472" width="33.55103" y="53.87499" x="82.29796" fill="#ff0000"/>
+  <ellipse stroke="null" ry="35.61225" rx="35.55103" id="svg_22" cy="36.48724" cx="98.03266" fill="#ff0000"/>
+  <rect transform="rotate(12.5621 79.6476 194.115)" stroke="null" id="svg_29" height="108.30055" width="16.69509" y="139.96448" x="71.30002" fill="#ff0000"/>
+  <rect transform="rotate(-15.4265 120.531 193.104)" stroke="null" id="svg_51" height="110.37402" width="16.69509" y="137.91706" x="112.18301" fill="#ff0000"/>
+  <rect transform="rotate(-4.96145 127.65 138.252)" id="svg_10" height="7.31705" width="213.82055" y="134.59353" x="20.73977" stroke="null" fill="#333333"/>
+  <rect transform="rotate(22.6451 70.7396 112.439)" id="svg_12" height="89.02414" width="11.38208" y="67.92704" x="65.04859" stroke="null" fill="#ff0000"/>
+  <rect transform="rotate(-23.634 125.008 107.968)" id="svg_13" height="97.96721" width="12.60159" y="58.98398" x="118.70698" stroke="null" fill="#ff0000"/>
+  <ellipse stroke="null" ry="20.9349" rx="23.78042" id="svg_14" cy="129.10574" cx="222.16198" fill="#333333"/>
+  <path id="svg_17" d="m188.21899,79.30913" opacity="NaN" stroke="null" fill="#333333"/>
+  <path id="svg_27" d="m214.64168,117.1139l4.8699,-23.21172l10.16257,25.20318" opacity="NaN" stroke="null" fill="#333333"/>
+  <path id="svg_28" d="m201.22708,123.21144l-13.42273,-12.64265l25.60968,4.87804" opacity="NaN" stroke="null" fill="#333333"/>
+  <path id="svg_30" d="m228.46278,114.67488l16.25198,-11.01664l-5.69104,18.69913" opacity="NaN" stroke="null" fill="#333333"/>
+  <path id="svg_31" d="m205.69861,135.40653l-4.88617,21.5036c0.00813,0.04106 19.92678,-15.40605 20.33328,-15.40605" opacity="NaN" stroke="null" fill="#333333"/>
+  <path id="svg_32" d="m215.86119,140.69107l10.56094,18.25157l4.47153,-20.32515" opacity="NaN" stroke="null" fill="#333333"/>
+  <path id="svg_33" d="m230.90179,144.7561l14.21947,9.30851c0.00813,0.04106 -6.90242,-24.34912 -6.49591,-24.34912" opacity="NaN" stroke="null" fill="#333333"/>
+ </g>
+
+</svg>
