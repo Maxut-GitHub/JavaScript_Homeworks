@@ -82,11 +82,17 @@ function createArrayEnemy() {
 		//view - внешний вид моба
 		//pozX и poxY случайны и подобраны так, чтобы моб всегда был в пределых комнаты
 		let enemy = {
+			id: i,
 			damage: damage,
 			HP: HP,
 			view: view,
 			posX: (Math.floor(Math.random() * (90 - 5)) + 5),
 			posY: (Math.floor(Math.random() * (60 - 5)) + 5),
+			death: function () {
+
+				enemyElArray[this.id].style.backgroundImage = `url(SVGLibrary/enemy/enemyCorpse.svg)`
+				this.damage = 0;
+			}
 		}
 		enemyArray.push(enemy)
 	}
@@ -102,8 +108,20 @@ function nextRoom() {
 		enemyElement.style.cssText = `background-image: url(SVGLibrary/enemy/enemy${enemyArray[i].view}.svg);
 		background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: absolute;
 		left: ${enemyArray[i].posX}%; top: ${enemyArray[i].posY}%;`;
-		enemyElArray.push(enemyElement);
 		console.log(`%c Враг: ${enemyArray[i].HP} hp, ${enemyArray[i].damage} damage`, `color: red`);
+		//у каждого врага есть свой id, совпадающий с его индексом в массиме enemyArray
+		enemyElement.id = enemyArray[i].id;
+		//Добавляем слушателя и отнимаем хп у противника за каждый клик. Если HP врага <=0, то он погибает и перестает наносить урон
+		enemyElement.addEventListener(`click`, enemyGetHit)
+		function enemyGetHit() {
+			enemyArray[this.id].HP -= player.damage;
+			if (enemyArray[this.id].HP <= 0) {
+				enemyArray[this.id].death();
+				this.removeEventListener(`click`, enemyGetHit);
+				console.log(`%cВраг побежден`, `color: Lime`);
+			}
+		}
+		enemyElArray.push(enemyElement);
 		floor.appendChild(enemyElement)
 	}
 }
