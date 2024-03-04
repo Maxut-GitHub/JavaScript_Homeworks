@@ -1,21 +1,26 @@
 "use strict";
 
 //Таймер (60фпс)
-setInterval(tick, 1000 / 60);
+let key = setInterval(tick, 1000 / 60);
 
 function tick() {
-	for (let i = 0; i < enemyElArray.length; i++) {
-		player.HP -= enemyArray[i].damage
+
+	for (let i = 0; i < enemyArray.length; i++) {
+		player.HP -= enemyArray[i].damage;
 	}
+
 	checkHealsbar()
 }
 
 //текущий уровень комнаты (все скейлы зависят ОТ ЭТОГО ЧИСЛА)
-let currentLevel = document.getElementById(`level`).textContent;
+let currentLevel = 1;
+//текущий уровень (тег) показывается в левом верхнем углу экрана
+let currentLevelElement = document.getElementById(`levelText`);
+currentLevelElement.textContent = `level ` + currentLevel;
 
 //массив врагов (для добавления в комнату)
 let enemyArray = [];
-//массив врагов ЭЛЕМЕНТОВ (тегов) 
+//массив врагов ЭЛЕМЕНТОВ (тегов)
 let enemyElArray = [];
 
 //текущая комната (пол)
@@ -51,6 +56,15 @@ let gameStatus = `fight`
 //сундук
 let chest = {};
 
+//верхняя дверь
+let doorElement = document.getElementById(`doorTop`);
+doorElement.onclick = enterTheDoor;
+
+//стекло для модельного окна (чтобы запретить игроку нажимать на что-либо с z-индексом менее 4)
+let modalGlass = document.createElement(`div`);
+modalGlass.style.cssText = `position: fixed; width: 100%; height: 100%; z-index: 4`
+
+
 // ЧТОБЫ добавить новое оружие, нужно: 
 //нарисовать svg оружия
 //нарисовать svg игрока с оружием в руках
@@ -72,7 +86,7 @@ let player = {
 	bodyArmor: `none`,
 	helmet: `none`,
 	HP: 1000,
-	damage: 1000,
+	damage: 1,
 }
 
 //Проверка инвентаря у игрока (показать оружие в руке, если есть в инвентаре и показать оружие/доспехи в слотах) дать игроку урон исходя из его оружия
@@ -98,6 +112,7 @@ playerInRoom()
 function createArrayEnemy() {
 	//расчет кол-ва, урона, ХП и внешнего вида мобов. Всё зависит от LVL
 	const enemyCount = Math.floor(Math.random() * (currentLevel) + 1)
+	console.log(`енеми каунт = ` + enemyCount)
 	for (let i = 0; i < enemyCount; i++) {
 		let HP = 1 * currentLevel * (Math.floor(Math.random() * 5) + 1)
 		let damage = (0.01 * currentLevel * (Math.floor(Math.random() * 5) + 1)).toFixed(2)
@@ -109,6 +124,7 @@ function createArrayEnemy() {
 		}
 		//view - внешний вид моба
 		//pozX и poxY случайны и подобраны так, чтобы моб всегда был в пределых комнаты
+		console.log(i)
 		let enemy = {
 			id: i,
 			damage: damage,
@@ -174,7 +190,7 @@ function createChest() {
 			(weaponType === 2) {
 			weaponType = `Spear`
 		} else if
-			(weaponType === 3) {
+			(weaponType >= 3 && weaponType < 5) {
 			weaponType = `Hammer`
 		} else if
 			(weaponType >= 5) {
@@ -191,6 +207,7 @@ function createChest() {
 	chestElement.style.cssText = `background-image: url(SVGLibrary/chest/chestClosed.svg);
 	background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: absolute;
 	left: ${chest.posX}%; top: ${chest.posY}%; z-index: 2`;
+	chestElement.id = `chest`
 	floor.appendChild(chestElement);
 
 	chestElement.addEventListener(`click`, openChest)
@@ -207,8 +224,6 @@ function createChest() {
 		left: 40%; top: 20%; padding: 2vw; gap: 0.5vw; border-radius: 4vw 4vw 0 0; z-index: 5`
 			body.appendChild(modalWindowChest)
 
-			let modalGlass = document.createElement(`div`);
-			modalGlass.style.cssText = `position: fixed; width: 100%; height: 100%; z-index: 4`
 			body.appendChild(modalGlass)
 
 			let tikeItemButton = document.createElement(`input`);
@@ -291,7 +306,6 @@ function checkHealsbar() {
 		playerElement.style.backgroundImage = `url(SVGLibrary/player/playerCorpse.svg)`
 	}
 }
-checkHealsbar()
 
 //Создание случайных координат для различных объектов (рассчитано для floor) в аргумент передавать строку `X` или `Y`
 function randomPositionFloor(stringXY) {
@@ -303,5 +317,31 @@ function randomPositionFloor(stringXY) {
 }
 
 
+function enterTheDoor() {
+	if (gameStatus === `roomClear`) {
+		//удаление всего из прошлой комнаты
+		for (let i = 0; i < enemyArray.length; i++) {
+			enemyElArray[i].remove();
+		}
+		for (let i = 0; i < enemyArray.length; i++) {
+			enemyElArray.shift();
+		}
+		enemyArray = [];
+		let chestElement = document.getElementById(`chest`);
+		chestElement.remove();
+		roomKillsCount = 0;
+		chest = {};
 
+		//повышение уровня
+		++currentLevel;
+		currentLevelElement.textContent = `level ` + currentLevel;
+
+		//создание всего нового
+		createArrayEnemy();
+		nextRoom();
+		createChest();
+		player.HP = 1000;
+		gameStatus = `fight`;
+	}
+}
 
