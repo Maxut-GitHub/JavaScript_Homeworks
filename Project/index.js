@@ -13,7 +13,7 @@ function tick() {
 }
 
 //текущий уровень комнаты (все скейлы зависят ОТ ЭТОГО ЧИСЛА)
-let currentLevel = 1;
+let currentLevel = 20;
 //текущий уровень (тег) показывается в левом верхнем углу экрана
 let currentLevelElement = document.getElementById(`levelText`);
 currentLevelElement.textContent = `level ` + currentLevel;
@@ -133,14 +133,14 @@ function createArrayEnemy() {
 			posX: randomPositionFloor(`X`),
 			posY: randomPositionFloor(`Y`),
 			death: function () {
-				enemyElArray[this.id].style.backgroundImage = `url(SVGLibrary/enemy/enemyCorpse.svg)`
+				enemyElArray[this.id].style.backgroundImage = `url(SVGLibrary/enemy/enemyCorpse.svg)`;
 				enemyElArray[this.id].style.zIndex = 1;
 				this.damage = 0;
 				roomKillsCount++;
 				console.log(`фрагов в комнате: ` + roomKillsCount)
 				if (roomKillsCount === enemyArray.length) {
 					console.log(`%cКомната зачищена!`, `color: Lime`);
-					gameStatus = `roomClear`
+					gameStatus = `roomClear`;
 				}
 			}
 		}
@@ -152,7 +152,7 @@ createArrayEnemy()
 //создать сундук и положить в него лут
 function createChest() {
 	//lootType 1 - оружие, 2 - сапоги, 3 - нагрудник, 4 - шлем
-	let lootType = (Math.floor(Math.random() * (4 - 1)) + 1);
+	let lootType = (Math.floor(Math.random() * 4) + 1);
 	switch (lootType) {
 		case 1: lootType = `weapon`
 			break;
@@ -300,19 +300,26 @@ nextRoom()
 
 //Проверка полоски здоровья
 function checkHealsbar() {
-	healsbarCurrentHP.style.width = `${player.HP / 10}%`;
-	healsbarCountCurrentHP.textContent = player.HP.toFixed(0);
+	if (player.HP > 0) {
+		healsbarCurrentHP.style.width = `${player.HP / 10}%`;
+		healsbarCountCurrentHP.textContent = player.HP.toFixed(0);
+	}
 	if (player.HP <= 0) {
-		playerElement.style.backgroundImage = `url(SVGLibrary/player/playerCorpse.svg)`
+		healsbarCurrentHP.style.width = `${0}%`;
+		healsbarCountCurrentHP.textContent = 0;
+		playerElement.style.backgroundImage = `url(SVGLibrary/player/playerCorpse.svg)`;
+		gameStatus = `defeat`;
 	}
 }
 
 //Создание случайных координат для различных объектов (рассчитано для floor) в аргумент передавать строку `X` или `Y`
 function randomPositionFloor(stringXY) {
 	if (stringXY === `X`) {
-		return (Math.floor(Math.random() * (90 - 5)) + 5);
+		//максимум 90 минимум 5
+		return (Math.floor(Math.random() * 85) + 5);
 	} else if (stringXY === `Y`) {
-		return (Math.floor(Math.random() * (60 - 5)) + 5);
+		//максимум 50 минимум 5
+		return (Math.floor(Math.random() * 45) + 5);
 	}
 }
 
