@@ -11,6 +11,7 @@ function tick() {
 }
 
 
+
 //текущий уровень комнаты (все скейлы зависят ОТ ЭТОГО ЧИСЛА)
 let currentLevel = document.getElementById(`level`).textContent;
 
@@ -37,7 +38,20 @@ let currentHelmet = document.getElementById(`helmetSlot`)
 
 //Элемент игрока
 let playerElement = document.createElement(`div`);
-playerElement.style.cssText = `background-image: url(SVGLibrary/player/player.svg);  background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: relative`
+playerElement.style.cssText = `background-image: url(SVGLibrary/player/player.svg);
+  background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: relative; z-index: 3`
+
+//подсчет фрагов
+let allkillsCount = 0;
+let roomKillsCount = 0;
+
+//статус игры
+let gameStatus = `fight`
+
+//сундук
+let chest = {};
+
+
 
 let player = {
 	weapon: `none`,
@@ -86,12 +100,18 @@ function createArrayEnemy() {
 			damage: damage,
 			HP: HP,
 			view: view,
-			posX: (Math.floor(Math.random() * (90 - 5)) + 5),
-			posY: (Math.floor(Math.random() * (60 - 5)) + 5),
+			posX: randomPositionFloor(`X`),
+			posY: randomPositionFloor(`Y`),
 			death: function () {
-
 				enemyElArray[this.id].style.backgroundImage = `url(SVGLibrary/enemy/enemyCorpse.svg)`
+				enemyElArray[this.id].style.zIndex = 1;
 				this.damage = 0;
+				roomKillsCount++;
+				console.log(`фрагов в комнате: ` + roomKillsCount)
+				if (roomKillsCount === enemyArray.length) {
+					console.log(`%cКомната зачищена!`, `color: Lime`);
+					gameStatus = `roomClear`
+				}
 			}
 		}
 		enemyArray.push(enemy)
@@ -99,6 +119,125 @@ function createArrayEnemy() {
 }
 createArrayEnemy()
 
+//создать сундук и положить в него лут
+function createChest() {
+	//lootType 1 - оружие, 2 - сапоги, 3 - нагрудник, 4 - шлем
+	let lootType = (Math.floor(Math.random() * (4 - 1)) + 1);
+	switch (lootType) {
+		case 1: lootType = `weapon`
+			break;
+		case 2: lootType = `boots`
+			break;
+		case 3: lootType = `bodyArmor`
+			break;
+		case 4: lootType = `helmet`
+			break;
+	}
+	//lootRarity 1 - обычный, 2 - магический, 3 - редкий, 4 - уникальный
+	//игроку на 1 уровне может попасться обычный или волшебный предмет. После 3 уровня волшебный или редкий и так далее
+	let lootRarity;
+	//Если тип лута - weapon, то вместо редкости ролится вид оружия 
+	let weaponType;
+	if (lootType != `weapon`) {
+		lootRarity = Math.floor(1 + currentLevel / 3 + (Math.random()));
+		if (lootRarity === 1) {
+			lootRarity = `Common`
+		} else if
+			(lootRarity === 2) {
+			lootRarity = `Magic`
+		} else if
+			(lootRarity === 3) {
+			lootRarity = `Rare`
+		} else if
+			(lootRarity >= 4) {
+			lootRarity = `Unique`
+		}
+	} else if (lootType === `weapon`) {
+		weaponType = Math.floor(1 + currentLevel / 3 + (Math.random()));
+		if (weaponType === 1) {
+			weaponType = `Sword`
+		} else if
+			(weaponType === 2) {
+			weaponType = `Spear`
+		} else if
+			(weaponType >= 3) {
+			weaponType = `Hammer`
+		}
+	}
+	chest = {
+		loot: `${lootType + lootRarity}`,
+		posX: randomPositionFloor(`X`),
+		posY: randomPositionFloor(`Y`),
+	}
+	let chestElement = document.createElement(`div`);
+	chestElement.style.cssText = `background-image: url(SVGLibrary/chest/chestClosed.svg);
+	background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: absolute;
+	left: ${chest.posX}%; top: ${chest.posY}%; z-index: 2`;
+	floor.appendChild(chestElement);
+
+	chestElement.addEventListener(`click`, openChest)
+
+	function openChest() {
+		if (gameStatus === `roomClear`) {
+
+
+			//модальнок окно (табличка со взятием предмета)
+			let body = document.getElementsByTagName(`body`)[0];
+			chestElement.style.backgroundImage = `url(SVGLibrary/chest/chestOpenWithLoot.svg)`
+			let modalWindowChest = document.createElement(`div`);
+			modalWindowChest.style.cssText = `display: flex; position: absolute; width: 20vw; height: 15vw; background-color: rgb(84, 80, 84);
+		left: 40%; top: 20%; padding: 2vw; gap: 0.5vw; border-radius: 4vw 4vw 0 0; z-index: 5`
+			body.appendChild(modalWindowChest)
+
+			let modalGlass = document.createElement(`div`);
+			modalGlass.style.cssText = `position: fixed; width: 100%; height: 100%; z-index: 4`
+			body.appendChild(modalGlass)
+
+			let tikeItemButton = document.createElement(`input`);
+			tikeItemButton.setAttribute(`type`, `button`);
+			tikeItemButton.setAttribute(`value`, `Взять`);
+			tikeItemButton.onclick = takeItem;
+			tikeItemButton.style.cssText = ` width: 5vw; height: 3vw; background-color: rgb(172, 172, 172); font-size: 1vw; align-self: flex-end;`
+			modalWindowChest.appendChild(tikeItemButton)
+
+			let itemImage = document.createElement(`div`);
+			itemImage.style.cssText = ` width: 5vw; height: 5vw; background-color: rgb(172, 172, 172); background-size: contain; background-repeat: no-repeat`
+			if (lootType != `weapon`) {
+				itemImage.style.backgroundImage = `url(SVGLibrary/${lootType}/${lootType + lootRarity}.svg`
+			} else if (lootType === `weapon`) {
+				itemImage.style.backgroundImage = `url(SVGLibrary/${lootType}/${weaponType}.svg`
+			}
+			modalWindowChest.appendChild(itemImage)
+
+			let notTakeItemButton = document.createElement(`input`);
+			notTakeItemButton.setAttribute(`type`, `button`);
+			notTakeItemButton.setAttribute(`value`, `Оставить`);
+			notTakeItemButton.onclick = notTakeItem;
+			notTakeItemButton.style.cssText = ` width: 5vw; height: 3vw; background-color: rgb(172, 172, 172); font-size: 1vw; align-self: flex-end;`
+			modalWindowChest.appendChild(notTakeItemButton)
+
+			function takeItem() {
+				if (lootType != `weapon`) {
+					player[lootType] = lootType + lootRarity;
+				} else if (lootType === `weapon`) {
+					player[lootType] = weaponType;
+				}
+				checkInventory()
+				modalWindowChest.remove();
+				modalGlass.remove();
+				chestElement.style.backgroundImage = `url(SVGLibrary/chest/chestOpen.svg)`
+				chestElement.removeEventListener(`click`, openChest)
+			}
+
+			function notTakeItem() {
+				modalWindowChest.remove();
+				modalGlass.remove();
+				chestElement.style.backgroundImage = `url(SVGLibrary/chest/chestClosedWithLoot.svg)`
+			}
+		}
+	}
+}
+createChest()
 
 //Заполнить комнату врагами
 function nextRoom() {
@@ -107,7 +246,7 @@ function nextRoom() {
 		let enemyElement = document.createElement(`div`);
 		enemyElement.style.cssText = `background-image: url(SVGLibrary/enemy/enemy${enemyArray[i].view}.svg);
 		background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: absolute;
-		left: ${enemyArray[i].posX}%; top: ${enemyArray[i].posY}%;`;
+		left: ${enemyArray[i].posX}%; top: ${enemyArray[i].posY}%; z-index: 2`;
 		console.log(`%c Враг: ${enemyArray[i].HP} hp, ${enemyArray[i].damage} damage`, `color: red`);
 		//у каждого врага есть свой id, совпадающий с его индексом в массиме enemyArray
 		enemyElement.id = enemyArray[i].id;
@@ -118,7 +257,6 @@ function nextRoom() {
 			if (enemyArray[this.id].HP <= 0) {
 				enemyArray[this.id].death();
 				this.removeEventListener(`click`, enemyGetHit);
-				console.log(`%cВраг побежден`, `color: Lime`);
 			}
 		}
 		enemyElArray.push(enemyElement);
@@ -135,6 +273,15 @@ function checkHealsbar() {
 	}
 }
 checkHealsbar()
+
+//Создание случайных координат для различных объектов (рассчитано для floor) в аргумент передавать строку `X` или `Y`
+function randomPositionFloor(stringXY) {
+	if (stringXY === `X`) {
+		return (Math.floor(Math.random() * (90 - 5)) + 5);
+	} else if (stringXY === `Y`) {
+		return (Math.floor(Math.random() * (60 - 5)) + 5);
+	}
+}
 
 
 
