@@ -10,8 +10,6 @@ function tick() {
 	checkHealsbar()
 }
 
-
-
 //текущий уровень комнаты (все скейлы зависят ОТ ЭТОГО ЧИСЛА)
 let currentLevel = document.getElementById(`level`).textContent;
 
@@ -23,8 +21,10 @@ let enemyElArray = [];
 //текущая комната (пол)
 const floor = document.getElementById(`floor`);
 
-//текущее здоровье
+//текущее здоровье (красная полоска)
 let healsbarCurrentHP = document.getElementById(`HP`);
+//счетчик здоровья(белая цифра в хелсбаре)
+let healsbarCountCurrentHP = document.getElementById(`HPcount`);
 
 //слоты инвентаря
 //текущее оружие 
@@ -39,7 +39,7 @@ let currentHelmet = document.getElementById(`helmetSlot`)
 //Элемент игрока
 let playerElement = document.createElement(`div`);
 playerElement.style.cssText = `background-image: url(SVGLibrary/player/player.svg);
-  background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: relative; z-index: 3`
+background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: relative; z-index: 3`
 
 //подсчет фрагов
 let allkillsCount = 0;
@@ -268,6 +268,7 @@ nextRoom()
 //Проверка полоски здоровья
 function checkHealsbar() {
 	healsbarCurrentHP.style.width = `${player.HP / 10}%`;
+	healsbarCountCurrentHP.textContent = player.HP.toFixed(0);
 	if (player.HP <= 0) {
 		playerElement.style.backgroundImage = `url(SVGLibrary/player/playerCorpse.svg)`
 	}
