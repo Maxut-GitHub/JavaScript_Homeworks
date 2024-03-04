@@ -51,7 +51,20 @@ let gameStatus = `fight`
 //сундук
 let chest = {};
 
+// ЧТОБЫ добавить новое оружие, нужно: 
+//нарисовать svg оружия
+//нарисовать svg игрока с оружием в руках
+//дать название оружию НАЗВАНИЕ С БОЛЬШОЙ БУКВЫ `Sword`
+//добавить оружие в пул сундука 	} else if(weaponType === ЧЕМ БОЛЬШЕ ЦИФРА, ТЕМ ПОЗЖЕ БУДЕТ ВСТРЕЧАТЬСЯ ОРУЖИЕ) {weaponType = `Sword`}
+//добавить оружие в объект damageWeapon, указать урон
 
+//Урон всех оружий
+let damageWeapon = {
+	Sword: 3,
+	Spear: 5,
+	Hammer: 10,
+	Bow: 20,
+}
 
 let player = {
 	weapon: `none`,
@@ -59,13 +72,14 @@ let player = {
 	bodyArmor: `none`,
 	helmet: `none`,
 	HP: 1000,
-	damage: 1,
+	damage: 1000,
 }
 
-//Проверка инвентаря у игрока (показать оружие в руке, если есть в инвентаре, а показать оружие/доспехи в слотах)
+//Проверка инвентаря у игрока (показать оружие в руке, если есть в инвентаре и показать оружие/доспехи в слотах) дать игроку урон исходя из его оружия
 function checkInventory() {
 	if (player.weapon != `none`) {
 		playerElement.style.backgroundImage = `url(SVGLibrary/player/player${player.weapon}.svg)`
+		player.damage = damageWeapon[player.weapon];
 	}
 	currentWeapon.style.backgroundImage = `url(SVGLibrary/weapon/${player.weapon}.svg)`;
 	currentHelmet.style.backgroundImage = `url(SVGLibrary/helmet/${player.helmet}.svg)`;
@@ -160,9 +174,13 @@ function createChest() {
 			(weaponType === 2) {
 			weaponType = `Spear`
 		} else if
-			(weaponType >= 3) {
+			(weaponType === 3) {
 			weaponType = `Hammer`
+		} else if
+			(weaponType >= 5) {
+			weaponType = `Bow`
 		}
+
 	}
 	chest = {
 		loot: `${lootType + lootRarity}`,
