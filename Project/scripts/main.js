@@ -1,5 +1,7 @@
 "use strict";
 
+import allItemsArray from './items.js';
+
 //Таймер (60фпс)
 let key = setInterval(tick, 1000 / 60);
 
@@ -13,15 +15,24 @@ function tick() {
 }
 
 //текущий уровень комнаты (все скейлы зависят ОТ ЭТОГО ЧИСЛА)
-let currentLevel = 20;
+let currentLevel = 1;
 //текущий уровень (тег) показывается в левом верхнем углу экрана
 let currentLevelElement = document.getElementById(`levelText`);
 currentLevelElement.textContent = `level ` + currentLevel;
+
+//коэфициент расчета здоровья врагов
+let enemyHPIndex = 0.5;
+//коэфициент расчета урона врагов
+let enemyDamageIndex = 0.01;
+
 
 //массив врагов (для добавления в комнату)
 let enemyArray = [];
 //массив врагов ЭЛЕМЕНТОВ (тегов)
 let enemyElArray = [];
+
+//тег `body` (для присоединения к нему modalGlass)
+let body = document.getElementsByTagName(`body`)[0];
 
 //текущая комната (пол)
 const floor = document.getElementById(`floor`);
@@ -44,7 +55,7 @@ let currentHelmet = document.getElementById(`helmetSlot`)
 //Элемент игрока
 let playerElement = document.createElement(`div`);
 playerElement.style.cssText = `background-image: url(SVGLibrary/player/player.svg);
-background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: relative; z-index: 3`
+background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: relative; z-index: 4`
 
 //подсчет фрагов
 let allkillsCount = 0;
@@ -60,25 +71,9 @@ let chest = {};
 let doorElement = document.getElementById(`doorTop`);
 doorElement.onclick = enterTheDoor;
 
-//стекло для модельного окна (чтобы запретить игроку нажимать на что-либо с z-индексом менее 4)
+//стекло для модельного окна (чтобы запретить игроку нажимать на что-либо с z-индексом менее 5)
 let modalGlass = document.createElement(`div`);
-modalGlass.style.cssText = `position: fixed; width: 100%; height: 100%; z-index: 4`
-
-
-// ЧТОБЫ добавить новое оружие, нужно: 
-//нарисовать svg оружия
-//нарисовать svg игрока с оружием в руках
-//дать название оружию НАЗВАНИЕ С БОЛЬШОЙ БУКВЫ `Sword`
-//добавить оружие в пул сундука 	} else if(weaponType === ЧЕМ БОЛЬШЕ ЦИФРА, ТЕМ ПОЗЖЕ БУДЕТ ВСТРЕЧАТЬСЯ ОРУЖИЕ) {weaponType = `Sword`}
-//добавить оружие в объект damageWeapon, указать урон
-
-//Урон всех оружий
-let damageWeapon = {
-	Sword: 3,
-	Spear: 5,
-	Hammer: 10,
-	Bow: 20,
-}
+modalGlass.style.cssText = `position: fixed; width: 100%; height: 100%; z-index: 5`
 
 let player = {
 	weapon: `none`,
@@ -92,13 +87,13 @@ let player = {
 //Проверка инвентаря у игрока (показать оружие в руке, если есть в инвентаре и показать оружие/доспехи в слотах) дать игроку урон исходя из его оружия
 function checkInventory() {
 	if (player.weapon != `none`) {
-		playerElement.style.backgroundImage = `url(SVGLibrary/player/player${player.weapon}.svg)`
-		player.damage = damageWeapon[player.weapon];
+		playerElement.style.backgroundImage = player.weapon.playerView;
+		player.damage = [player.weapon.damage];
 	}
-	currentWeapon.style.backgroundImage = `url(SVGLibrary/weapon/${player.weapon}.svg)`;
-	currentHelmet.style.backgroundImage = `url(SVGLibrary/helmet/${player.helmet}.svg)`;
-	currentBoots.style.backgroundImage = `url(SVGLibrary/boots/${player.boots}.svg)`;
-	currentBodyArmor.style.backgroundImage = `url(SVGLibrary/bodyArmor/${player.bodyArmor}.svg)`;
+	currentWeapon.style.backgroundImage = player.weapon.view;
+	currentHelmet.style.backgroundImage = player.helmet.view;
+	currentBoots.style.backgroundImage = player.boots.view;
+	currentBodyArmor.style.backgroundImage = player.bodyArmor.view;
 }
 checkInventory()
 
@@ -112,10 +107,9 @@ playerInRoom()
 function createArrayEnemy() {
 	//расчет кол-ва, урона, ХП и внешнего вида мобов. Всё зависит от LVL
 	const enemyCount = Math.floor(Math.random() * (currentLevel) + 1)
-	console.log(`енеми каунт = ` + enemyCount)
 	for (let i = 0; i < enemyCount; i++) {
-		let HP = 1 * currentLevel * (Math.floor(Math.random() * 5) + 1)
-		let damage = (0.01 * currentLevel * (Math.floor(Math.random() * 5) + 1)).toFixed(2)
+		let HP = enemyHPIndex * currentLevel * (Math.floor(Math.random() * 5) + 1)
+		let damage = (enemyDamageIndex * currentLevel * (Math.floor(Math.random() * 5) + 1)).toFixed(2)
 		let view = 1;
 		if (damage > 0.5 && damage < 1) {
 			view = 2
@@ -124,7 +118,6 @@ function createArrayEnemy() {
 		}
 		//view - внешний вид моба
 		//pozX и poxY случайны и подобраны так, чтобы моб всегда был в пределых комнаты
-		console.log(i)
 		let enemy = {
 			id: i,
 			damage: damage,
@@ -151,55 +144,38 @@ createArrayEnemy()
 
 //создать сундук и положить в него лут
 function createChest() {
+	let loot;
 	//lootType 1 - оружие, 2 - сапоги, 3 - нагрудник, 4 - шлем
-	let lootType = (Math.floor(Math.random() * 4) + 1);
-	switch (lootType) {
-		case 1: lootType = `weapon`
+	let lootType = ``;
+	//lootTypeNumber нужна для нахождения типа в массиве allItemsArray
+	let lootTypeNumber = (Math.floor((Math.random() * 3) + 0.5));
+	switch (lootTypeNumber) {
+		case 0: lootType = `weapon`
 			break;
-		case 2: lootType = `boots`
+		case 1: lootType = `boots`
 			break;
-		case 3: lootType = `bodyArmor`
+		case 2: lootType = `bodyArmor`
 			break;
-		case 4: lootType = `helmet`
+		case 3: lootType = `helmet`
 			break;
 	}
-	//lootRarity 1 - обычный, 2 - магический, 3 - редкий, 4 - уникальный
-	//игроку на 1 уровне может попасться обычный или волшебный предмет. После 3 уровня волшебный или редкий и так далее
-	let lootRarity;
 	//Если тип лута - weapon, то вместо редкости ролится вид оружия 
-	let weaponType;
 	if (lootType != `weapon`) {
-		lootRarity = Math.floor(1 + currentLevel / 3 + (Math.random()));
-		if (lootRarity === 1) {
-			lootRarity = `Common`
-		} else if
-			(lootRarity === 2) {
-			lootRarity = `Magic`
-		} else if
-			(lootRarity === 3) {
-			lootRarity = `Rare`
-		} else if
-			(lootRarity >= 4) {
-			lootRarity = `Unique`
+		let lootRarity = Math.floor(currentLevel / 3 + (Math.random()));
+		if (lootRarity > allItemsArray[lootTypeNumber].length - 1) {
+			lootRarity = allItemsArray[lootTypeNumber].length - 1
 		}
+		loot = allItemsArray[lootTypeNumber][lootRarity];
 	} else if (lootType === `weapon`) {
-		weaponType = Math.floor(1 + currentLevel / 3 + (Math.random()));
-		if (weaponType === 1) {
-			weaponType = `Sword`
-		} else if
-			(weaponType === 2) {
-			weaponType = `Spear`
-		} else if
-			(weaponType >= 3 && weaponType < 5) {
-			weaponType = `Hammer`
-		} else if
-			(weaponType >= 5) {
-			weaponType = `Bow`
+		let weaponType = Math.floor(currentLevel / 3 + (Math.random()));
+		if (weaponType > allItemsArray[0].length - 1) {
+			weaponType = allItemsArray[0].length - 1;
 		}
-
+		loot = allItemsArray[0][weaponType];
 	}
+	console.log(`%cВ сундуке лежит ${loot.name}`, `color: yellow`);
 	chest = {
-		loot: `${lootType + lootRarity}`,
+		loot: loot,
 		posX: randomPositionFloor(`X`),
 		posY: randomPositionFloor(`Y`),
 	}
@@ -217,11 +193,10 @@ function createChest() {
 
 
 			//модальнок окно (табличка со взятием предмета)
-			let body = document.getElementsByTagName(`body`)[0];
 			chestElement.style.backgroundImage = `url(SVGLibrary/chest/chestOpenWithLoot.svg)`
 			let modalWindowChest = document.createElement(`div`);
 			modalWindowChest.style.cssText = `display: flex; position: absolute; width: 20vw; height: 15vw; background-color: rgb(84, 80, 84);
-		left: 40%; top: 20%; padding: 2vw; gap: 0.5vw; border-radius: 4vw 4vw 0 0; z-index: 5`
+			left: 40%; top: 20%; padding: 2vw; gap: 0.5vw; border-radius: 4vw 4vw 0 0; z-index: 6`
 			body.appendChild(modalWindowChest)
 
 			body.appendChild(modalGlass)
@@ -235,11 +210,7 @@ function createChest() {
 
 			let itemImage = document.createElement(`div`);
 			itemImage.style.cssText = ` width: 5vw; height: 5vw; background-color: rgb(172, 172, 172); background-size: contain; background-repeat: no-repeat`
-			if (lootType != `weapon`) {
-				itemImage.style.backgroundImage = `url(SVGLibrary/${lootType}/${lootType + lootRarity}.svg`
-			} else if (lootType === `weapon`) {
-				itemImage.style.backgroundImage = `url(SVGLibrary/${lootType}/${weaponType}.svg`
-			}
+			itemImage.style.backgroundImage = `${loot.view}`
 			modalWindowChest.appendChild(itemImage)
 
 			let notTakeItemButton = document.createElement(`input`);
@@ -250,11 +221,8 @@ function createChest() {
 			modalWindowChest.appendChild(notTakeItemButton)
 
 			function takeItem() {
-				if (lootType != `weapon`) {
-					player[lootType] = lootType + lootRarity;
-				} else if (lootType === `weapon`) {
-					player[lootType] = weaponType;
-				}
+				console.log(lootType)
+				player[lootType] = loot;
 				checkInventory()
 				modalWindowChest.remove();
 				modalGlass.remove();
@@ -279,7 +247,7 @@ function nextRoom() {
 		let enemyElement = document.createElement(`div`);
 		enemyElement.style.cssText = `background-image: url(SVGLibrary/enemy/enemy${enemyArray[i].view}.svg);
 		background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: absolute;
-		left: ${enemyArray[i].posX}%; top: ${enemyArray[i].posY}%; z-index: 2`;
+		left: ${enemyArray[i].posX}%; top: ${enemyArray[i].posY}%; z-index: 3`;
 		console.log(`%c Враг: ${enemyArray[i].HP} hp, ${enemyArray[i].damage} damage`, `color: red`);
 		//у каждого врага есть свой id, совпадающий с его индексом в массиме enemyArray
 		enemyElement.id = enemyArray[i].id;
@@ -308,6 +276,7 @@ function checkHealsbar() {
 		healsbarCurrentHP.style.width = `${0}%`;
 		healsbarCountCurrentHP.textContent = 0;
 		playerElement.style.backgroundImage = `url(SVGLibrary/player/playerCorpse.svg)`;
+		body.appendChild(modalGlass)
 		gameStatus = `defeat`;
 	}
 }
@@ -351,4 +320,3 @@ function enterTheDoor() {
 		gameStatus = `fight`;
 	}
 }
-
