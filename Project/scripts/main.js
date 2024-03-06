@@ -73,7 +73,7 @@ doorElement.onclick = enterTheDoor;
 
 //стекло для модельного окна (чтобы запретить игроку нажимать на что-либо с z-индексом менее 5)
 let modalGlass = document.createElement(`div`);
-modalGlass.style.cssText = `position: fixed; width: 100%; height: 100%; z-index: 5`
+modalGlass.style.cssText = `position: fixed; width: 100%; height: 100%; background-color: #2b2b2b; opacity: 0.5; z-index: 5 `
 
 let player = {
 	weapon: `none`,
@@ -191,34 +191,58 @@ function createChest() {
 	function openChest() {
 		if (gameStatus === `roomClear`) {
 
-
-			//модальнок окно (табличка со взятием предмета)
+			//модальное окно (табличка со взятием предмета)
 			chestElement.style.backgroundImage = `url(SVGLibrary/chest/chestOpenWithLoot.svg)`
+			body.appendChild(modalGlass)
+
 			let modalWindowChest = document.createElement(`div`);
-			modalWindowChest.style.cssText = `display: flex; position: absolute; width: 20vw; height: 15vw; background-color: rgb(84, 80, 84);
-			left: 40%; top: 20%; padding: 2vw; gap: 0.5vw; border-radius: 4vw 4vw 0 0; z-index: 6`
+			modalWindowChest.style.cssText = `display: flex; position: absolute; width: 50vw; height: 27vw; background-color: #6e6b1a;
+			left: 25vw; top: 10vw; padding: 2vw; border: solid 0.5vw #7f3f00; border-radius:  6vw 6vw 1vw 1vw; z-index: 6`
 			body.appendChild(modalWindowChest)
 
-			body.appendChild(modalGlass)
+			//левая сторона окна (кнопка взятия и наоборот)
+			let Buttons = document.createElement(`div`);
+			Buttons.style.cssText = `width: 10vw; height: 16vw; display: flex; flex-direction: column; justify-content: space-between; margin: 2vw 4vw 2vw 0; `
+			modalWindowChest.appendChild(Buttons)
+
 
 			let tikeItemButton = document.createElement(`input`);
 			tikeItemButton.setAttribute(`type`, `button`);
 			tikeItemButton.setAttribute(`value`, `Взять`);
 			tikeItemButton.onclick = takeItem;
-			tikeItemButton.style.cssText = ` width: 5vw; height: 3vw; background-color: rgb(172, 172, 172); font-size: 1vw; align-self: flex-end;`
-			modalWindowChest.appendChild(tikeItemButton)
-
-			let itemImage = document.createElement(`div`);
-			itemImage.style.cssText = ` width: 5vw; height: 5vw; background-color: rgb(172, 172, 172); background-size: contain; background-repeat: no-repeat`
-			itemImage.style.backgroundImage = `${loot.view}`
-			modalWindowChest.appendChild(itemImage)
+			tikeItemButton.style.cssText = ` width: 10vw; height: 6vw; background-color: rgb(172, 172, 172); font-size: 2vw; align-self: flex-end;`
+			Buttons.appendChild(tikeItemButton)
 
 			let notTakeItemButton = document.createElement(`input`);
 			notTakeItemButton.setAttribute(`type`, `button`);
 			notTakeItemButton.setAttribute(`value`, `Оставить`);
 			notTakeItemButton.onclick = notTakeItem;
-			notTakeItemButton.style.cssText = ` width: 5vw; height: 3vw; background-color: rgb(172, 172, 172); font-size: 1vw; align-self: flex-end;`
-			modalWindowChest.appendChild(notTakeItemButton)
+			notTakeItemButton.style.cssText = ` width: 10vw; height: 6vw; background-color: rgb(172, 172, 172); font-size: 2vw; align-self: flex-end;`
+			Buttons.appendChild(notTakeItemButton)
+
+			//Правая сторона окна (иконка предмета и описание)
+			let itemDescription = document.createElement(`div`);
+			itemDescription.style.cssText = `display: flex; flex-direction: column; align-items: center; width: 100%; height: 22vw;`;
+			modalWindowChest.appendChild(itemDescription)
+
+			let itemImage = document.createElement(`div`);
+			itemImage.style.cssText = `width: 10vw; height: 10vw; background-color: rgb(172, 172, 172);
+			background-size: contain; background-repeat: no-repeat; margin-bottom: 2vw; border: solid 0.2vw `;
+			itemImage.style.backgroundImage = loot.view;
+			itemDescription.appendChild(itemImage)
+
+			let itemsStats = document.createElement(`div`);
+			itemsStats.style.cssText = `width: 100%; height: 10vw; background-color: rgb(172, 172, 172); font-size: 1.6vw; padding: 1vw; border: solid 0.2vw`;
+			if (lootType != `weapon`) {
+				itemsStats.innerHTML = `${loot.name} <br>
+				броня: ${loot.armor}`
+			} else if (lootType === `weapon`) {
+				itemsStats.innerHTML = `${loot.name} <br>
+			урон: ${loot.damage}`
+			}
+			itemDescription.appendChild(itemsStats)
+
+
 
 			function takeItem() {
 				console.log(lootType)

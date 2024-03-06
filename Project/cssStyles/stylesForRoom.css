@@ -7,6 +7,9 @@
 	border-bottom: solid 0.5vw black;
 	border: 5vw inset;
 	border-color: rgb(209, 209, 209) rgb(87, 87, 87) rgb(109, 109, 109) rgb(179, 179, 179);
+	border-image: url(../SVGLibrary/room/walls.svg);
+	border-image-slice: 50;
+	border-image-repeat: round;
 }
 
 #floor {
@@ -16,11 +19,12 @@
 	width: 100%;
 	height: 100%;
 	background-color: rgb(176, 176, 176);
+	background-image: url(../SVGLibrary/room/floor.svg);
 }
 
 #doorTop {
 	position: absolute;
-	background: linear-gradient(180deg, rgba(0, 0, 0, 1) 30%, rgba(106, 106, 106, 1) 100%);
+	background: linear-gradient(180deg, rgba(0, 0, 0, 1) 30%, #666666 100%);
 	border-radius: 2vw 2vw 0 0;
 	top: 1vw;
 	width: 5vw;
@@ -29,7 +33,7 @@
 
 #doorButton {
 	position: absolute;
-	background: linear-gradient(180deg, rgba(176, 176, 176, 1) 0%, rgba(79, 79, 79, 1) 100%);
+	background: linear-gradient(180deg, #666666 0%, rgba(79, 79, 79, 1) 100%);
 	border-radius: 0 0 2vw 2vw;
 	bottom: 8.9vw;
 	width: 5vw;
