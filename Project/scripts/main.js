@@ -1,16 +1,45 @@
 "use strict";
-
+//импорт всех предметов
 import allItemsArray from './items.js';
 
 //Таймер (60фпс)
 let key = setInterval(tick, 1000 / 60);
 
 function tick() {
-
+	//нанесение урона игроку
 	for (let i = 0; i < enemyArray.length; i++) {
 		player.HP -= enemyArray[i].damage;
 	}
 
+	//движение врагов
+	for (let i = 0; i < enemyArray.length; i++) {
+		enemyElArray[i].style.left = enemyArray[i].posX + `%`;
+		enemyElArray[i].style.top = enemyArray[i].posY + `%`;
+		enemyArray[i].posX += enemyArray[i].speedX;
+		enemyArray[i].posY += enemyArray[i].speedY;
+
+		// отскок от нижнего пола
+		if (enemyArray[i].posY > 62) {
+			enemyArray[i].speedY = -enemyArray[i].speedY;
+			enemyArray[i].posY = 62;
+		}
+		// отскок от верха пола
+		if (enemyArray[i].posY < 1) {
+			enemyArray[i].speedY = -enemyArray[i].speedY;
+			enemyArray[i].posY = 1;
+		}
+
+		// отскок от левой стенки
+		if (enemyArray[i].posX < 5) {
+			enemyArray[i].speedX = -enemyArray[i].speedX;
+			enemyArray[i].posX = 5;
+		}
+		// отскок от правой стенки
+		if (enemyArray[i].posX > 90) {
+			enemyArray[i].speedX = -enemyArray[i].speedX;
+			enemyArray[i].posX = 90;
+		}
+	}
 	checkHealsbar()
 }
 
@@ -21,10 +50,12 @@ let currentLevelElement = document.getElementById(`levelText`);
 currentLevelElement.textContent = `level ` + currentLevel;
 
 //коэфициент расчета здоровья врагов
-let enemyHPIndex = 0.5;
+let enemyHPIndex = 0.3;
 //коэфициент расчета урона врагов
 let enemyDamageIndex = 0.01;
-
+//коэфициент расчета скорости врагов
+let enemySpeedXIndex = 0.3;
+let enemySpeedYIndex = 0.3;
 
 //массив врагов (для добавления в комнату)
 let enemyArray = [];
@@ -110,11 +141,19 @@ function createArrayEnemy() {
 	for (let i = 0; i < enemyCount; i++) {
 		let HP = enemyHPIndex * currentLevel * (Math.floor(Math.random() * 5) + 1)
 		let damage = (enemyDamageIndex * currentLevel * (Math.floor(Math.random() * 5) + 1)).toFixed(2)
+		//view - внешний вид моба
 		let view = 1;
 		if (damage > 0.5 && damage < 1) {
 			view = 2
 		} else if (damage >= 1) {
 			view = 3
+		}
+		//Направление по X и Y рандомны (всего 4 направления для врага)
+		if (Math.round(Math.random()) === 1) {
+			enemySpeedXIndex = -enemySpeedXIndex;
+		}
+		if (Math.round(Math.random()) === 1) {
+			enemySpeedYIndex = -enemySpeedYIndex;
 		}
 		//view - внешний вид моба
 		//pozX и poxY случайны и подобраны так, чтобы моб всегда был в пределых комнаты
@@ -123,13 +162,17 @@ function createArrayEnemy() {
 			damage: damage,
 			HP: HP,
 			view: view,
+			speedX: enemySpeedXIndex,
+			speedY: enemySpeedYIndex,
 			posX: randomPositionFloor(`X`),
 			posY: randomPositionFloor(`Y`),
 			death: function () {
 				enemyElArray[this.id].style.backgroundImage = `url(SVGLibrary/enemy/enemyCorpse.svg)`;
 				enemyElArray[this.id].style.zIndex = 1;
 				this.damage = 0;
-				roomKillsCount++;
+				this.speedX = 0,
+					this.speedY = 0,
+					roomKillsCount++;
 				console.log(`фрагов в комнате: ` + roomKillsCount)
 				if (roomKillsCount === enemyArray.length) {
 					console.log(`%cКомната зачищена!`, `color: Lime`);
@@ -334,7 +377,7 @@ function enterTheDoor() {
 
 		//повышение уровня
 		++currentLevel;
-		currentLevelElement.textContent = `level ` + currentLevel;
+		currentLevelElement.textContent = `level ` + currentLevel + ` выпускной проект Б. Максима`;
 
 		//создание всего нового
 		createArrayEnemy();

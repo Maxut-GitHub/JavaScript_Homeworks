@@ -161,4 +161,5 @@ allItemsArray.push(bootsArray);
 allItemsArray.push(bodyArmorArray);
 allItemsArray.push(helmetArray);
 
+//экспорт массива всех объектов 
 export default allItemsArray;
