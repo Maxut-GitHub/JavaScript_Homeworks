@@ -138,7 +138,7 @@ function createArrayEnemy() {
 	//расчет кол-ва, урона, ХП и внешнего вида мобов. Всё зависит от LVL
 	const enemyCount = Math.floor(Math.random() * (currentLevel) + 1)
 	for (let i = 0; i < enemyCount; i++) {
-		let HP = enemyHPIndex * currentLevel * (Math.floor(Math.random() * 5) + 1)
+		let HP = (enemyHPIndex * currentLevel * (Math.floor(Math.random() * 5) + 1)).toFixed(2)
 		let damage = (enemyDamageIndex * currentLevel * (Math.floor(Math.random() * 5) + 1)).toFixed(2)
 		//view - внешний вид моба
 		let view = 1;
