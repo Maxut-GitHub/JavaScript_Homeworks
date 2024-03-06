@@ -49,8 +49,6 @@ const LeatherBoots = {
 }
 bootsArray.push(LeatherBoots)
 
-console.log(`%c`, `color: Lime`);
-
 const IronBoots_lowQuality = {
 	name: `Некачественные Железные ботинки`,
 	armor: 3,

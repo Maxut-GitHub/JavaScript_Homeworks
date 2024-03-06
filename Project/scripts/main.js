@@ -3,7 +3,7 @@
 import allItemsArray from './items.js';
 
 //Таймер (60фпс)
-let key = setInterval(tick, 1000 / 60);
+setInterval(tick, 1000 / 60);
 
 function tick() {
 	//нанесение урона игроку
@@ -18,6 +18,7 @@ function tick() {
 		enemyArray[i].posX += enemyArray[i].speedX;
 		enemyArray[i].posY += enemyArray[i].speedY;
 
+		// ВСЕ ЧИСЛА ПОДОБРАНЫ ДЛЯ РАБОТЫ С ПРОЦЕНТАМИ % `floor`
 		// отскок от нижнего пола
 		if (enemyArray[i].posY > 62) {
 			enemyArray[i].speedY = -enemyArray[i].speedY;
@@ -28,7 +29,6 @@ function tick() {
 			enemyArray[i].speedY = -enemyArray[i].speedY;
 			enemyArray[i].posY = 1;
 		}
-
 		// отскок от левой стенки
 		if (enemyArray[i].posX < 5) {
 			enemyArray[i].speedX = -enemyArray[i].speedX;
@@ -47,7 +47,7 @@ function tick() {
 let currentLevel = 1;
 //текущий уровень (тег) показывается в левом верхнем углу экрана
 let currentLevelElement = document.getElementById(`levelText`);
-currentLevelElement.textContent = `level ` + currentLevel;
+currentLevelElement.textContent = `level ` + currentLevel + ` Работа над выпускным проектом Максима Б. группа FD2-140-23-12`;
 
 //коэфициент расчета здоровья врагов
 let enemyHPIndex = 0.3;
@@ -65,8 +65,9 @@ let enemyElArray = [];
 //тег `body` (для присоединения к нему modalGlass)
 let body = document.getElementsByTagName(`body`)[0];
 
-//текущая комната (пол)
+//текущая комната (пол) и отключение `dragstart` чтобы игрок случайно не начал перетаскивать пол/врага
 const floor = document.getElementById(`floor`);
+floor.ondragstart = function (event) { event.preventDefault() }
 
 //текущее здоровье (красная полоска)
 let healsbarCurrentHP = document.getElementById(`HP`);
@@ -126,13 +127,11 @@ function checkInventory() {
 	currentBoots.style.backgroundImage = player.boots.view;
 	currentBodyArmor.style.backgroundImage = player.bodyArmor.view;
 }
-checkInventory()
 
 //добавление игрока в комнату
 function playerInRoom() {
 	floor.appendChild(playerElement)
 }
-playerInRoom()
 
 //Создать массив врагов (Размер массива зависит от LVL)
 function createArrayEnemy() {
@@ -183,7 +182,6 @@ function createArrayEnemy() {
 		enemyArray.push(enemy)
 	}
 }
-createArrayEnemy()
 
 //создать сундук и положить в него лут
 function createChest() {
@@ -285,10 +283,7 @@ function createChest() {
 			}
 			itemDescription.appendChild(itemsStats)
 
-
-
 			function takeItem() {
-				console.log(lootType)
 				player[lootType] = loot;
 				checkInventory()
 				modalWindowChest.remove();
@@ -305,7 +300,6 @@ function createChest() {
 		}
 	}
 }
-createChest()
 
 //Заполнить комнату врагами
 function nextRoom() {
@@ -318,20 +312,19 @@ function nextRoom() {
 		console.log(`%c Враг: ${enemyArray[i].HP} hp, ${enemyArray[i].damage} damage`, `color: red`);
 		//у каждого врага есть свой id, совпадающий с его индексом в массиме enemyArray
 		enemyElement.id = enemyArray[i].id;
-		//Добавляем слушателя и отнимаем хп у противника за каждый клик. Если HP врага <=0, то он погибает и перестает наносить урон
-		enemyElement.addEventListener(`click`, enemyGetHit)
+		//Добавляем слушателя и отнимаем хп у противника за каждый клик (mousedown для удобства игрока). Если HP врага <=0, то он погибает и перестает наносить урон
+		enemyElement.addEventListener(`mousedown`, enemyGetHit)
 		function enemyGetHit() {
 			enemyArray[this.id].HP -= player.damage;
 			if (enemyArray[this.id].HP <= 0) {
 				enemyArray[this.id].death();
-				this.removeEventListener(`click`, enemyGetHit);
+				this.removeEventListener(`mousedown`, enemyGetHit);
 			}
 		}
 		enemyElArray.push(enemyElement);
 		floor.appendChild(enemyElement)
 	}
 }
-nextRoom()
 
 //Проверка полоски здоровья
 function checkHealsbar() {
@@ -377,7 +370,7 @@ function enterTheDoor() {
 
 		//повышение уровня
 		++currentLevel;
-		currentLevelElement.textContent = `level ` + currentLevel + ` выпускной проект Б. Максима`;
+		currentLevelElement.textContent = `level ` + currentLevel;
 
 		//создание всего нового
 		createArrayEnemy();
@@ -387,3 +380,9 @@ function enterTheDoor() {
 		gameStatus = `fight`;
 	}
 }
+
+checkInventory()
+playerInRoom()
+createArrayEnemy()
+createChest()
+nextRoom()
