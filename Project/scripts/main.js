@@ -67,6 +67,22 @@ function tick() {
 			enemyArray[i].posX = 90;
 		}
 	}
+
+	//Нанесение урона врагу, если он в находится в области `damageRange`. Если противник убит, его HP становится `undefined` 
+	let damageRange = document.getElementById(`damageRange`);
+	let damageRangeInfo = damageRange.getBoundingClientRect();
+	for (let i = 0; i < enemyArray.length; i++) {
+		let enemyInfo = enemyElArray[i].getBoundingClientRect();
+		if (damageRangeInfo.x < enemyInfo.x + enemyInfo.width && damageRangeInfo.x + damageRangeInfo.width > enemyInfo.x &&
+			damageRangeInfo.y < enemyInfo.y + enemyInfo.height && damageRangeInfo.y + damageRangeInfo.height > enemyInfo.y) {
+			enemyArray[i].HP -= player.damage;
+			if (enemyArray[i].HP <= 0) {
+				enemyArray[i].death();
+				enemyArray[i].HP = undefined;
+			}
+		}
+	}
+
 	checkHealsbar()
 }
 
@@ -92,9 +108,6 @@ let enemyElArray = [];
 //тег `body` (для присоединения к нему modalGlass)
 let body = document.getElementsByTagName(`body`)[0];
 
-//текущая комната (пол) и отключение `dragstart` чтобы игрок случайно не начал перетаскивать пол/врага
-const floor = document.getElementById(`floor`);
-floor.ondragstart = function (event) { event.preventDefault() }
 
 //текущее здоровье (красная полоска)
 let healsbarCurrentHP = document.getElementById(`HP`);
@@ -140,7 +153,8 @@ let player = {
 	bodyArmor: `none`,
 	helmet: `none`,
 	HP: 1000,
-	damage: 1,
+	damage: 0.1,
+	range: 10,
 	speed: 0.3,
 	speedX: 0,
 	speedY: 0,
@@ -148,16 +162,49 @@ let player = {
 	posY: 62,
 }
 
-//Проверка инвентаря у игрока (показать оружие в руке, если есть в инвентаре и показать оружие/доспехи в слотах) дать игроку урон исходя из его оружия
-function checkInventory() {
-	if (player.weapon != `none`) {
-		playerElement.style.backgroundImage = player.weapon.playerView;
-		player.damage = [player.weapon.damage];
+//Создать или обновить круг урона игрока (Функция срабатывает при checkInventory())
+function checkPlayerDamageRange() {
+	let playerDamageRange = document.getElementById(`playerDamageRange`)
+	//Удаление старого круга урона, если он есть
+	if (playerDamageRange) {
+		document.getElementById(`playerDamageRange`).remove();
 	}
+	playerDamageRange = document.createElementNS("http://www.w3.org/2000/svg", `svg`);
+	playerDamageRange.id = `playerDamageRange`;
+	playerDamageRange.style.cssText = `position: absolute; left: -${450}%; top: -${450}%; pointer-events: none; z-index: 0`;
+	playerDamageRange.setAttribute(`width`, 1000 + `%`);
+	playerDamageRange.setAttribute(`height`, 1000 + `%`);
+	playerElement.appendChild(playerDamageRange);
+	let damageRange = document.createElementNS("http://www.w3.org/2000/svg", `rect`);
+	damageRange.id = `damageRange`;
+	damageRange.setAttribute(`width`, player.range + `%`);
+	damageRange.setAttribute(`height`, player.range + `%`);
+	damageRange.setAttribute("stroke", `white`);
+	damageRange.setAttribute(`stroke-width`, "0.2vw")
+	damageRange.setAttribute("stroke-opacity", `0.2`);
+	damageRange.setAttribute("stroke-dasharray", `1vw,1.1vw`);
+	damageRange.setAttribute(`fill`, "none")
+	damageRange.setAttribute("x", 50 - player.range / 2 + `%`);
+	damageRange.setAttribute("y", 50 - player.range / 2 + `%`);
+	playerDamageRange.appendChild(damageRange);
+}
+
+//Проверка инвентаря у игрока (показать оружие в руке, если есть в инвентаре и показать оружие/доспехи в слотах) дать игроку урон исходя из его оружия + обновить круг урона
+function checkInventory() {
+	playerElement.style.backgroundImage = player.weapon.playerView;
 	currentWeapon.style.backgroundImage = player.weapon.view;
+	if (player.weapon != `none`) {
+
+		player.damage = player.weapon.damage;
+		player.range = player.weapon.range;
+	}
 	currentHelmet.style.backgroundImage = player.helmet.view;
 	currentBoots.style.backgroundImage = player.boots.view;
+	if (player.boots != `none`) {
+		player.speed = player.boots.moveSpeed;
+	}
 	currentBodyArmor.style.backgroundImage = player.bodyArmor.view;
+	checkPlayerDamageRange()
 }
 
 //добавление игрока в комнату
@@ -184,7 +231,7 @@ function playerMove(event) {
 }
 function playerStop(event) {
 	if (event.code === `KeyW`) {
-		player.speedY = -0;
+		player.speedY = 0;
 	}
 	if (event.code === `KeyS`) {
 		player.speedY = 0;
@@ -235,8 +282,9 @@ function createArrayEnemy() {
 				this.damage = 0;
 				this.speedX = 0,
 					this.speedY = 0,
-					roomKillsCount++;
-				console.log(`фрагов в комнате: ` + roomKillsCount)
+					console.log(`противник убит`)
+				roomKillsCount++;
+				allkillsCount++;
 				if (roomKillsCount === enemyArray.length) {
 					console.log(`%cКомната зачищена!`, `color: Lime`);
 					gameStatus = `roomClear`;
@@ -247,7 +295,7 @@ function createArrayEnemy() {
 	}
 }
 
-//создать сундук и положить в него лут
+//создать сундук и положить в него лут (+меню с лутом)
 function createChest() {
 	let loot;
 	//lootType 1 - оружие, 2 - сапоги, 3 - нагрудник, 4 - шлем
@@ -293,9 +341,9 @@ function createChest() {
 
 	chestElement.addEventListener(`click`, openChest)
 
+	//Показать меню с лутом
 	function openChest() {
 		if (gameStatus === `roomClear`) {
-
 			//модальное окно (табличка со взятием предмета)
 			chestElement.style.backgroundImage = `url(SVGLibrary/chest/chestOpenWithLoot.svg)`
 			body.appendChild(modalGlass)
@@ -309,7 +357,6 @@ function createChest() {
 			let Buttons = document.createElement(`div`);
 			Buttons.style.cssText = `width: 10vw; height: 16vw; display: flex; flex-direction: column; justify-content: space-between; margin: 2vw 4vw 2vw 0; `
 			modalWindowChest.appendChild(Buttons)
-
 
 			let tikeItemButton = document.createElement(`input`);
 			tikeItemButton.setAttribute(`type`, `button`);
@@ -339,11 +386,18 @@ function createChest() {
 			let itemsStats = document.createElement(`div`);
 			itemsStats.style.cssText = `width: 100%; height: 10vw; background-color: rgb(172, 172, 172); font-size: 1.6vw; padding: 1vw; border: solid 0.2vw`;
 			if (lootType != `weapon`) {
-				itemsStats.innerHTML = `${loot.name} <br>
+				if (lootType === `boots`) {
+					itemsStats.innerHTML = `${loot.name} <br>
+				броня: ${loot.armor} <br>
+				скорость бега: ${loot.moveSpeed}`
+				} else {
+					itemsStats.innerHTML = `${loot.name} <br>
 				броня: ${loot.armor}`
+				}
 			} else if (lootType === `weapon`) {
 				itemsStats.innerHTML = `${loot.name} <br>
-			урон: ${loot.damage}`
+			урон: ${loot.damage} <br>
+			дальность: ${loot.range}`
 			}
 			itemDescription.appendChild(itemsStats)
 
@@ -371,20 +425,11 @@ function nextRoom() {
 	for (let i = 0; i < enemyArray.length; i++) {
 		let enemyElement = document.createElement(`div`);
 		enemyElement.style.cssText = `background-image: url(SVGLibrary/enemy/enemy${enemyArray[i].view}.svg);
-		background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: absolute;
+		background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: absolute; pointer-events: none;
 		left: ${enemyArray[i].posX}%; top: ${enemyArray[i].posY}%; z-index: 3`;
 		console.log(`%c Враг: ${enemyArray[i].HP} hp, ${enemyArray[i].damage} damage`, `color: red`);
-		//у каждого врага есть свой id, совпадающий с его индексом в массиме enemyArray
+		//у каждого врага (элемента) есть свой id, совпадающий с его индексом в массиме enemyArray
 		enemyElement.id = enemyArray[i].id;
-		//Добавляем слушателя и отнимаем хп у противника за каждый клик (mousedown для удобства игрока). Если HP врага <=0, то он погибает и перестает наносить урон
-		enemyElement.addEventListener(`mousedown`, enemyGetHit)
-		function enemyGetHit() {
-			enemyArray[this.id].HP -= player.damage;
-			if (enemyArray[this.id].HP <= 0) {
-				enemyArray[this.id].death();
-				this.removeEventListener(`mousedown`, enemyGetHit);
-			}
-		}
 		enemyElArray.push(enemyElement);
 		floor.appendChild(enemyElement)
 	}
@@ -396,12 +441,18 @@ function checkHealsbar() {
 		healsbarCurrentHP.style.width = `${player.HP / 10}%`;
 		healsbarCountCurrentHP.textContent = player.HP.toFixed(0);
 	}
-	if (player.HP <= 0) {
+	if (player.HP < 0) {
 		healsbarCurrentHP.style.width = `${0}%`;
 		healsbarCountCurrentHP.textContent = 0;
 		playerElement.style.backgroundImage = `url(SVGLibrary/player/playerCorpse.svg)`;
 		body.appendChild(modalGlass)
 		gameStatus = `defeat`;
+		document.removeEventListener(`keydown`, playerMove);
+		document.removeEventListener(`keyup`, playerStop);
+		player.speedX = 0;
+		player.speedY = 0;
+		player.damage = 0;
+		player.HP = undefined;
 	}
 }
 
@@ -415,7 +466,6 @@ function randomPositionFloor(stringXY) {
 		return (Math.floor(Math.random() * 45) + 5);
 	}
 }
-
 
 function enterTheDoor() {
 	if (gameStatus === `roomClear`) {
@@ -441,12 +491,14 @@ function enterTheDoor() {
 		nextRoom();
 		createChest();
 		player.HP = 1000;
+		player.posX = 47.5;
+		player.posY = 62;
 		gameStatus = `fight`;
 	}
 }
 
-checkInventory()
-playerInRoom()
-createArrayEnemy()
-createChest()
-nextRoom()
+checkInventory();
+playerInRoom();
+createArrayEnemy();
+createChest();
+nextRoom();

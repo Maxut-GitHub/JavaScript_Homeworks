@@ -6,7 +6,8 @@ let weaponArray = [];
 
 const Sword = {
 	name: `Меч`,
-	damage: 3,
+	damage: 0.3,
+	range: 20,
 	view: `url(SVGLibrary/weapon/Sword.svg)`,
 	playerView: `url(SVGLibrary/player/playerSword.svg)`,
 }
@@ -14,7 +15,8 @@ weaponArray.push(Sword)
 
 const Spear = {
 	name: `Копье`,
-	damage: 5,
+	damage: 0.5,
+	range: 30,
 	view: `url(SVGLibrary/weapon/Spear.svg)`,
 	playerView: `url(SVGLibrary/player/playerSpear.svg)`,
 }
@@ -22,7 +24,8 @@ weaponArray.push(Spear)
 
 const Hammer = {
 	name: `Молот`,
-	damage: 10,
+	damage: 0.8,
+	range: 20,
 	view: `url(SVGLibrary/weapon/Hammer.svg)`,
 	playerView: `url(SVGLibrary/player/playerHammer.svg)`,
 }
@@ -30,7 +33,8 @@ weaponArray.push(Hammer)
 
 const Bow = {
 	name: `Лук`,
-	damage: 20,
+	damage: 0.5,
+	range: 60,
 	view: `url(SVGLibrary/weapon/Bow.svg)`,
 	playerView: `url(SVGLibrary/player/playerBow.svg)`,
 }
@@ -44,35 +48,40 @@ let bootsArray = [];
 // Сапоги
 const LeatherBoots = {
 	name: `Кожанные ботинки`,
-	armor: 1,
+	armor: 0,
+	moveSpeed: 0.5,
 	view: `url(SVGLibrary/boots/leatherBoots.svg)`,
 }
 bootsArray.push(LeatherBoots)
 
 const IronBoots_lowQuality = {
 	name: `Некачественные Железные ботинки`,
-	armor: 3,
+	armor: 1,
+	moveSpeed: 0.3,
 	view: `url(SVGLibrary/boots/IronBoots_lowQuality.svg)`,
 }
 bootsArray.push(IronBoots_lowQuality)
 
 const IronBoots_awerageQuality = {
 	name: `Железные ботинки`,
-	armor: 5,
+	armor: 2,
+	moveSpeed: 0.4,
 	view: `url(SVGLibrary/boots/IronBoots_awerageQuality.svg)`,
 }
 bootsArray.push(IronBoots_awerageQuality)
 
 const IronBoots_highQuality = {
 	name: `Высококачественные Железные ботинки`,
-	armor: 7,
+	armor: 4,
+	moveSpeed: 0.5,
 	view: `url(SVGLibrary/boots/IronBoots_highQuality.svg)`,
 }
 bootsArray.push(IronBoots_highQuality)
 
 const IronBoots_PerfectQuality = {
 	name: `Идельные Железные ботинки`,
-	armor: 14,
+	armor: 6,
+	moveSpeed: 0.6,
 	view: `url(SVGLibrary/boots/IronBoots_PerfectQuality.svg)`,
 }
 bootsArray.push(IronBoots_PerfectQuality)
