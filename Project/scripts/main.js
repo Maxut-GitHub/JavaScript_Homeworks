@@ -11,13 +11,40 @@ function tick() {
 		player.HP -= enemyArray[i].damage;
 	}
 
+	//Передвижение игрока
+	playerElement.style.left = player.posX + `%`;
+	playerElement.style.top = player.posY + `%`;
+	player.posX += player.speedX;
+	player.posY += player.speedY;
+	//отскок игрока от стен
+	// ВСЕ ЧИСЛА ПОДОБРАНЫ ДЛЯ РАБОТЫ С ПРОЦЕНТАМИ % `floor`
+	// отскок от нижнего пола
+	if (player.posY > 62) {
+		player.speedY = 0;
+		player.posY = 62;
+	}
+	// отскок от верха пола
+	if (player.posY < 1) {
+		player.speedY = 0;
+		player.posY = 1;
+	}
+	// отскок от левой стенки
+	if (player.posX < 5) {
+		player.speedX = 0;
+		player.posX = 5;
+	}
+	// отскок от правой стенки
+	if (player.posX > 90) {
+		player.speedX = 0;
+		player.posX = 90;
+	}
+
 	//движение врагов
 	for (let i = 0; i < enemyArray.length; i++) {
 		enemyElArray[i].style.left = enemyArray[i].posX + `%`;
 		enemyElArray[i].style.top = enemyArray[i].posY + `%`;
 		enemyArray[i].posX += enemyArray[i].speedX;
 		enemyArray[i].posY += enemyArray[i].speedY;
-
 		// ВСЕ ЧИСЛА ПОДОБРАНЫ ДЛЯ РАБОТЫ С ПРОЦЕНТАМИ % `floor`
 		// отскок от нижнего пола
 		if (enemyArray[i].posY > 62) {
@@ -87,7 +114,7 @@ let currentHelmet = document.getElementById(`helmetSlot`)
 //Элемент игрока
 let playerElement = document.createElement(`div`);
 playerElement.style.cssText = `background-image: url(SVGLibrary/player/player.svg);
-background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: relative; z-index: 4`
+background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: absolute; z-index: 4`
 
 //подсчет фрагов
 let allkillsCount = 0;
@@ -114,6 +141,11 @@ let player = {
 	helmet: `none`,
 	HP: 1000,
 	damage: 1,
+	speed: 0.3,
+	speedX: 0,
+	speedY: 0,
+	posX: 47.5,
+	posY: 62,
 }
 
 //Проверка инвентаря у игрока (показать оружие в руке, если есть в инвентаре и показать оружие/доспехи в слотах) дать игроку урон исходя из его оружия
@@ -131,6 +163,38 @@ function checkInventory() {
 //добавление игрока в комнату
 function playerInRoom() {
 	floor.appendChild(playerElement)
+}
+
+//Управление игрока
+document.addEventListener(`keydown`, playerMove);
+document.addEventListener(`keyup`, playerStop);
+function playerMove(event) {
+	if (event.code === `KeyW`) {
+		player.speedY = -player.speed * 2;
+	}
+	if (event.code === `KeyS`) {
+		player.speedY = player.speed * 2;
+	}
+	if (event.code === `KeyA`) {
+		player.speedX = -player.speed;
+	}
+	if (event.code === `KeyD`) {
+		player.speedX = player.speed;
+	}
+}
+function playerStop(event) {
+	if (event.code === `KeyW`) {
+		player.speedY = -0;
+	}
+	if (event.code === `KeyS`) {
+		player.speedY = 0;
+	}
+	if (event.code === `KeyA`) {
+		player.speedX = 0;
+	}
+	if (event.code === `KeyD`) {
+		player.speedX = 0;
+	}
 }
 
 //Создать массив врагов (Размер массива зависит от LVL)
