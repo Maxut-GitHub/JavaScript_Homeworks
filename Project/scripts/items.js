@@ -48,7 +48,7 @@ let bootsArray = [];
 // Сапоги
 const LeatherBoots = {
 	name: `Кожанные ботинки`,
-	armor: 0,
+	armor: 5,
 	moveSpeed: 0.5,
 	view: `url(SVGLibrary/boots/leatherBoots.svg)`,
 }
@@ -56,7 +56,7 @@ bootsArray.push(LeatherBoots)
 
 const IronBoots_lowQuality = {
 	name: `Некачественные Железные ботинки`,
-	armor: 1,
+	armor: 10,
 	moveSpeed: 0.3,
 	view: `url(SVGLibrary/boots/IronBoots_lowQuality.svg)`,
 }
@@ -64,7 +64,7 @@ bootsArray.push(IronBoots_lowQuality)
 
 const IronBoots_awerageQuality = {
 	name: `Железные ботинки`,
-	armor: 2,
+	armor: 20,
 	moveSpeed: 0.4,
 	view: `url(SVGLibrary/boots/IronBoots_awerageQuality.svg)`,
 }
@@ -72,7 +72,7 @@ bootsArray.push(IronBoots_awerageQuality)
 
 const IronBoots_highQuality = {
 	name: `Высококачественные Железные ботинки`,
-	armor: 4,
+	armor: 30,
 	moveSpeed: 0.5,
 	view: `url(SVGLibrary/boots/IronBoots_highQuality.svg)`,
 }
@@ -80,7 +80,7 @@ bootsArray.push(IronBoots_highQuality)
 
 const IronBoots_PerfectQuality = {
 	name: `Идельные Железные ботинки`,
-	armor: 6,
+	armor: 60,
 	moveSpeed: 0.6,
 	view: `url(SVGLibrary/boots/IronBoots_PerfectQuality.svg)`,
 }
@@ -91,35 +91,35 @@ let bodyArmorArray = [];
 // Нагрудный доспех
 const LeatherBodyArmor = {
 	name: `Кожанный Нагрудный доспех`,
-	armor: 2,
+	armor: 25,
 	view: `url(SVGLibrary/bodyArmor/LeatherBodyArmor.svg)`,
 }
 bodyArmorArray.push(LeatherBodyArmor)
 
 const IronBodyArmor_lowQuality = {
 	name: `Некачественный Железный нагрудник`,
-	armor: 5,
+	armor: 100,
 	view: `url(SVGLibrary/bodyArmor/IronBodyArmor_lowQuality.svg)`,
 }
 bodyArmorArray.push(IronBodyArmor_lowQuality)
 
 const IronBodyArmor_awerageQuality = {
 	name: `Железный нагрудник`,
-	armor: 10,
+	armor: 150,
 	view: `url(SVGLibrary/bodyArmor/IronBodyArmor_awerageQuality.svg)`,
 }
 bodyArmorArray.push(IronBodyArmor_awerageQuality)
 
 const IronBodyArmor_highQuality = {
 	name: `Высококачественный Железный нагрудник`,
-	armor: 15,
+	armor: 200,
 	view: `url(SVGLibrary/bodyArmor/IronBodyArmor_highQuality.svg)`,
 }
 bodyArmorArray.push(IronBodyArmor_highQuality)
 
 const IronBodyArmor_PerfectQuality = {
 	name: `Идеальный Железный нагрудник`,
-	armor: 30,
+	armor: 350,
 	view: `url(SVGLibrary/bodyArmor/IronBodyArmor_PerfectQuality.svg)`,
 }
 bodyArmorArray.push(IronBodyArmor_PerfectQuality)
@@ -129,35 +129,35 @@ let helmetArray = [];
 // Шлем
 const LeatherHelmet = {
 	name: `Кожанный шлем`,
-	armor: 2,
+	armor: 20,
 	view: `url(SVGLibrary/helmet/LeatherHelmet.svg)`,
 }
 helmetArray.push(LeatherHelmet)
 
 const IronHelmet_lowQuality = {
 	name: `Некачественный Железный шлем`,
-	armor: 4,
+	armor: 40,
 	view: `url(SVGLibrary/helmet/IronHelmet_lowQuality.svg)`,
 }
 helmetArray.push(IronHelmet_lowQuality)
 
 const IronHelmet_awerageQuality = {
 	name: `Железный шлем`,
-	armor: 6,
+	armor: 70,
 	view: `url(SVGLibrary/helmet/IronHelmet_awerageQuality.svg)`,
 }
 helmetArray.push(IronHelmet_awerageQuality)
 
 const IronHelmet_highQuality = {
 	name: `Высококачественный Железный шлем`,
-	armor: 9,
+	armor: 100,
 	view: `url(SVGLibrary/helmet/IronHelmet_highQuality.svg)`,
 }
 helmetArray.push(IronHelmet_highQuality)
 
 const IronHelmet_PerfectQuality = {
 	name: `Идеальный Железный шлем`,
-	armor: 18,
+	armor: 200,
 	view: `url(SVGLibrary/helmet/IronHelmet_PerfectQuality.svg)`,
 }
 helmetArray.push(IronHelmet_PerfectQuality)

@@ -1,4 +1,4 @@
-import { player, playerElement, enemyArray, enemyElArray } from './model.js';
+import { player, playerElement, enemyArray, enemyElArray, gameStatus } from './model.js';
 
 //слоты инвентаря
 //текущее оружие 
@@ -14,6 +14,8 @@ let currentHelmet = document.getElementById(`helmetSlot`)
 let healsbarCurrentHP = document.getElementById(`HP`);
 //счетчик здоровья(белая цифра в хелсбаре)
 let healsbarCountCurrentHP = document.getElementById(`HPcount`);
+//текст под полоской здоровья
+let lifeText = document.getElementById(`lifeText`);
 
 //обновление позиции игрока
 export function playerPositionUpdate() {
@@ -28,8 +30,19 @@ export function enemyPositionUpdate(id) {
 
 //обновить отображение полоски здоровья
 export function changeHealsbar() {
-	healsbarCurrentHP.style.width = `${player.HP / 10}%`;
-	healsbarCountCurrentHP.textContent = player.HP.toFixed(0);
+	if (gameStatus === `fight`) {
+		if (player.HP > 1000) {
+			healsbarCurrentHP.style.backgroundColor = `#3f66d1`
+			healsbarCurrentHP.style.width = 100 + `%`;
+			healsbarCountCurrentHP.textContent = `1000 + ${(player.HP - 1000).toFixed(0)}`;
+			lifeText.innerHTML = `Здоровье + Броня`
+		} else {
+			healsbarCurrentHP.style.backgroundColor = `rgb(164, 0, 0)`
+			healsbarCurrentHP.style.width = `${player.HP / 10}%`;
+			healsbarCountCurrentHP.textContent = player.HP.toFixed(0);
+			lifeText.innerHTML = `Здоровье`
+		}
+	}
 }
 
 //чтобы полоска остановилась ровно на 0, +обновить внешний вид игрока

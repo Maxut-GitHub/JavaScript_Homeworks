@@ -112,7 +112,7 @@ let allkillsCount = 0;
 let roomKillsCount = 0;
 
 //статус игры
-let gameStatus = `fight`
+export let gameStatus = `fight`
 
 //сундук
 export let chest = {};
@@ -132,6 +132,8 @@ export let player = {
 	boots: `none`,
 	bodyArmor: `none`,
 	helmet: `none`,
+	armor: 0,
+	maxHP: 1000,
 	HP: undefined,
 	damage: 0.1,
 	range: 10,
@@ -143,8 +145,11 @@ export let player = {
 	posY: 62,
 
 	move: function (x, y) {
-		this.speedY = y * 2;
-		this.speedX = x;
+		if (x) {
+			this.speedX = x;
+		} else if (y) {
+			this.speedY = y * 2;
+		}
 	},
 
 	stop: function (x, y) {
@@ -162,14 +167,22 @@ background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw;
 
 //Проверка инвентаря у игрока (показать оружие в руке, если есть в инвентаре и показать оружие/доспехи в слотах) дать игроку урон исходя из его оружия + обновить круг урона
 function checkInventory() {
+	player.armor = 0;
 	if (player.weapon != `none`) {
-
 		player.damage = player.weapon.damage;
 		player.range = player.weapon.range;
 	}
 	if (player.boots != `none`) {
 		player.speed = player.boots.moveSpeed;
+		player.armor += player.boots.armor;
 	}
+	if (player.bodyArmor != `none`) {
+		player.armor += player.bodyArmor.armor;
+	}
+	if (player.helmet != `none`) {
+		player.armor += player.helmet.armor;
+	}
+	console.log(`броня игрока: ` + player.armor)
 	view.checkViewInventory()
 }
 
@@ -312,19 +325,27 @@ function createChest() {
 				let itemsStats = document.createElement(`div`);
 				itemsStats.style.cssText = `width: 100%; height: 10vw; background-color: rgb(172, 172, 172); font-size: 1.6vw; padding: 1vw; border: solid 0.2vw`;
 				if (lootType != `weapon`) {
+
 					if (lootType === `boots`) {
 						itemsStats.innerHTML = `${loot.name} <br>
-					броня: ${loot.armor} <br>
-					скорость бега: ${loot.moveSpeed}`
-					} else {
-						itemsStats.innerHTML = `${loot.name} <br>
-					броня: ${loot.armor}`
+					броня: ${loot.armor} ${player.boots.armor ? `(ваши сапоги: ${player.boots.armor})` : ``} <br>
+					скорость бега: ${loot.moveSpeed} (сейчас: ${player.speed})`
 					}
+					else if (lootType === `bodyArmor`) {
+						itemsStats.innerHTML = `${loot.name} <br>
+					броня: ${loot.armor} ${player.bodyArmor.armor ? `(ваш нагрудник: ${player.bodyArmor.armor})` : ``}`
+					}
+					else if (lootType === `helmet`) {
+						itemsStats.innerHTML = `${loot.name} <br>
+					броня: ${loot.armor} ${player.helmet.armor ? `(ваш шлем: ${player.helmet.armor})` : ``}`
+					}
+
 				} else if (lootType === `weapon`) {
 					itemsStats.innerHTML = `${loot.name} <br>
-				урон: ${loot.damage} <br>
-				дальность: ${loot.range}`
+				урон: ${loot.damage} (сейчас: ${player.damage}) <br>
+				дальность: ${loot.range} (сейчас: ${player.range})`
 				}
+
 				itemDescription.appendChild(itemsStats)
 
 				function takeItem() {
@@ -392,6 +413,7 @@ function randomPositionFloor(stringXY) {
 	}
 }
 
+//Зайти в следующую комнату
 function enterTheDoor() {
 	if (gameStatus === `roomClear`) {
 		//удаление всего из прошлой комнаты
@@ -415,7 +437,7 @@ function enterTheDoor() {
 		nextRoom();
 		createChest();
 		chest.status = `closed`
-		player.HP = 1000;
+		player.HP = player.maxHP + player.armor;
 		player.posX = 47.5;
 		player.posY = 62;
 		gameStatus = `fight`;
