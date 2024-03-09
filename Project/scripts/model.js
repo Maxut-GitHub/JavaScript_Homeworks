@@ -1,6 +1,7 @@
 "use strict";
 //импорт всех предметов
 import allItemsArray from './items.js';
+import * as view from './view.js';
 
 //Таймер (60фпс)
 setInterval(tick, 1000 / 60);
@@ -12,8 +13,7 @@ function tick() {
 	}
 
 	//Передвижение игрока
-	playerElement.style.left = player.posX + `%`;
-	playerElement.style.top = player.posY + `%`;
+	view.playerPositionUpdate()
 	player.posX += player.speedX;
 	player.posY += player.speedY;
 	//отскок игрока от стен
@@ -41,8 +41,7 @@ function tick() {
 
 	//движение врагов
 	for (let i = 0; i < enemyArray.length; i++) {
-		enemyElArray[i].style.left = enemyArray[i].posX + `%`;
-		enemyElArray[i].style.top = enemyArray[i].posY + `%`;
+		view.enemyPositionUpdate(i);
 		enemyArray[i].posX += enemyArray[i].speedX;
 		enemyArray[i].posY += enemyArray[i].speedY;
 		// ВСЕ ЧИСЛА ПОДОБРАНЫ ДЛЯ РАБОТЫ С ПРОЦЕНТАМИ % `floor`
@@ -101,33 +100,12 @@ let enemySpeedXIndex = 0.3;
 let enemySpeedYIndex = 0.3;
 
 //массив врагов (для добавления в комнату)
-let enemyArray = [];
+export let enemyArray = [];
 //массив врагов ЭЛЕМЕНТОВ (тегов)
-let enemyElArray = [];
+export let enemyElArray = [];
 
 //тег `body` (для присоединения к нему modalGlass)
 let body = document.getElementsByTagName(`body`)[0];
-
-
-//текущее здоровье (красная полоска)
-let healsbarCurrentHP = document.getElementById(`HP`);
-//счетчик здоровья(белая цифра в хелсбаре)
-let healsbarCountCurrentHP = document.getElementById(`HPcount`);
-
-//слоты инвентаря
-//текущее оружие 
-let currentWeapon = document.getElementById(`weaponSlot`)
-//текущее сапоги
-let currentBoots = document.getElementById(`bootsSlot`)
-//текущий нагрудник
-let currentBodyArmor = document.getElementById(`bodyArmorSlot`)
-//текущий шлем 
-let currentHelmet = document.getElementById(`helmetSlot`)
-
-//Элемент игрока
-let playerElement = document.createElement(`div`);
-playerElement.style.cssText = `background-image: url(SVGLibrary/player/player.svg);
-background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: absolute; z-index: 4`
 
 //подсчет фрагов
 let allkillsCount = 0;
@@ -137,7 +115,8 @@ let roomKillsCount = 0;
 let gameStatus = `fight`
 
 //сундук
-let chest = {};
+export let chest = {};
+export let chestElement = document.createElement(`div`);
 
 //верхняя дверь
 let doorElement = document.getElementById(`doorTop`);
@@ -147,101 +126,57 @@ doorElement.onclick = enterTheDoor;
 let modalGlass = document.createElement(`div`);
 modalGlass.style.cssText = `position: fixed; width: 100%; height: 100%; background-color: #2b2b2b; opacity: 0.5; z-index: 5 `
 
-let player = {
+//игрок
+export let player = {
 	weapon: `none`,
 	boots: `none`,
 	bodyArmor: `none`,
 	helmet: `none`,
-	HP: 1000,
+	HP: undefined,
 	damage: 0.1,
 	range: 10,
+	canMove: true,
 	speed: 0.3,
 	speedX: 0,
 	speedY: 0,
 	posX: 47.5,
 	posY: 62,
-}
 
-//Создать или обновить круг урона игрока (Функция срабатывает при checkInventory())
-function checkPlayerDamageRange() {
-	let playerDamageRange = document.getElementById(`playerDamageRange`)
-	//Удаление старого круга урона, если он есть
-	if (playerDamageRange) {
-		document.getElementById(`playerDamageRange`).remove();
+	move: function (x, y) {
+		this.speedY = y * 2;
+		this.speedX = x;
+	},
+
+	stop: function (x, y) {
+		if (x === 0) {
+			this.speedX = x;
+		} else if (y === 0) {
+			this.speedY = y;
+		}
 	}
-	playerDamageRange = document.createElementNS("http://www.w3.org/2000/svg", `svg`);
-	playerDamageRange.id = `playerDamageRange`;
-	playerDamageRange.style.cssText = `position: absolute; left: -${450}%; top: -${450}%; pointer-events: none; z-index: 0`;
-	playerDamageRange.setAttribute(`width`, 1000 + `%`);
-	playerDamageRange.setAttribute(`height`, 1000 + `%`);
-	playerElement.appendChild(playerDamageRange);
-	let damageRange = document.createElementNS("http://www.w3.org/2000/svg", `rect`);
-	damageRange.id = `damageRange`;
-	damageRange.setAttribute(`width`, player.range + `%`);
-	damageRange.setAttribute(`height`, player.range + `%`);
-	damageRange.setAttribute("stroke", `white`);
-	damageRange.setAttribute(`stroke-width`, "0.2vw")
-	damageRange.setAttribute("stroke-opacity", `0.2`);
-	damageRange.setAttribute("stroke-dasharray", `1vw,1.1vw`);
-	damageRange.setAttribute(`fill`, "none")
-	damageRange.setAttribute("x", 50 - player.range / 2 + `%`);
-	damageRange.setAttribute("y", 50 - player.range / 2 + `%`);
-	playerDamageRange.appendChild(damageRange);
 }
+//Элемент игрока
+export let playerElement = document.createElement(`div`);
+playerElement.style.cssText = `background-image: url(SVGLibrary/player/player.svg);
+background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: absolute; z-index: 4`
 
 //Проверка инвентаря у игрока (показать оружие в руке, если есть в инвентаре и показать оружие/доспехи в слотах) дать игроку урон исходя из его оружия + обновить круг урона
 function checkInventory() {
-	playerElement.style.backgroundImage = player.weapon.playerView;
-	currentWeapon.style.backgroundImage = player.weapon.view;
 	if (player.weapon != `none`) {
 
 		player.damage = player.weapon.damage;
 		player.range = player.weapon.range;
 	}
-	currentHelmet.style.backgroundImage = player.helmet.view;
-	currentBoots.style.backgroundImage = player.boots.view;
 	if (player.boots != `none`) {
 		player.speed = player.boots.moveSpeed;
 	}
-	currentBodyArmor.style.backgroundImage = player.bodyArmor.view;
-	checkPlayerDamageRange()
+	view.checkViewInventory()
 }
 
 //добавление игрока в комнату
 function playerInRoom() {
 	floor.appendChild(playerElement)
-}
-
-//Управление игрока
-document.addEventListener(`keydown`, playerMove);
-document.addEventListener(`keyup`, playerStop);
-function playerMove(event) {
-	if (event.code === `KeyW`) {
-		player.speedY = -player.speed * 2;
-	}
-	if (event.code === `KeyS`) {
-		player.speedY = player.speed * 2;
-	}
-	if (event.code === `KeyA`) {
-		player.speedX = -player.speed;
-	}
-	if (event.code === `KeyD`) {
-		player.speedX = player.speed;
-	}
-}
-function playerStop(event) {
-	if (event.code === `KeyW`) {
-		player.speedY = 0;
-	}
-	if (event.code === `KeyS`) {
-		player.speedY = 0;
-	}
-	if (event.code === `KeyA`) {
-		player.speedX = 0;
-	}
-	if (event.code === `KeyD`) {
-		player.speedX = 0;
-	}
+	player.HP = 1000;
 }
 
 //Создать массив врагов (Размер массива зависит от LVL)
@@ -288,6 +223,7 @@ function createArrayEnemy() {
 				if (roomKillsCount === enemyArray.length) {
 					console.log(`%cКомната зачищена!`, `color: Lime`);
 					gameStatus = `roomClear`;
+					chest.status = `open`;
 				}
 			}
 		}
@@ -331,92 +267,87 @@ function createChest() {
 		loot: loot,
 		posX: randomPositionFloor(`X`),
 		posY: randomPositionFloor(`Y`),
-	}
-	let chestElement = document.createElement(`div`);
-	chestElement.style.cssText = `background-image: url(SVGLibrary/chest/chestClosed.svg);
-	background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: absolute;
-	left: ${chest.posX}%; top: ${chest.posY}%; z-index: 2`;
-	chestElement.id = `chest`
-	floor.appendChild(chestElement);
+		status: `closed`,
+		open: function () {
+			if (this.status === `open`) {
+				//модальное окно (табличка со взятием предмета)
+				chestElement.style.backgroundImage = `url(SVGLibrary/chest/chestOpenWithLoot.svg)`
+				body.appendChild(modalGlass)
 
-	chestElement.addEventListener(`click`, openChest)
+				let modalWindowChest = document.createElement(`div`);
+				modalWindowChest.style.cssText = `display: flex; position: absolute; width: 50vw; height: 27vw; background-color: #6e6b1a;
+				left: 25vw; top: 10vw; padding: 2vw; border: solid 0.5vw #7f3f00; border-radius:  6vw 6vw 1vw 1vw; z-index: 6`
+				body.appendChild(modalWindowChest)
 
-	//Показать меню с лутом
-	function openChest() {
-		if (gameStatus === `roomClear`) {
-			//модальное окно (табличка со взятием предмета)
-			chestElement.style.backgroundImage = `url(SVGLibrary/chest/chestOpenWithLoot.svg)`
-			body.appendChild(modalGlass)
+				//левая сторона окна (кнопка взятия и наоборот)
+				let Buttons = document.createElement(`div`);
+				Buttons.style.cssText = `width: 10vw; height: 16vw; display: flex; flex-direction: column; justify-content: space-between; margin: 2vw 4vw 2vw 0; `
+				modalWindowChest.appendChild(Buttons)
 
-			let modalWindowChest = document.createElement(`div`);
-			modalWindowChest.style.cssText = `display: flex; position: absolute; width: 50vw; height: 27vw; background-color: #6e6b1a;
-			left: 25vw; top: 10vw; padding: 2vw; border: solid 0.5vw #7f3f00; border-radius:  6vw 6vw 1vw 1vw; z-index: 6`
-			body.appendChild(modalWindowChest)
+				let tikeItemButton = document.createElement(`input`);
+				tikeItemButton.setAttribute(`type`, `button`);
+				tikeItemButton.setAttribute(`value`, `Взять`);
+				tikeItemButton.onclick = takeItem;
+				tikeItemButton.style.cssText = ` width: 10vw; height: 6vw; background-color: rgb(172, 172, 172); font-size: 2vw; align-self: flex-end;`
+				Buttons.appendChild(tikeItemButton)
 
-			//левая сторона окна (кнопка взятия и наоборот)
-			let Buttons = document.createElement(`div`);
-			Buttons.style.cssText = `width: 10vw; height: 16vw; display: flex; flex-direction: column; justify-content: space-between; margin: 2vw 4vw 2vw 0; `
-			modalWindowChest.appendChild(Buttons)
+				let notTakeItemButton = document.createElement(`input`);
+				notTakeItemButton.setAttribute(`type`, `button`);
+				notTakeItemButton.setAttribute(`value`, `Оставить`);
+				notTakeItemButton.onclick = notTakeItem;
+				notTakeItemButton.style.cssText = ` width: 10vw; height: 6vw; background-color: rgb(172, 172, 172); font-size: 2vw; align-self: flex-end;`
+				Buttons.appendChild(notTakeItemButton)
 
-			let tikeItemButton = document.createElement(`input`);
-			tikeItemButton.setAttribute(`type`, `button`);
-			tikeItemButton.setAttribute(`value`, `Взять`);
-			tikeItemButton.onclick = takeItem;
-			tikeItemButton.style.cssText = ` width: 10vw; height: 6vw; background-color: rgb(172, 172, 172); font-size: 2vw; align-self: flex-end;`
-			Buttons.appendChild(tikeItemButton)
+				//Правая сторона окна (иконка предмета и описание)
+				let itemDescription = document.createElement(`div`);
+				itemDescription.style.cssText = `display: flex; flex-direction: column; align-items: center; width: 100%; height: 22vw;`;
+				modalWindowChest.appendChild(itemDescription)
 
-			let notTakeItemButton = document.createElement(`input`);
-			notTakeItemButton.setAttribute(`type`, `button`);
-			notTakeItemButton.setAttribute(`value`, `Оставить`);
-			notTakeItemButton.onclick = notTakeItem;
-			notTakeItemButton.style.cssText = ` width: 10vw; height: 6vw; background-color: rgb(172, 172, 172); font-size: 2vw; align-self: flex-end;`
-			Buttons.appendChild(notTakeItemButton)
+				let itemImage = document.createElement(`div`);
+				itemImage.style.cssText = `width: 10vw; height: 10vw; background-color: rgb(172, 172, 172);
+				background-size: contain; background-repeat: no-repeat; margin-bottom: 2vw; border: solid 0.2vw `;
+				itemImage.style.backgroundImage = loot.view;
+				itemDescription.appendChild(itemImage)
 
-			//Правая сторона окна (иконка предмета и описание)
-			let itemDescription = document.createElement(`div`);
-			itemDescription.style.cssText = `display: flex; flex-direction: column; align-items: center; width: 100%; height: 22vw;`;
-			modalWindowChest.appendChild(itemDescription)
-
-			let itemImage = document.createElement(`div`);
-			itemImage.style.cssText = `width: 10vw; height: 10vw; background-color: rgb(172, 172, 172);
-			background-size: contain; background-repeat: no-repeat; margin-bottom: 2vw; border: solid 0.2vw `;
-			itemImage.style.backgroundImage = loot.view;
-			itemDescription.appendChild(itemImage)
-
-			let itemsStats = document.createElement(`div`);
-			itemsStats.style.cssText = `width: 100%; height: 10vw; background-color: rgb(172, 172, 172); font-size: 1.6vw; padding: 1vw; border: solid 0.2vw`;
-			if (lootType != `weapon`) {
-				if (lootType === `boots`) {
+				let itemsStats = document.createElement(`div`);
+				itemsStats.style.cssText = `width: 100%; height: 10vw; background-color: rgb(172, 172, 172); font-size: 1.6vw; padding: 1vw; border: solid 0.2vw`;
+				if (lootType != `weapon`) {
+					if (lootType === `boots`) {
+						itemsStats.innerHTML = `${loot.name} <br>
+					броня: ${loot.armor} <br>
+					скорость бега: ${loot.moveSpeed}`
+					} else {
+						itemsStats.innerHTML = `${loot.name} <br>
+					броня: ${loot.armor}`
+					}
+				} else if (lootType === `weapon`) {
 					itemsStats.innerHTML = `${loot.name} <br>
-				броня: ${loot.armor} <br>
-				скорость бега: ${loot.moveSpeed}`
-				} else {
-					itemsStats.innerHTML = `${loot.name} <br>
-				броня: ${loot.armor}`
+				урон: ${loot.damage} <br>
+				дальность: ${loot.range}`
 				}
-			} else if (lootType === `weapon`) {
-				itemsStats.innerHTML = `${loot.name} <br>
-			урон: ${loot.damage} <br>
-			дальность: ${loot.range}`
-			}
-			itemDescription.appendChild(itemsStats)
+				itemDescription.appendChild(itemsStats)
 
-			function takeItem() {
-				player[lootType] = loot;
-				checkInventory()
-				modalWindowChest.remove();
-				modalGlass.remove();
-				chestElement.style.backgroundImage = `url(SVGLibrary/chest/chestOpen.svg)`
-				chestElement.removeEventListener(`click`, openChest)
-			}
+				function takeItem() {
+					player[lootType] = loot;
+					checkInventory()
+					modalWindowChest.remove();
+					modalGlass.remove();
+					chestElement.style.backgroundImage = `url(SVGLibrary/chest/chestOpen.svg)`
+					chest.status = `closed`;
+				}
 
-			function notTakeItem() {
-				modalWindowChest.remove();
-				modalGlass.remove();
-				chestElement.style.backgroundImage = `url(SVGLibrary/chest/chestClosedWithLoot.svg)`
+				function notTakeItem() {
+					modalWindowChest.remove();
+					modalGlass.remove();
+					chestElement.style.backgroundImage = `url(SVGLibrary/chest/chestClosedWithLoot.svg)`
+				}
 			}
 		}
 	}
+	chestElement.style.cssText = `background-image: url(SVGLibrary/chest/chestClosed.svg);
+	background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: absolute;
+	left: ${chest.posX}%; top: ${chest.posY}%; z-index: 2`;
+	floor.appendChild(chestElement);
 }
 
 //Заполнить комнату врагами
@@ -424,9 +355,7 @@ function nextRoom() {
 	console.log(`%cВ комнате появились враги в размере: ${enemyArray.length}`, `color: red`);
 	for (let i = 0; i < enemyArray.length; i++) {
 		let enemyElement = document.createElement(`div`);
-		enemyElement.style.cssText = `background-image: url(SVGLibrary/enemy/enemy${enemyArray[i].view}.svg);
-		background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: absolute; pointer-events: none;
-		left: ${enemyArray[i].posX}%; top: ${enemyArray[i].posY}%; z-index: 3`;
+		view.enemyView(enemyElement, i);
 		console.log(`%c Враг: ${enemyArray[i].HP} hp, ${enemyArray[i].damage} damage`, `color: red`);
 		//у каждого врага (элемента) есть свой id, совпадающий с его индексом в массиме enemyArray
 		enemyElement.id = enemyArray[i].id;
@@ -438,17 +367,13 @@ function nextRoom() {
 //Проверка полоски здоровья
 function checkHealsbar() {
 	if (player.HP > 0) {
-		healsbarCurrentHP.style.width = `${player.HP / 10}%`;
-		healsbarCountCurrentHP.textContent = player.HP.toFixed(0);
+		view.changeHealsbar();
 	}
 	if (player.HP < 0) {
-		healsbarCurrentHP.style.width = `${0}%`;
-		healsbarCountCurrentHP.textContent = 0;
-		playerElement.style.backgroundImage = `url(SVGLibrary/player/playerCorpse.svg)`;
+		view.HealsbarIsZero();
 		body.appendChild(modalGlass)
 		gameStatus = `defeat`;
-		document.removeEventListener(`keydown`, playerMove);
-		document.removeEventListener(`keyup`, playerStop);
+		player.canMove = false;
 		player.speedX = 0;
 		player.speedY = 0;
 		player.damage = 0;
@@ -477,7 +402,6 @@ function enterTheDoor() {
 			enemyElArray.shift();
 		}
 		enemyArray = [];
-		let chestElement = document.getElementById(`chest`);
 		chestElement.remove();
 		roomKillsCount = 0;
 		chest = {};
@@ -490,6 +414,7 @@ function enterTheDoor() {
 		createArrayEnemy();
 		nextRoom();
 		createChest();
+		chest.status = `closed`
 		player.HP = 1000;
 		player.posX = 47.5;
 		player.posY = 62;
@@ -502,3 +427,4 @@ playerInRoom();
 createArrayEnemy();
 createChest();
 nextRoom();
+
