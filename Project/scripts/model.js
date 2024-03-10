@@ -249,14 +249,20 @@ function createArrayEnemy() {
 				roomKillsCount++;
 				allkillsCount++;
 				if (roomKillsCount === enemyArray.length) {
-					console.log(`%cКомната зачищена!`, `color: Lime`);
-					gameStatus = `roomClear`;
-					chest.status = `open`;
+					playerWin();
 				}
 			}
 		}
 		enemyArray.push(enemy)
 	}
+}
+
+function playerWin() {
+	console.log(`%cКомната зачищена!`, `color: Lime`);
+	gameStatus = `roomClear`;
+	chest.status = `open`;
+	//чтобы появилась дверь
+	doorElement.classList = `appearanceDoor`;
 }
 
 //создать сундук и положить в него лут (+меню с лутом)
@@ -398,6 +404,8 @@ function nextRoom() {
 		enemyElArray.push(enemyElement);
 		floor.appendChild(enemyElement)
 	}
+	//убрать дверь
+	doorElement.classList = ``
 }
 
 //Проверка полоски здоровья
