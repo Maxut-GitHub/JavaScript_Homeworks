@@ -7,11 +7,6 @@ import * as view from './view.js';
 setInterval(tick, 1000 / 60);
 
 function tick() {
-	//нанесение урона игроку
-	for (let i = 0; i < enemyArray.length; i++) {
-		player.HP -= enemyArray[i].damage;
-	}
-
 	//Передвижение игрока
 	view.playerPositionUpdate()
 	player.posX += player.speedX;
@@ -39,50 +34,62 @@ function tick() {
 		player.posX = 90;
 	}
 
-	//движение врагов
-	for (let i = 0; i < enemyArray.length; i++) {
-		view.enemyPositionUpdate(i);
-		enemyArray[i].posX += enemyArray[i].speedX;
-		enemyArray[i].posY += enemyArray[i].speedY;
-		// ВСЕ ЧИСЛА ПОДОБРАНЫ ДЛЯ РАБОТЫ С ПРОЦЕНТАМИ % `floor`
-		// отскок от нижнего пола
-		if (enemyArray[i].posY > 62) {
-			enemyArray[i].speedY = -enemyArray[i].speedY;
-			enemyArray[i].posY = 62;
-		}
-		// отскок от верха пола
-		if (enemyArray[i].posY < 1) {
-			enemyArray[i].speedY = -enemyArray[i].speedY;
-			enemyArray[i].posY = 1;
-		}
-		// отскок от левой стенки
-		if (enemyArray[i].posX < 5) {
-			enemyArray[i].speedX = -enemyArray[i].speedX;
-			enemyArray[i].posX = 5;
-		}
-		// отскок от правой стенки
-		if (enemyArray[i].posX > 90) {
-			enemyArray[i].speedX = -enemyArray[i].speedX;
-			enemyArray[i].posX = 90;
-		}
-	}
-
-	//Нанесение урона врагу, если он в находится в области `damageRange`. Если противник убит, его HP становится `undefined` 
-	let damageRange = document.getElementById(`damageRange`);
-	let damageRangeInfo = damageRange.getBoundingClientRect();
-	for (let i = 0; i < enemyArray.length; i++) {
-		let enemyInfo = enemyElArray[i].getBoundingClientRect();
-		if (damageRangeInfo.x < enemyInfo.x + enemyInfo.width && damageRangeInfo.x + damageRangeInfo.width > enemyInfo.x &&
-			damageRangeInfo.y < enemyInfo.y + enemyInfo.height && damageRangeInfo.y + damageRangeInfo.height > enemyInfo.y) {
-			enemyArray[i].HP -= player.damage;
-			if (enemyArray[i].HP <= 0) {
-				enemyArray[i].death();
-				enemyArray[i].HP = undefined;
+	if (gameStatus === `fight`) {
+		//движение врагов
+		for (let i = 0; i < enemyArray.length; i++) {
+			view.enemyPositionUpdate(i);
+			enemyArray[i].posX += enemyArray[i].speedX;
+			enemyArray[i].posY += enemyArray[i].speedY;
+			// ВСЕ ЧИСЛА ПОДОБРАНЫ ДЛЯ РАБОТЫ С ПРОЦЕНТАМИ % `floor`
+			// отскок от нижнего пола
+			if (enemyArray[i].posY > 62) {
+				enemyArray[i].speedY = -enemyArray[i].speedY;
+				enemyArray[i].posY = 62;
+			}
+			// отскок от верха пола
+			if (enemyArray[i].posY < 1) {
+				enemyArray[i].speedY = -enemyArray[i].speedY;
+				enemyArray[i].posY = 1;
+			}
+			// отскок от левой стенки
+			if (enemyArray[i].posX < 5) {
+				enemyArray[i].speedX = -enemyArray[i].speedX;
+				enemyArray[i].posX = 5;
+			}
+			// отскок от правой стенки
+			if (enemyArray[i].posX > 90) {
+				enemyArray[i].speedX = -enemyArray[i].speedX;
+				enemyArray[i].posX = 90;
 			}
 		}
-	}
 
-	checkHealsbar()
+		//нанесение урона игроку
+		for (let i = 0; i < enemyArray.length; i++) {
+			player.HP -= enemyArray[i].damage;
+		}
+
+		//Нанесение урона врагу, если он в находится в области `damageRange`. Если противник убит, его HP становится `undefined` 
+		let damageRange = document.getElementById(`damageRange`);
+		let damageRangeInfo = damageRange.getBoundingClientRect();
+		let enemyInfo;
+		for (let i = 0; i < enemyArray.length; i++) {
+			enemyInfo = enemyElArray[i].getBoundingClientRect();
+			if (damageRangeInfo.x < enemyInfo.x + enemyInfo.width && damageRangeInfo.x + damageRangeInfo.width > enemyInfo.x &&
+				damageRangeInfo.y < enemyInfo.y + enemyInfo.height && damageRangeInfo.y + damageRangeInfo.height > enemyInfo.y) {
+				if (enemyArray[i].HP) {
+					enemyArray[i].HP -= player.damage;
+					document.getElementById(`SVGpath${i}`).setAttributeNS(null, `fill`, `white`);
+				}
+				if (enemyArray[i].HP <= 0) {
+					enemyArray[i].death();
+					enemyArray[i].HP = undefined;
+				}
+			} else if (enemyArray[i].HP) {
+				document.getElementById(`SVGpath${i}`).setAttributeNS(null, `fill`, `#ff0000`);
+			}
+		}
+		checkHealsbar()
+	}
 }
 
 //текущий уровень комнаты (все скейлы зависят ОТ ЭТОГО ЧИСЛА)
@@ -199,12 +206,12 @@ function createArrayEnemy() {
 	for (let i = 0; i < enemyCount; i++) {
 		let HP = (enemyHPIndex * currentLevel * (Math.floor(Math.random() * 5) + 1)).toFixed(2)
 		let damage = (enemyDamageIndex * currentLevel * (Math.floor(Math.random() * 5) + 1)).toFixed(2)
-		//view - внешний вид моба
-		let view = 1;
+		//weapon - оружие в руках у врага
+		let weapon = `knife`;
 		if (damage > 0.5 && damage < 1) {
-			view = 2
+			weapon = `double knives`;
 		} else if (damage >= 1) {
-			view = 3
+			weapon = `two-handed mace`;
 		}
 		//Направление по X и Y рандомны (всего 4 направления для врага)
 		if (Math.round(Math.random()) === 1) {
@@ -213,20 +220,28 @@ function createArrayEnemy() {
 		if (Math.round(Math.random()) === 1) {
 			enemySpeedYIndex = -enemySpeedYIndex;
 		}
-		//view - внешний вид моба
 		//pozX и poxY случайны и подобраны так, чтобы моб всегда был в пределых комнаты
 		let enemy = {
 			id: i,
 			damage: damage,
 			HP: HP,
-			view: view,
+			weapon: weapon,
 			speedX: enemySpeedXIndex,
 			speedY: enemySpeedYIndex,
 			posX: randomPositionFloor(`X`),
 			posY: randomPositionFloor(`Y`),
 			death: function () {
-				enemyElArray[this.id].style.backgroundImage = `url(SVGLibrary/enemy/enemyCorpse.svg)`;
+				//удалить прошлый вид вррага и добавить новый свг с трупом
+				enemyElArray[this.id].childNodes[0].remove()
+				let enemyCorpse = document.createElementNS("http://www.w3.org/2000/svg", `svg`);
+				enemyCorpse.setAttributeNS(null, `viewBox`, `0 0 250 250`);
+				let path = document.createElementNS("http://www.w3.org/2000/svg", `path`);
+				path.setAttributeNS(null, `d`, `m6.03779,221.8726c0,0 1.9802,15.34652 1.88299,14.7609c0.0972,0.09057 10.49324,0.09057 10.49324,0.09057c0,0 1.9802,13.36633 1.9802,13.36633c0,0 84.15836,-9.90098 84.15836,-9.90098c0,0 1.9802,8.91089 1.88299,8.82031c0.0972,0.09057 76.33478,-9.81041 76.23757,-9.90098c0.09721,0.09057 13.95858,9.49651 13.95858,9.49651c0,0 16.33662,0.49505 16.23942,0.40448c0.09721,0.09057 17.91898,-5.35497 17.82177,-5.44554c0.09721,0.09057 9.50314,-12.28566 8.91089,-12.37623c0.09721,0.09057 3.56255,-12.7807 3.46534,-12.87128c0.09721,0.09057 -0.39784,-10.80051 -0.49505,-10.89108c0.09721,0.09057 -3.86319,-8.82031 -3.96039,-8.91089c0.09721,0.09057 -4.85329,-7.83021 -5.44554,-8.41584c0.09721,0.09057 -9.80378,-6.34507 -9.90098,-6.43564c0.09721,0.09057 -10.79388,-4.85992 -10.89108,-4.95049c0.09721,0.09057 -13.76417,1.57572 -13.86138,1.48515c0.09721,0.09057 -11.28893,8.01136 -11.38613,7.92079c0.09721,0.09057 -8.81368,6.52621 -8.41584,6.43564c0.09721,0.09057 -86.5364,1.08067 -86.5364,1.08067c0,0 -0.49505,9.90098 -0.59225,9.81041c5.0477,-1.88962 -12.27902,4.54602 20.29702,2.47525`);
+				path.setAttributeNS(null, `fill`, `#330404`);
+				enemyCorpse.appendChild(path);
+				enemyElArray[this.id].appendChild(enemyCorpse);
 				enemyElArray[this.id].style.zIndex = 1;
+
 				this.damage = 0;
 				this.speedX = 0,
 					this.speedY = 0,

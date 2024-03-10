@@ -64,9 +64,43 @@ export function checkViewInventory() {
 
 //стилизовать врага (в аргументах: сам элемент, его id)
 export function enemyView(el, id) {
-	el.style.cssText = `background-image: url(SVGLibrary/enemy/enemy${enemyArray[id].view}.svg);
-	background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw; position: absolute; pointer-events: none;
+	el.style.cssText = `width: 5vw; height: 5vw; position: absolute; pointer-events: none;
 	left: ${enemyArray[id].posX}%; top: ${enemyArray[id].posY}%; z-index: 3`;
+	//враг без оружия
+	let enemyView = document.createElementNS("http://www.w3.org/2000/svg", `svg`);
+	enemyView.setAttributeNS(null, `viewBox`, `0 0 250 250`);
+	let path = document.createElementNS("http://www.w3.org/2000/svg", `path`);
+	path.setAttributeNS(null, `d`, `m103.59168,67.68819c-5.70343,16.34982 -28.89736,79.46775 -28.89736,79.46775c0,0 12.16731,5.3232 11.99777,5.31568c0.16954,0.00752 19.56119,-50.94309 19.39165,-50.95061c0.16954,0.00752 0.92999,43.7338 0.92999,43.7338c0,0 -22.05325,99.23963 -22.05325,99.23963c0,0 15.96959,3.80228 15.80006,3.79477c0.16954,0.00752 20.32165,-91.24731 20.15211,-91.25483c0.16954,0.00752 26.02507,91.26235 26.02507,91.26235c0,0 15.96959,-4.56274 15.80006,-4.57026c0.16954,0.00752 -26.44646,-95.42982 -26.61599,-95.43735c0.16954,0.00752 -0.21069,-46.00012 -0.38023,-46.00764c0.16954,0.00752 21.84256,50.57791 21.84256,50.57791c0,0 12.92777,-4.94297 12.75823,-4.95049c0.16953,0.00752 -33.29057,-79.46022 -33.46011,-79.46775c0.16954,0.00753 10.81593,-7.21681 10.81593,-7.21681c3.80228,-5.70343 6.08366,-11.02663 6.08366,-11.02663c0,0 3.42206,-11.02663 3.25252,-11.41438c0.16954,0.00753 -1.35138,-10.63887 -1.52091,-10.6464c0.16954,0.00753 -4.39321,-11.39933 -4.39321,-11.39933c-0.38023,0 -9.50571,-8.74525 -9.67525,-8.75278c-6.29435,-3.0343 -10.47686,-4.55521 -10.6464,-4.56274c0.16954,0.00753 -13.51869,-1.89361 -13.68822,-1.90114c0.92999,0.38776 -10.85709,2.66913 -11.02663,2.6616c0.16954,0.00753 -8.95595,6.47141 -9.12548,6.46388c0.16954,0.00753 -6.67457,8.37255 -6.84411,8.36503c0.16954,0.00753 -5.91412,5.71096 -4.3932,18.25849c-0.76046,-8.74525 1.14069,11.40685 0.97115,11.39933c1.69045,5.33073 7.01365,11.41438 7.01365,11.41438c0,0 3.80228,4.18251 9.88594,7.60457z`);
+	path.setAttributeNS(null, `fill`, `#ff0000`);
+	path.setAttributeNS(null, `id`, `SVGpath${enemyArray[id].id}`);
+	enemyView.appendChild(path);
+	el.appendChild(enemyView)
+
+	//добавить оружие в руку
+	if (enemyArray[id].weapon === `knife`) {
+		let path = document.createElementNS("http://www.w3.org/2000/svg", `path`);
+		path.setAttributeNS(null, `d`, `m23.76023,124.42687l8.53722,7.49134l58.57716,-58.15388l-51.64868,63.15637l6.29861,6.25312l-4.20956,2.39752l-8.38768,-3.64815l-13.96199,15.11118l-5.93118,-4.26455l14.50527,-15.21142c0.196,-2.92362 -4.99015,-6.37745 -2.75155,-4.5139`);
+		path.setAttributeNS(null, `fill`, `#333333`);
+		path.setAttributeNS(null, `transform`, `rotate(-92.5157 51.9544 115.399)`);
+		enemyView.appendChild(path);
+	} else if (enemyArray[id].weapon === `double knives`) {
+		let path1 = document.createElementNS("http://www.w3.org/2000/svg", `path`);
+		path1.setAttributeNS(null, `d`, `m23.76023,124.42687l8.53722,7.49134l58.57716,-58.15388l-51.64868,63.15637l6.29861,6.25312l-4.20956,2.39752l-8.38768,-3.64815l-13.96199,15.11118l-5.93118,-4.26455l14.50527,-15.21142c0.196,-2.92362 -4.99015,-6.37745 -2.75155,-4.5139`);
+		path1.setAttributeNS(null, `fill`, `#333333`);
+		path1.setAttributeNS(null, `transform`, `rotate(-92.5157 51.9544 115.399)`);
+		enemyView.appendChild(path1);
+		let path2 = document.createElementNS("http://www.w3.org/2000/svg", `path`);
+		path2.setAttributeNS(null, `d`, `m164.44476,126.70824l8.53722,7.49134l58.57716,-58.15388l-51.64868,63.15637l6.29861,6.25311l-4.20956,2.39753l-8.38768,-3.64816l-13.96199,15.11118l-5.93118,-4.26455l14.50527,-15.21142c0.196,-2.92362 -4.99015,-6.37745 -2.75155,-4.5139`);
+		path2.setAttributeNS(null, `fill`, `#333333`);
+		path2.setAttributeNS(null, `transform`, `rotate(9.82316 192.639 117.681)`);
+		enemyView.appendChild(path2);
+	} else if (enemyArray[id].weapon === `two-handed mace`) {
+		let path = document.createElementNS("http://www.w3.org/2000/svg", `path`);
+		path.setAttributeNS(null, `d`, `m117.02776,35.46935l4.39321,-10.53219l5.3232,10.91427l12.16731,-6.23672l-6.46388,10.91427l9.12548,5.84693l-10.26617,4.28775l2.28137,13.25304l-9.88594,-10.52447l1.90428,195.75735l-5.54204,-13.77942l-3.96681,-182.36773l-9.50571,9.35509l2.28137,-14.03263l-10.26617,-3.50816l10.26617,-5.45713l-3.04183,-10.91427`);
+		path.setAttributeNS(null, `fill`, `#333333`);
+		path.setAttributeNS(null, `transform`, `rotate(-84.9039 120.09 137.043)`);
+		enemyView.appendChild(path);
+	}
 }
 
 //Создать или обновить круг урона игрока (Функция срабатывает при checkInventory())
