@@ -1,4 +1,4 @@
-import { player, playerElement, enemyArray, enemyElArray, gameStatus } from './model.js';
+import { player, playerElement, enemyArray, enemyElArray, gameStatus, floor, room, currentLevel, body } from './model.js';
 
 //слоты инвентаря
 //текущее оружие 
@@ -100,6 +100,40 @@ export function enemyView(el, id) {
 		path.setAttributeNS(null, `fill`, `#333333`);
 		path.setAttributeNS(null, `transform`, `rotate(-84.9039 120.09 137.043)`);
 		enemyView.appendChild(path);
+	} else if (enemyArray[id].weapon === `two hellish staff`) {
+		let path1 = document.createElementNS("http://www.w3.org/2000/svg", `path`);
+		path1.setAttributeNS(null, `d`, `m158.78,12.97l34.24,60.56l-3.11,-61.78l-31.67,36.02l45.56,-4.44l-25.01,-18.45l-39.86,224.67l48.69,-218.1l-28.84,-18.48z`);
+		path1.setAttributeNS(null, `fill`, `#333333`);
+		enemyView.appendChild(path1);
+		let path2 = document.createElementNS("http://www.w3.org/2000/svg", `path`);
+		path2.setAttributeNS(null, `d`, `m70.8,20.15l-25.58,62.93l-4.76,-60.21l35.24,30.91l-44.73,1.4l21.92,-20.99l66.93,212.56l-74.66,-205.09l25.63,-21.5z`);
+		path2.setAttributeNS(null, `fill`, `#333333`);
+		enemyView.appendChild(path2);
+		let circle1 = document.createElementNS("http://www.w3.org/2000/svg", `circle`);
+		circle1.setAttributeNS(null, `cx`, `52.14`);
+		circle1.setAttributeNS(null, `cy`, `49.56`);
+		circle1.setAttributeNS(null, `r`, `49.91`);
+		circle1.setAttributeNS(null, `fill`, `url(#svg_1)`);
+		enemyView.appendChild(circle1);
+		let circle2 = document.createElementNS("http://www.w3.org/2000/svg", `circle`);
+		circle2.setAttributeNS(null, `cx`, `182.64`);
+		circle2.setAttributeNS(null, `cy`, `40.06`);
+		circle2.setAttributeNS(null, `r`, `41.58`);
+		circle2.setAttributeNS(null, `fill`, `url(#svg_1)`);
+		enemyView.appendChild(circle2);
+		let radialGradient = document.createElementNS("http://www.w3.org/2000/svg", `radialGradient`);
+		radialGradient.setAttributeNS(null, `id`, `svg_1`);
+		let stop1 = document.createElementNS("http://www.w3.org/2000/svg", `stop`);
+		stop1.setAttributeNS(null, `id`, `jq_stop_2335`);
+		stop1.setAttributeNS(null, `offset`, `0`);
+		stop1.setAttributeNS(null, `stop-color`, `#FF0000`);
+		radialGradient.appendChild(stop1);
+		let stop2 = document.createElementNS("http://www.w3.org/2000/svg", `stop`);
+		stop2.setAttributeNS(null, `id`, `jq_stop_4362`);
+		stop2.setAttributeNS(null, `offset`, `1`);
+		stop2.setAttributeNS(null, `stop-opacity`, `0`);
+		radialGradient.appendChild(stop2);
+		enemyView.appendChild(radialGradient);
 	}
 }
 
@@ -128,4 +162,35 @@ function checkPlayerDamageRange() {
 	damageRange.setAttribute("x", 50 - player.range / 2 + `%`);
 	damageRange.setAttribute("y", 50 - player.range / 2 + `%`);
 	playerDamageRange.appendChild(damageRange);
+}
+
+//изменение пола и стен в заввисимости от уровня
+export function locationView() {
+	if (currentLevel >= 1 && currentLevel <= 10) {
+		floor.style.backgroundImage = `url(../Project/SVGLibrary/room/floor1-10.svg)`;
+		room.style.borderImage = `url(../Project/SVGLibrary/room/walls1-10.svg) 40 round`;
+	} else if (currentLevel >= 11 && currentLevel <= 20) {
+		floor.style.backgroundImage = `url(../Project/SVGLibrary/room/floor11-20.svg)`;
+		room.style.borderImage = `url(../Project/SVGLibrary/room/walls11-20.svg) 40 round`;
+	} else if (currentLevel >= 21 && currentLevel <= 30) {
+		floor.style.backgroundImage = `url(../Project/SVGLibrary/room/floor21-30.svg)`;
+		room.style.borderImage = `url(../Project/SVGLibrary/room/walls21-30.svg) 40 round`;
+	}
+}
+
+//оповещение Сколько уровней осталось? (после 11 и 21 уровня)
+export function levelsLeft() {
+	if (currentLevel === 10 || currentLevel === 20) {
+		let message = document.createElement(`div`);
+		message.textContent = `ОСТАЛОСЬ ${30 - currentLevel} УРОВНЕЙ`
+		message.style.cssText = `position: absolute; left: 20vw; top: 10vw;
+		font-size: 5vw; pointer-events: none; z-index: 4;`
+		if (currentLevel === 10) {
+			message.style.textShadow = `green 2vw 0 4vw`
+		} else if (currentLevel === 20) {
+			message.style.textShadow = `red 2vw 0 4vw`
+		}
+		message.classList = `appearanceMessage`
+		body.appendChild(message);
+	}
 }

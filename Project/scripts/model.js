@@ -93,7 +93,7 @@ function tick() {
 }
 
 //текущий уровень комнаты (все скейлы зависят ОТ ЭТОГО ЧИСЛА)
-let currentLevel = 1;
+export let currentLevel = 1;
 //текущий уровень (тег) показывается в левом верхнем углу экрана
 let currentLevelElement = document.getElementById(`levelText`);
 currentLevelElement.textContent = `level ` + currentLevel + ` Работа над выпускным проектом Максима Б. группа FD2-140-23-12`;
@@ -111,9 +111,6 @@ export let enemyArray = [];
 //массив врагов ЭЛЕМЕНТОВ (тегов)
 export let enemyElArray = [];
 
-//тег `body` (для присоединения к нему modalGlass)
-let body = document.getElementsByTagName(`body`)[0];
-
 //подсчет фрагов
 let allkillsCount = 0;
 let roomKillsCount = 0;
@@ -124,6 +121,11 @@ export let gameStatus = `fight`
 //сундук
 export let chest = {};
 export let chestElement = document.createElement(`div`);
+
+//элементы игрового поля и body
+export let body = document.getElementsByTagName(`body`)[0];
+export let room = document.getElementById(`room`);
+export let floor = document.getElementById(`room`);
 
 //верхняя дверь
 let doorElement = document.getElementById(`doorTop`);
@@ -189,7 +191,6 @@ function checkInventory() {
 	if (player.helmet != `none`) {
 		player.armor += player.helmet.armor;
 	}
-	console.log(`броня игрока: ` + player.armor)
 	view.checkViewInventory()
 }
 
@@ -202,7 +203,11 @@ function playerInRoom() {
 //Создать массив врагов (Размер массива зависит от LVL)
 function createArrayEnemy() {
 	//расчет кол-ва, урона, ХП и внешнего вида мобов. Всё зависит от LVL
-	const enemyCount = Math.floor(Math.random() * (currentLevel) + 1)
+	let enemyCount = Math.floor(Math.random() * (currentLevel) + 1)
+	//количество врагов 1 - 20 (больше 20 не нужно, это слишком)
+	if (enemyCount > 20) {
+		enemyCount = 20;
+	}
 	for (let i = 0; i < enemyCount; i++) {
 		let HP = (enemyHPIndex * currentLevel * (Math.floor(Math.random() * 5) + 1)).toFixed(2)
 		let damage = (enemyDamageIndex * currentLevel * (Math.floor(Math.random() * 5) + 1)).toFixed(2)
@@ -210,8 +215,10 @@ function createArrayEnemy() {
 		let weapon = `knife`;
 		if (damage > 0.5 && damage < 1) {
 			weapon = `double knives`;
-		} else if (damage >= 1) {
+		} else if (damage >= 1 && damage < 1.4) {
 			weapon = `two-handed mace`;
+		} else if (damage >= 1.4) {
+			weapon = `two hellish staff`;
 		}
 		//Направление по X и Y рандомны (всего 4 направления для врага)
 		if (Math.round(Math.random()) === 1) {
@@ -220,14 +227,15 @@ function createArrayEnemy() {
 		if (Math.round(Math.random()) === 1) {
 			enemySpeedYIndex = -enemySpeedYIndex;
 		}
-		//pozX и poxY случайны и подобраны так, чтобы моб всегда был в пределых комнаты
+		//pozX и poxY случайны и подобраны так, чтобы моб всегда был в пределых комнаты.
+		//Если оружие у врага `two hellish staff`, то скорость у него будет 0 (некое особое поведение у самого опасного проотивника)
 		let enemy = {
 			id: i,
 			damage: damage,
 			HP: HP,
 			weapon: weapon,
-			speedX: enemySpeedXIndex,
-			speedY: enemySpeedYIndex,
+			speedX: (weapon === `two hellish staff` ? 0 : enemySpeedXIndex),
+			speedY: (weapon === `two hellish staff` ? 0 : enemySpeedXIndex),
 			posX: randomPositionFloor(`X`),
 			posY: randomPositionFloor(`Y`),
 			death: function () {
@@ -263,6 +271,8 @@ function playerWin() {
 	chest.status = `open`;
 	//чтобы появилась дверь
 	doorElement.classList = `appearanceDoor`;
+	//оповещение Сколько уровней осталось? (после 11 и 21 уровня)
+	view.levelsLeft()
 }
 
 //создать сундук и положить в него лут (+меню с лутом)
@@ -374,7 +384,8 @@ function createChest() {
 					checkInventory()
 					modalWindowChest.remove();
 					modalGlass.remove();
-					chestElement.style.backgroundImage = `url(SVGLibrary/chest/chestOpen.svg)`
+					chestElement.style.backgroundImage = `url(SVGLibrary/chest/chestOpen.svg)`;
+					chestElement.style.pointerEvents = `none`;
 					chest.status = `closed`;
 				}
 
@@ -455,6 +466,9 @@ function enterTheDoor() {
 		++currentLevel;
 		currentLevelElement.textContent = `level ` + currentLevel;
 
+		//обновление локации (после 11 и 21 уровня)
+		view.locationView();
+
 		//создание всего нового
 		createArrayEnemy();
 		nextRoom();
@@ -471,5 +485,5 @@ checkInventory();
 playerInRoom();
 createArrayEnemy();
 createChest();
+view.locationView();
 nextRoom();
-

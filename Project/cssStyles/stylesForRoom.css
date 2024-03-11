@@ -7,9 +7,6 @@
 	border-bottom: solid 0.5vw black;
 	border: 5vw inset;
 	border-color: rgb(209, 209, 209) rgb(87, 87, 87) rgb(109, 109, 109) rgb(179, 179, 179);
-	border-image: url(../SVGLibrary/room/walls.svg);
-	border-image-slice: 50;
-	border-image-repeat: round;
 }
 
 #floor {
@@ -18,8 +15,7 @@
 	align-items: end;
 	width: 100%;
 	height: 100%;
-	background-color: rgb(176, 176, 176);
-	background-image: url(../SVGLibrary/room/floor.svg);
+	background-size: 20%;
 }
 
 #doorButton {
@@ -29,6 +25,9 @@
 	bottom: 8.9vw;
 	width: 5vw;
 	height: 4vw;
+	border-right: 0.3vw solid #4c4c4c;
+	border-left: 0.3vw solid #4c4c4c;
+	border-bottom: 0.3vw solid #4c4c4c;
 }
 
 #doorTop {
@@ -39,6 +38,9 @@
 	width: 5vw;
 	height: 4vw;
 	opacity: 0;
+	border-top: 0.3vw solid #5c5c5c;
+	border-right: 0.3vw solid #5c5c5c;
+	border-left: 0.3vw solid #5c5c5c;
 }
 
 .appearanceDoor {
@@ -52,5 +54,22 @@
 	to {
 		box-shadow: 0 0 10vw 0.5vw rgba(255, 255, 255, 0.524);
 		opacity: 1;
+	}
+}
+
+.appearanceMessage {
+	animation: appearanceMessage 5s forwards;
+}
+/* Анимация появления сообщения Сколько уровней осталось? */
+@keyframes appearanceMessage {
+	from {
+		opacity: 0;
+	}
+	50% {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+		display: none;
 	}
 }
