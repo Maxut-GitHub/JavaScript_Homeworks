@@ -14,24 +14,24 @@ function tick() {
 	//отскок игрока от стен
 	// ВСЕ ЧИСЛА ПОДОБРАНЫ ДЛЯ РАБОТЫ С ПРОЦЕНТАМИ % `floor`
 	// отскок от нижнего пола
-	if (player.posY > 62) {
+	if (player.posY > 82) {
 		player.speedY = 0;
-		player.posY = 62;
+		player.posY = 82;
 	}
 	// отскок от верха пола
-	if (player.posY < 1) {
+	if (player.posY < -15) {
 		player.speedY = 0;
-		player.posY = 1;
+		player.posY = -15;
 	}
 	// отскок от левой стенки
-	if (player.posX < 5) {
+	if (player.posX < 0) {
 		player.speedX = 0;
-		player.posX = 5;
+		player.posX = 0;
 	}
 	// отскок от правой стенки
-	if (player.posX > 90) {
+	if (player.posX > 95) {
 		player.speedX = 0;
-		player.posX = 90;
+		player.posX = 95;
 	}
 
 	if (gameStatus === `fight`) {
@@ -42,24 +42,24 @@ function tick() {
 			enemyArray[i].posY += enemyArray[i].speedY;
 			// ВСЕ ЧИСЛА ПОДОБРАНЫ ДЛЯ РАБОТЫ С ПРОЦЕНТАМИ % `floor`
 			// отскок от нижнего пола
-			if (enemyArray[i].posY > 62) {
+			if (enemyArray[i].posY > 82) {
 				enemyArray[i].speedY = -enemyArray[i].speedY;
-				enemyArray[i].posY = 62;
+				enemyArray[i].posY = 82;
 			}
 			// отскок от верха пола
-			if (enemyArray[i].posY < 1) {
+			if (enemyArray[i].posY < -15) {
 				enemyArray[i].speedY = -enemyArray[i].speedY;
-				enemyArray[i].posY = 1;
+				enemyArray[i].posY = -15;
 			}
 			// отскок от левой стенки
-			if (enemyArray[i].posX < 5) {
+			if (enemyArray[i].posX < 0) {
 				enemyArray[i].speedX = -enemyArray[i].speedX;
-				enemyArray[i].posX = 5;
+				enemyArray[i].posX = 0;
 			}
 			// отскок от правой стенки
-			if (enemyArray[i].posX > 90) {
+			if (enemyArray[i].posX > 95) {
 				enemyArray[i].speedX = -enemyArray[i].speedX;
-				enemyArray[i].posX = 90;
+				enemyArray[i].posX = 95;
 			}
 		}
 
@@ -235,7 +235,7 @@ function createArrayEnemy() {
 			HP: HP,
 			weapon: weapon,
 			speedX: (weapon === `two hellish staff` ? 0 : enemySpeedXIndex),
-			speedY: (weapon === `two hellish staff` ? 0 : enemySpeedXIndex),
+			speedY: (weapon === `two hellish staff` ? 0 : enemySpeedYIndex),
 			posX: randomPositionFloor(`X`),
 			posY: randomPositionFloor(`Y`),
 			death: function () {
@@ -439,11 +439,11 @@ function checkHealsbar() {
 //Создание случайных координат для различных объектов (рассчитано для floor) в аргумент передавать строку `X` или `Y`
 function randomPositionFloor(stringXY) {
 	if (stringXY === `X`) {
-		//максимум 90 минимум 5
-		return (Math.floor(Math.random() * 85) + 5);
+		//максимум 95 минимум 0
+		return Math.round(Math.random() * 95);
 	} else if (stringXY === `Y`) {
-		//максимум 50 минимум 5
-		return (Math.floor(Math.random() * 45) + 5);
+		//максимум 82 минимум -15
+		return Math.round(Math.random() * (82 - (-15)) + (-15));
 	}
 }
 

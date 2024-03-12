@@ -10,17 +10,17 @@ html {
 #gamePanel {
 	position: absolute;
 	display: flex;
-	flex-direction: column;
 	margin: 1%;
 	width: 98%;
 	height: 48vw;
-	border: solid 0.5vw black;
 }
 
 #interface {
+	position: absolute;
 	display: flex;
 	width: 100%;
 	height: 10vw;
+	top: 80%;
 	background-color: aliceblue;
 	z-index: 5;
 }
@@ -31,7 +31,9 @@ html {
 	width: 40%;
 }
 #healsbar {
-	width: 80%;
+	position: absolute;
+	display: flex;
+	width: 35vw;
 	height: 40%;
 	background-color: rgb(0, 0, 0);
 	border: solid 0.3vw black;
@@ -43,11 +45,17 @@ html {
 	height: 100%;
 }
 #HPcount {
-	position: relative;
-	bottom: 2.3vw;
+	position: absolute;
+	width: 100%;
+	top: 15%;
 	text-align: center;
 	font-size: 2vw;
 	color: rgb(210, 210, 210);
+}
+
+#lifeText {
+	position: absolute;
+	top: 75%;
 }
 
 .interface-slot {
@@ -72,4 +80,23 @@ html {
 }
 .interface-all-text {
 	font-size: 1.5vw;
+}
+
+@media screen and (max-height: 480px) {
+	#interface {
+		height: 6vw;
+	}
+
+	#healsbar {
+		top: 10%;
+	}
+
+	#lifeText {
+		top: 50%;
+	}
+
+	#HPcount {
+		font-size: 1.5vw;
+		top: 1%;
+	}
 }
