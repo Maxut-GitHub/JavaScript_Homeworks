@@ -86,6 +86,14 @@ const IronBoots_PerfectQuality = {
 }
 bootsArray.push(IronBoots_PerfectQuality)
 
+const SpikedBoots = {
+	name: `Шипастые ботинки (будет больно)`,
+	armor: -500,
+	moveSpeed: 1,
+	view: `url(SVGLibrary/boots/SpikedBoots.svg)`,
+}
+bootsArray.push(SpikedBoots)
+
 //массив всех нагрудных доспех
 let bodyArmorArray = [];
 // Нагрудный доспех
@@ -163,10 +171,10 @@ const IronHelmet_PerfectQuality = {
 helmetArray.push(IronHelmet_PerfectQuality)
 
 let allItemsArray = [];
-allItemsArray.push(weaponArray);
 allItemsArray.push(bootsArray);
 allItemsArray.push(bodyArmorArray);
 allItemsArray.push(helmetArray);
+allItemsArray.push(weaponArray);
 
 //экспорт массива всех объектов 
 export default allItemsArray;

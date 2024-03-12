@@ -147,11 +147,11 @@ export let player = {
 	damage: 0.1,
 	range: 10,
 	canMove: true,
-	speed: 0.3,
+	speed: 0,
 	speedX: 0,
 	speedY: 0,
-	posX: 47.5,
-	posY: 62,
+	posX: 47,
+	posY: 80,
 
 	move: function (x, y) {
 		if (x) {
@@ -177,12 +177,15 @@ background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw;
 //Проверка инвентаря у игрока (показать оружие в руке, если есть в инвентаре и показать оружие/доспехи в слотах) дать игроку урон исходя из его оружия + обновить круг урона
 function checkInventory() {
 	player.armor = 0;
+	player.damage = 0;
+	player.range = 0;
+	player.speed = 0;
 	if (player.weapon != `none`) {
-		player.damage = player.weapon.damage;
-		player.range = player.weapon.range;
+		player.damage += player.weapon.damage;
+		player.range += player.weapon.range;
 	}
 	if (player.boots != `none`) {
-		player.speed = player.boots.moveSpeed;
+		player.speed += player.boots.moveSpeed;
 		player.armor += player.boots.armor;
 	}
 	if (player.bodyArmor != `none`) {
@@ -191,6 +194,9 @@ function checkInventory() {
 	if (player.helmet != `none`) {
 		player.armor += player.helmet.armor;
 	}
+	player.damage ? true : player.damage = 0.1;
+	player.range ? true : player.range = 10;
+	player.speed ? true : player.speed = 0.3;
 	view.checkViewInventory()
 }
 
@@ -199,7 +205,6 @@ function playerInRoom() {
 	floor.appendChild(playerElement)
 	player.HP = 1000;
 }
-
 //Создать массив врагов (Размер массива зависит от LVL)
 function createArrayEnemy() {
 	//расчет кол-ва, урона, ХП и внешнего вида мобов. Всё зависит от LVL
@@ -207,6 +212,10 @@ function createArrayEnemy() {
 	//количество врагов 1 - 20 (больше 20 не нужно, это слишком)
 	if (enemyCount > 20) {
 		enemyCount = 20;
+	}
+	//Если уровнь больше 20, то минимум противников = 10
+	if (enemyCount < 10 && currentLevel > 20) {
+		enemyCount = 10;
 	}
 	for (let i = 0; i < enemyCount; i++) {
 		let HP = (enemyHPIndex * currentLevel * (Math.floor(Math.random() * 5) + 1)).toFixed(2)
@@ -278,19 +287,20 @@ function playerWin() {
 //создать сундук и положить в него лут (+меню с лутом)
 function createChest() {
 	let loot;
-	//lootType 1 - оружие, 2 - сапоги, 3 - нагрудник, 4 - шлем
+	//lootType - тип лута (определяется в lootTypeNumber)
 	let lootType = ``;
 	//lootTypeNumber нужна для нахождения типа в массиве allItemsArray
-	let lootTypeNumber = (Math.floor((Math.random() * 3) + 0.5));
-	switch (lootTypeNumber) {
-		case 0: lootType = `weapon`
-			break;
-		case 1: lootType = `boots`
-			break;
-		case 2: lootType = `bodyArmor`
-			break;
-		case 3: lootType = `helmet`
-			break;
+	//0 - сапоги, 1 - нагрудник, 2 - шлем, 3,4 - оружие (3.4 оружие - нужно для большего шанса встретить именно ОРУЖИЕ)
+	let lootTypeNumber = (Math.round((Math.random() * (4 - 0) + 0)));
+	if (lootTypeNumber === 0) {
+		lootType = `boots`;
+	} else if (lootTypeNumber === 1) {
+		lootType = `bodyArmor`;
+	} else if (lootTypeNumber === 2) {
+		lootType = `helmet`;
+	} else if (lootTypeNumber >= 3) {
+		lootType = `weapon`;
+		lootTypeNumber = 3;
 	}
 	//Если тип лута - weapon, то вместо редкости ролится вид оружия 
 	if (lootType != `weapon`) {
@@ -301,10 +311,10 @@ function createChest() {
 		loot = allItemsArray[lootTypeNumber][lootRarity];
 	} else if (lootType === `weapon`) {
 		let weaponType = Math.floor(currentLevel / 3 + (Math.random()));
-		if (weaponType > allItemsArray[0].length - 1) {
+		if (weaponType > allItemsArray[3].length - 1) {
 			weaponType = allItemsArray[0].length - 1;
 		}
-		loot = allItemsArray[0][weaponType];
+		loot = allItemsArray[3][weaponType];
 	}
 	console.log(`%cВ сундуке лежит ${loot.name}`, `color: yellow`);
 	chest = {
@@ -475,8 +485,8 @@ function enterTheDoor() {
 		createChest();
 		chest.status = `closed`
 		player.HP = player.maxHP + player.armor;
-		player.posX = 47.5;
-		player.posY = 62;
+		player.posX = 47;
+		player.posY = 80;
 		gameStatus = `fight`;
 	}
 }
