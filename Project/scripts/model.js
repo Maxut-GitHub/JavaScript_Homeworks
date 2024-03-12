@@ -302,21 +302,12 @@ function createChest() {
 		lootType = `weapon`;
 		lootTypeNumber = 3;
 	}
-	//Если тип лута - weapon, то вместо редкости ролится вид оружия 
-	if (lootType != `weapon`) {
-		let lootRarity = Math.floor(currentLevel / 3 + (Math.random()));
-		if (lootRarity > allItemsArray[lootTypeNumber].length - 1) {
-			lootRarity = allItemsArray[lootTypeNumber].length - 1
-		}
-		loot = allItemsArray[lootTypeNumber][lootRarity];
-	} else if (lootType === `weapon`) {
-		let weaponType = Math.floor(currentLevel / 3 + (Math.random()));
-		if (weaponType > allItemsArray[3].length - 1) {
-			weaponType = allItemsArray[0].length - 1;
-		}
-		loot = allItemsArray[3][weaponType];
-	}
+
+	//Здесь определаяется, какой ИМЕННО лут будет в сундуке (находится объект в массиве allItemsArray)
+	let item = Math.floor((Math.random() * allItemsArray[lootTypeNumber].length));
+	loot = allItemsArray[lootTypeNumber][item];
 	console.log(`%cВ сундуке лежит ${loot.name}`, `color: yellow`);
+
 	chest = {
 		loot: loot,
 		posX: randomPositionFloor(`X`),

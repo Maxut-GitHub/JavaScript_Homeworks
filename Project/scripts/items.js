@@ -94,7 +94,7 @@ const SpikedBoots = {
 }
 bootsArray.push(SpikedBoots)
 
-//массив всех нагрудных доспех
+//массив всех нагрудных доспехов
 let bodyArmorArray = [];
 // Нагрудный доспех
 const LeatherBodyArmor = {
@@ -132,7 +132,7 @@ const IronBodyArmor_PerfectQuality = {
 }
 bodyArmorArray.push(IronBodyArmor_PerfectQuality)
 
-//массив всех нагрудных доспех
+//массив всех шлемов
 let helmetArray = [];
 // Шлем
 const LeatherHelmet = {
