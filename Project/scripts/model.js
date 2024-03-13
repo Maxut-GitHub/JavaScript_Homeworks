@@ -99,7 +99,7 @@ let currentLevelElement = document.getElementById(`levelText`);
 currentLevelElement.textContent = `level ` + currentLevel + ` Работа над выпускным проектом Максима Б. группа FD2-140-23-12`;
 
 //коэфициент расчета здоровья врагов
-let enemyHPIndex = 0.3;
+let enemyHPIndex = 0.2;
 //коэфициент расчета урона врагов
 let enemyDamageIndex = 0.01;
 //коэфициент расчета скорости врагов
@@ -205,9 +205,9 @@ function checkInventory() {
 		player.speed += player.helmet.moveSpeed ? player.helmet.moveSpeed : 0;
 	}
 	//характеристики, если вдруг игрок сделает себе ОТРИЦАТЕЛЬНЫЕ значения (или 0)
-	player.damage ? Math.abs(player.damage) : player.damage = 0.1;
-	player.range ? Math.abs(player.range) : player.range = 1;
-	player.speed ? Math.abs(player.speed) : player.speed = 0.1;
+	player.damage <= 0 ? player.damage = 0.1 : ``;
+	player.range <= 0 ? player.range = 1 : ``;
+	player.speed <= 0 ? player.speed = 0.1 : ``;
 	view.checkViewInventory()
 	console.log(`урон игрока: ` + player.damage)
 	console.log(`броня игрока: ` + player.armor)
@@ -322,10 +322,10 @@ function createChest() {
 	let item = Math.floor((Math.random() * allItemsArray[lootTypeNumber].length));
 	loot = allItemsArray[lootTypeNumber][item];
 	//ДЛЯ ТЕСТА ПРЕДМЕТОВ
-	// if (currentLevel === 1) {
-	// 	lootType = `helmet`
-	// 	loot = allItemsArray[2][5];
-	// }
+	if (currentLevel === 1) {
+		lootType = `weapon`
+		loot = allItemsArray[3][6];
+	}
 
 	console.log(`%cВ сундуке лежит ${loot.name}`, `color: yellow`);
 	chest = {
@@ -340,7 +340,7 @@ function createChest() {
 				body.appendChild(modalGlass)
 
 				let modalWindowChest = document.createElement(`div`);
-				modalWindowChest.style.cssText = `display: flex; position: absolute; width: 50vw; height: 27vw; background-color: #6e6b1a;
+				modalWindowChest.style.cssText = `display: flex; position: absolute; width: 50vw; height: 29vw; background-color: #6e6b1a;
 				left: 25vw; top: 10vw; padding: 2vw; border: solid 0.5vw #7f3f00; border-radius:  6vw 6vw 1vw 1vw; z-index: 6`
 				body.appendChild(modalWindowChest)
 
@@ -365,7 +365,7 @@ function createChest() {
 
 				//Правая сторона окна (иконка предмета и описание)
 				let itemDescription = document.createElement(`div`);
-				itemDescription.style.cssText = `display: flex; flex-direction: column; align-items: center; width: 100%; height: 22vw;`;
+				itemDescription.style.cssText = `display: flex; flex-direction: column; align-items: center; width: 100%; height: 24vw;`;
 				modalWindowChest.appendChild(itemDescription)
 
 				let itemImage = document.createElement(`div`);
@@ -375,15 +375,20 @@ function createChest() {
 				itemDescription.appendChild(itemImage)
 
 				let itemsStats = document.createElement(`div`);
-				itemsStats.style.cssText = `width: 100%; height: 10vw; background-color: rgb(172, 172, 172); font-size: 1.6vw; padding: 1vw; border: solid 0.2vw`;
+				itemsStats.style.cssText = `width: 100%; height: 12vw; background-color: rgb(172, 172, 172); font-size: 1.6vw; padding: 1vw; border: solid 0.2vw`;
 
-				//описание предмета (ЛЮБОГО) + сравнение
+				//описание предмета (ЛЮБОГО) + сравнение (сравниваются статы даже если у найденного предмета нет статов, которые ЕСТЬ у предмета на персонаже)
+				//Пример: у героя "Саи" (урон, дальноость и скорость бега) в сундуке "Топор" (урон и дальноость). Будет сравнение ВСЕХ ТРЕХ статов, у топора будет 0 скорости бега.
 				itemsStats.innerHTML = `${loot.name} <br>
 					${loot.armor ? `броня: ${loot.armor} ${player[lootType].armor ? `← ${player[lootType].armor}` : ``} <br>` : ``}
-					${loot.moveSpeed ? `скорость бега: ${loot.moveSpeed} ${player[lootType].moveSpeed ? `← ${player[lootType].moveSpeed}` : ``} <br>` : ``}
+					${player[lootType].armor && !loot.armor ? `броня: ${loot.armor ? loot.armor : 0} ${player[lootType].armor ? `← ${player[lootType].armor}` : ``} <br>` : ``}
 					${loot.damage ? `урон: ${loot.damage} ${player[lootType].damage ? `← ${player[lootType].damage}` : ``} <br>` : ``}
-					${loot.range ? `дальность: ${loot.range} ${player[lootType].range ? `← ${player[lootType].range}` : ``} <br>` : ``}`
-				itemDescription.appendChild(itemsStats)
+					${player[lootType].damage && !loot.damage ? `урон: ${loot.damage ? loot.damage : 0} ${player[lootType].damage ? `← ${player[lootType].damage}` : ``} <br>` : ``}
+					${loot.moveSpeed ? `скорость бега: ${loot.moveSpeed} ${player[lootType].moveSpeed ? `← ${player[lootType].moveSpeed}` : ``} <br>` : ``}
+					${player[lootType].moveSpeed && !loot.moveSpeed ? `скорость бега: ${loot.moveSpeed ? loot.moveSpeed : 0} ${player[lootType].moveSpeed ? `← ${player[lootType].moveSpeed}` : ``} <br>` : ``}
+					${loot.range ? `дальность: ${loot.range} ${player[lootType].range ? `← ${player[lootType].range}` : ``} <br>` : ``}
+					${player[lootType].range && !loot.range ? `дальность: ${loot.range ? loot.range : 0} ${player[lootType].range ? `← ${player[lootType].range}` : ``} <br>` : ``}`
+				itemDescription.appendChild(itemsStats);
 
 				function takeItem() {
 					player[lootType] = loot;
