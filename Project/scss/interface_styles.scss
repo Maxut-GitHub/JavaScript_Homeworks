@@ -1,12 +1,5 @@
-* {
-	box-sizing: border-box;
-	margin: 0;
-	padding: 0;
-}
-html {
-	background-color: rgb(30, 30, 30);
-}
-
+@import "_main_styles.scss";
+@import "_fonts.scss";
 #gamePanel {
 	position: absolute;
 	display: flex;
