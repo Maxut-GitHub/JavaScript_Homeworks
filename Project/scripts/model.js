@@ -177,27 +177,42 @@ background-size: contain; background-repeat: no-repeat; width: 5vw; height: 5vw;
 //Проверка инвентаря у игрока (показать оружие в руке, если есть в инвентаре и показать оружие/доспехи в слотах) дать игроку урон исходя из его оружия + обновить круг урона
 function checkInventory() {
 	player.armor = 0;
-	player.damage = 0;
-	player.range = 0;
-	player.speed = 0;
+	player.damage = 0.1;
+	player.range = 10;
+	player.speed = 0.3;
 	if (player.weapon != `none`) {
-		player.damage += player.weapon.damage;
-		player.range += player.weapon.range;
+		player.damage += player.weapon.damage ? player.weapon.damage : 0;
+		player.range += player.weapon.range ? player.weapon.range : 0;
+		player.armor += player.weapon.armor ? player.weapon.armor : 0;
+		player.speed += player.weapon.moveSpeed ? player.weapon.moveSpeed : 0;
 	}
 	if (player.boots != `none`) {
-		player.speed += player.boots.moveSpeed;
-		player.armor += player.boots.armor;
+		player.damage += player.boots.damage ? player.boots.damage : 0;
+		player.range += player.boots.range ? player.boots.range : 0;
+		player.armor += player.boots.armor ? player.boots.armor : 0;
+		player.speed += player.boots.moveSpeed ? player.boots.moveSpeed : 0;
 	}
 	if (player.bodyArmor != `none`) {
-		player.armor += player.bodyArmor.armor;
+		player.damage += player.bodyArmor.damage ? player.bodyArmor.damage : 0;
+		player.range += player.bodyArmor.range ? player.bodyArmor.range : 0;
+		player.armor += player.bodyArmor.armor ? player.bodyArmor.armor : 0;
+		player.speed += player.bodyArmor.moveSpeed ? player.bodyArmor.moveSpeed : 0;
 	}
 	if (player.helmet != `none`) {
-		player.armor += player.helmet.armor;
+		player.damage += player.helmet.damage ? player.helmet.damage : 0;
+		player.range += player.helmet.range ? player.helmet.range : 0;
+		player.armor += player.helmet.armor ? player.helmet.armor : 0;
+		player.speed += player.helmet.moveSpeed ? player.helmet.moveSpeed : 0;
 	}
-	player.damage ? true : player.damage = 0.1;
-	player.range ? true : player.range = 10;
-	player.speed ? true : player.speed = 0.3;
+	//характеристики, если вдруг игрок сделает себе ОТРИЦАТЕЛЬНЫЕ значения (или 0)
+	player.damage ? Math.abs(player.damage) : player.damage = 0.1;
+	player.range ? Math.abs(player.range) : player.range = 1;
+	player.speed ? Math.abs(player.speed) : player.speed = 0.1;
 	view.checkViewInventory()
+	console.log(`урон игрока: ` + player.damage)
+	console.log(`броня игрока: ` + player.armor)
+	console.log(`дальность игрока: ` + player.range)
+	console.log(`скорость игрока: ` + player.speed)
 }
 
 //добавление игрока в комнату
@@ -306,8 +321,13 @@ function createChest() {
 	//Здесь определаяется, какой ИМЕННО лут будет в сундуке (находится объект в массиве allItemsArray)
 	let item = Math.floor((Math.random() * allItemsArray[lootTypeNumber].length));
 	loot = allItemsArray[lootTypeNumber][item];
-	console.log(`%cВ сундуке лежит ${loot.name}`, `color: yellow`);
+	//ДЛЯ ТЕСТА ПРЕДМЕТОВ
+	// if (currentLevel === 1) {
+	// 	lootType = `helmet`
+	// 	loot = allItemsArray[2][5];
+	// }
 
+	console.log(`%cВ сундуке лежит ${loot.name}`, `color: yellow`);
 	chest = {
 		loot: loot,
 		posX: randomPositionFloor(`X`),
@@ -356,28 +376,13 @@ function createChest() {
 
 				let itemsStats = document.createElement(`div`);
 				itemsStats.style.cssText = `width: 100%; height: 10vw; background-color: rgb(172, 172, 172); font-size: 1.6vw; padding: 1vw; border: solid 0.2vw`;
-				if (lootType != `weapon`) {
 
-					if (lootType === `boots`) {
-						itemsStats.innerHTML = `${loot.name} <br>
-					броня: ${loot.armor} ${player.boots.armor ? `(ваши сапоги: ${player.boots.armor})` : ``} <br>
-					скорость бега: ${loot.moveSpeed} (сейчас: ${player.speed})`
-					}
-					else if (lootType === `bodyArmor`) {
-						itemsStats.innerHTML = `${loot.name} <br>
-					броня: ${loot.armor} ${player.bodyArmor.armor ? `(ваш нагрудник: ${player.bodyArmor.armor})` : ``}`
-					}
-					else if (lootType === `helmet`) {
-						itemsStats.innerHTML = `${loot.name} <br>
-					броня: ${loot.armor} ${player.helmet.armor ? `(ваш шлем: ${player.helmet.armor})` : ``}`
-					}
-
-				} else if (lootType === `weapon`) {
-					itemsStats.innerHTML = `${loot.name} <br>
-				урон: ${loot.damage} (сейчас: ${player.damage}) <br>
-				дальность: ${loot.range} (сейчас: ${player.range})`
-				}
-
+				//описание предмета (ЛЮБОГО) + сравнение
+				itemsStats.innerHTML = `${loot.name} <br>
+					${loot.armor ? `броня: ${loot.armor} ${player[lootType].armor ? `← ${player[lootType].armor}` : ``} <br>` : ``}
+					${loot.moveSpeed ? `скорость бега: ${loot.moveSpeed} ${player[lootType].moveSpeed ? `← ${player[lootType].moveSpeed}` : ``} <br>` : ``}
+					${loot.damage ? `урон: ${loot.damage} ${player[lootType].damage ? `← ${player[lootType].damage}` : ``} <br>` : ``}
+					${loot.range ? `дальность: ${loot.range} ${player[lootType].range ? `← ${player[lootType].range}` : ``} <br>` : ``}`
 				itemDescription.appendChild(itemsStats)
 
 				function takeItem() {

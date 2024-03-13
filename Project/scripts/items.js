@@ -7,7 +7,7 @@ let weaponArray = [];
 const Sword = {
 	name: `Меч`,
 	damage: 0.3,
-	range: 20,
+	range: 15,
 	view: `url(SVGLibrary/weapon/Sword.svg)`,
 	playerView: `url(SVGLibrary/player/playerSword.svg)`,
 }
@@ -15,8 +15,8 @@ weaponArray.push(Sword)
 
 const Spear = {
 	name: `Копье`,
-	damage: 0.5,
-	range: 30,
+	damage: 0.4,
+	range: 20,
 	view: `url(SVGLibrary/weapon/Spear.svg)`,
 	playerView: `url(SVGLibrary/player/playerSpear.svg)`,
 }
@@ -24,8 +24,8 @@ weaponArray.push(Spear)
 
 const Hammer = {
 	name: `Молот`,
-	damage: 0.8,
-	range: 20,
+	damage: 0.7,
+	range: 10,
 	view: `url(SVGLibrary/weapon/Hammer.svg)`,
 	playerView: `url(SVGLibrary/player/playerHammer.svg)`,
 }
@@ -33,8 +33,8 @@ weaponArray.push(Hammer)
 
 const Bow = {
 	name: `Лук`,
-	damage: 0.5,
-	range: 60,
+	damage: 0.2,
+	range: 50,
 	view: `url(SVGLibrary/weapon/Bow.svg)`,
 	playerView: `url(SVGLibrary/player/playerBow.svg)`,
 }
@@ -72,7 +72,7 @@ bootsArray.push(IronBoots_awerageQuality)
 
 const IronBoots_highQuality = {
 	name: `Высококачественные Железные ботинки`,
-	armor: 30,
+	armor: 50,
 	moveSpeed: 0.5,
 	view: `url(SVGLibrary/boots/IronBoots_highQuality.svg)`,
 }
@@ -80,14 +80,14 @@ bootsArray.push(IronBoots_highQuality)
 
 const IronBoots_PerfectQuality = {
 	name: `Идельные Железные ботинки`,
-	armor: 60,
+	armor: 100,
 	moveSpeed: 0.6,
 	view: `url(SVGLibrary/boots/IronBoots_PerfectQuality.svg)`,
 }
 bootsArray.push(IronBoots_PerfectQuality)
 
 const SpikedBoots = {
-	name: `Шипастые ботинки (будет больно)`,
+	name: `Шипастые ботинки`,
 	armor: -500,
 	moveSpeed: 1,
 	view: `url(SVGLibrary/boots/SpikedBoots.svg)`,
@@ -127,7 +127,7 @@ bodyArmorArray.push(IronBodyArmor_highQuality)
 
 const IronBodyArmor_PerfectQuality = {
 	name: `Идеальный Железный нагрудник`,
-	armor: 350,
+	armor: 400,
 	view: `url(SVGLibrary/bodyArmor/IronBodyArmor_PerfectQuality.svg)`,
 }
 bodyArmorArray.push(IronBodyArmor_PerfectQuality)
@@ -169,6 +169,22 @@ const IronHelmet_PerfectQuality = {
 	view: `url(SVGLibrary/helmet/IronHelmet_PerfectQuality.svg)`,
 }
 helmetArray.push(IronHelmet_PerfectQuality)
+
+const FormidableHelmet = {
+	name: `Грозный шлем`,
+	armor: 150,
+	damage: 0.2,
+	view: `url(SVGLibrary/helmet/FormidableHelmet.svg)`,
+}
+helmetArray.push(FormidableHelmet)
+
+const HeavyHelmet = {
+	name: `Тяжелый шлем`,
+	armor: 600,
+	moveSpeed: -0.2,
+	view: `url(SVGLibrary/helmet/HeavyHelmet.svg)`,
+}
+helmetArray.push(HeavyHelmet)
 
 let allItemsArray = [];
 allItemsArray.push(bootsArray);
