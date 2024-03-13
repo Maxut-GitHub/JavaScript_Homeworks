@@ -322,10 +322,10 @@ function createChest() {
 	let item = Math.floor((Math.random() * allItemsArray[lootTypeNumber].length));
 	loot = allItemsArray[lootTypeNumber][item];
 	//ДЛЯ ТЕСТА ПРЕДМЕТОВ
-	if (currentLevel === 1) {
-		lootType = `weapon`
-		loot = allItemsArray[3][6];
-	}
+	// if (currentLevel === 1) {
+	// 	lootType = `weapon`
+	// 	loot = allItemsArray[3][6];
+	// }
 
 	console.log(`%cВ сундуке лежит ${loot.name}`, `color: yellow`);
 	chest = {
