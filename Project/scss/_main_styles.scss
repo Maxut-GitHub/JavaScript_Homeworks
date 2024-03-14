@@ -22,3 +22,11 @@ body {
 	overflow: hidden;
 	user-select: none;
 }
+
+#gameField {
+	position: absolute;
+	display: flex;
+	margin: 1%;
+	width: 98%;
+	height: 48vw;
+}

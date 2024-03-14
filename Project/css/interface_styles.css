@@ -41,7 +41,7 @@ body {
   height: 48vw;
 }
 
-#interface {
+.interface {
   position: absolute;
   display: flex;
   width: 100%;
@@ -86,7 +86,7 @@ body {
   top: 75%;
 }
 
-.interface-slot {
+.interface__slot {
   width: 50%;
   height: 50%;
   border: solid 0.3vw black;
@@ -96,7 +96,7 @@ body {
   background-position: center;
 }
 
-.interface-panel {
+.interface__panel {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -107,7 +107,7 @@ body {
   border: solid 0.3vw black;
 }
 
-.interface-all-text {
+.interface__text {
   font-size: 1.5vw;
 }
 
@@ -125,4 +125,4 @@ body {
     font-size: 1.5vw;
     top: 1%;
   }
-}/*# sourceMappingURL=Interface_styles.css.map */
+}/*# sourceMappingURL=interface_styles.css.map */
