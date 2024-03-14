@@ -135,6 +135,10 @@ doorElement.onclick = enterTheDoor;
 let modalGlass = document.createElement(`div`);
 modalGlass.style.cssText = `position: fixed; width: 100%; height: 100%; background-color: #2b2b2b; opacity: 0.5; z-index: 5 `
 
+//Кнопка меню
+let menuButton = document.getElementById(`menuButton`);
+menuButton.onclick = menu;
+
 //игрок
 export let player = {
 	weapon: `none`,
@@ -204,10 +208,14 @@ function checkInventory() {
 		player.armor += player.helmet.armor ? player.helmet.armor : 0;
 		player.speed += player.helmet.moveSpeed ? player.helmet.moveSpeed : 0;
 	}
-	//характеристики, если вдруг игрок сделает себе ОТРИЦАТЕЛЬНЫЕ значения (или 0)
+	player.armor = player.armor;
+	player.damage = player.damage;
+	player.range = player.range;
+	player.speed = player.speed;
+	//характеристики, если вдруг игрок сделает себе ОТРИЦАТЕЛЬНЫЕ значения (или слишком низкие, это критично для скорости)
 	player.damage <= 0 ? player.damage = 0.1 : ``;
 	player.range <= 0 ? player.range = 1 : ``;
-	player.speed <= 0 ? player.speed = 0.1 : ``;
+	player.speed < 0.1 ? player.speed = 0.1 : ``;
 	view.checkViewInventory()
 	console.log(`урон игрока: ` + player.damage)
 	console.log(`броня игрока: ` + player.armor)
@@ -444,6 +452,7 @@ function checkHealsbar() {
 		player.speedY = 0;
 		player.damage = 0;
 		player.HP = undefined;
+		menu();
 	}
 }
 
@@ -498,3 +507,91 @@ createArrayEnemy();
 createChest();
 view.locationView();
 nextRoom();
+
+function menu() {
+	if (!document.getElementById(`menu`)) {
+		body.appendChild(modalGlass);
+		let pastGameStatus = gameStatus;
+		gameStatus = `pause`;
+		//---------------------------------------------------------------------------------------------------------------------
+		let menuElement = document.createElement(`div`);
+		menuElement.style.cssText = `width: 80vw; height: 80%; background-color: black; position: absolute; z-index: 6; margin: 5% 10%; padding: 2%;
+	display: flex; border-radius: 2vw`
+		menuElement.id = `menu`;
+		body.appendChild(menuElement);
+		//---------------------------------------------------------------------------------------------------------------------
+		let menuButtons = document.createElement(`div`);
+		menuElement.appendChild(menuButtons);
+		menuButtons.style.cssText = `width: 70%; height:  100%; background-color: rgb(113, 113, 113); margin: 0 1vw 0 0; padding: 2% 0;
+	display: flex; align-items: center;  border-radius: 2vw; flex-direction: column;`
+
+		let returnGame = document.createElement(`button`);
+		menuButtons.appendChild(returnGame);
+		returnGame.style.cssText = `width: 80%; height:  20%; background-color: rgb(113, 113, 113); margin: 0 0 5% 0; font-size: 2vw;
+	border: solid black`
+		returnGame.textContent = `Вернуться в игру`;
+		returnGame.onclick = function () { gameStatus = pastGameStatus; modalGlass.remove(); menuElement.remove() };
+		if (pastGameStatus === `defeat` || pastGameStatus === `win`) {
+			returnGame.disabled = `true`;
+		}
+
+		let records = document.createElement(`button`);
+		menuButtons.appendChild(records);
+		records.style.cssText = `width: 80%; height:  20%; background-color: rgb(113, 113, 113); margin: 0 0 5% 0;; font-size: 2vw;
+		border: solid black`
+		records.textContent = `Записать мой результат в рекорды`;
+		records.disabled = `true`;
+		if (pastGameStatus === `win`) {
+			returnGame.disabled = `false`;
+		}
+		records.onclick = function () { };
+
+		let mainMenu = document.createElement(`button`);
+		menuButtons.appendChild(mainMenu);
+		mainMenu.style.cssText = `width: 80%; height:  20%; background-color: rgb(113, 113, 113); font-size: 2vw;
+		border: solid black`
+		mainMenu.textContent = `Главное меню`;
+		mainMenu.onclick = function () { };
+
+		//---------------------------------------------------------------------------------------------------------------------
+		let menuStats = document.createElement(`div`);
+		menuStats.style.cssText = `width: 30%; height: 100%; background-color: rgb(113, 113, 113); border-radius: 2vw;
+	font-size: 2vw; text-align: center; padding: 0 1% `
+		menuElement.appendChild(menuStats);
+		menuStats.innerHTML = `Характеристики <br> <br>
+	Урон: ${player.damage.toFixed(1)}<br>
+	Броня: ${player.armor}<br>
+	Скорсть бега: ${player.speed.toFixed(1)}<br>
+	Дальность: ${player.range}<br><br>
+	Противников побеждено: ${allkillsCount}`
+	}
+}
+
+
+
+//ПРОВЕРКА НА ОРИЕНТАЦИЮ ЭКРАНА ДЛЯ МОБИЛЬНЫХ УСТРООЙСТВ (при просьбе перевернуть экран - вызывается меню)
+window.addEventListener(`orientationchange`, orientationMobileChange);
+//Темное модальнео стекло с сообщением перевернуть экран
+let orientationModalGlass = document.createElement(`div`);
+orientationModalGlass.style.cssText = `position: fixed; width: 100%; height: 100%; background-color: black; z-index: 7; color: white;
+font-size: 8vw; display: flex; justify-content: center; align-items: center;`
+orientationModalGlass.id = `orientationModalGlass`
+orientationModalGlass.textContent = `Переверните экран`
+function orientationMobileChange() {
+	if (window.matchMedia('(orientation: landscape)').matches) {
+		body.appendChild(orientationModalGlass);
+		menu()
+	} else {
+		if (document.getElementById(`orientationModalGlass`)) {
+			orientationModalGlass.remove()
+		}
+	}
+}
+if (window.matchMedia('(orientation: landscape)').matches) {
+} else {
+	body.appendChild(orientationModalGlass);
+	menu()
+}
+
+
+menu()

@@ -69,8 +69,20 @@
 	font-size: 1.5vw;
 }
 
+#menuButton {
+	width: 8vw;
+	height: 7vw;
+	font-size: 2vw;
+	background-color: rgb(113, 113, 113);
+	border: solid 0.3vw black;
+}
+
+#menuButton:hover {
+	background-color: rgb(161, 161, 161);
+}
+
 @media screen and (max-height: 480px) {
-	#interface {
+	.interface {
 		height: 6vw;
 	}
 
@@ -84,6 +96,6 @@
 
 	#HPcount {
 		font-size: 1.5vw;
-		top: 1%;
+		top: 10%;
 	}
 }
