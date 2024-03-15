@@ -30,3 +30,28 @@ body {
 	width: 98%;
 	height: 48vw;
 }
+
+@keyframes animationForMenu {
+	from {
+		transform: translateY(-100%);
+	}
+	to {
+		transform: translateY(0%);
+	}
+}
+
+@keyframes animationForWindowChest {
+	from {
+		transform: translate(-10%, -100%);
+	}
+	50% {
+		transform: translate(0, 0);
+		transform: rotate(2deg);
+	}
+	80% {
+		transform: translate(0, -5%);
+	}
+	to {
+		transform: translate(0, 0);
+	}
+}

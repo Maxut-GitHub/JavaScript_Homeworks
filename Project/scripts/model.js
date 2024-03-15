@@ -347,15 +347,15 @@ function createChest() {
 				chestElement.style.backgroundImage = `url(SVGLibrary/chest/chestOpenWithLoot.svg)`
 				body.appendChild(modalGlass)
 
-				let modalWindowChest = document.createElement(`div`);
-				modalWindowChest.style.cssText = `display: flex; position: absolute; width: 50vw; height: 29vw; background-color: #6e6b1a;
-				left: 25vw; top: 10vw; padding: 2vw; border: solid 0.5vw #7f3f00; border-radius:  6vw 6vw 1vw 1vw; z-index: 6`
-				body.appendChild(modalWindowChest)
+				let windowChest = document.createElement(`div`);
+				windowChest.style.cssText = `display: flex; position: absolute; width: 50vw; height: 29vw; background-color: #6e6b1a;
+				left: 25vw; top: 5vw; padding: 2vw; border: solid 0.5vw #7f3f00; border-radius:  6vw 6vw 1vw 1vw; z-index: 6; animation: animationForWindowChest 0.4s;`
+				body.appendChild(windowChest)
 
 				//левая сторона окна (кнопка взятия и наоборот)
 				let Buttons = document.createElement(`div`);
 				Buttons.style.cssText = `width: 10vw; height: 16vw; display: flex; flex-direction: column; justify-content: space-between; margin: 2vw 4vw 2vw 0; `
-				modalWindowChest.appendChild(Buttons)
+				windowChest.appendChild(Buttons)
 
 				let tikeItemButton = document.createElement(`input`);
 				tikeItemButton.setAttribute(`type`, `button`);
@@ -374,7 +374,7 @@ function createChest() {
 				//Правая сторона окна (иконка предмета и описание)
 				let itemDescription = document.createElement(`div`);
 				itemDescription.style.cssText = `display: flex; flex-direction: column; align-items: center; width: 100%; height: 24vw;`;
-				modalWindowChest.appendChild(itemDescription)
+				windowChest.appendChild(itemDescription)
 
 				let itemImage = document.createElement(`div`);
 				itemImage.style.cssText = `width: 10vw; height: 10vw; background-color: rgb(172, 172, 172);
@@ -401,7 +401,7 @@ function createChest() {
 				function takeItem() {
 					player[lootType] = loot;
 					checkInventory()
-					modalWindowChest.remove();
+					windowChest.remove();
 					modalGlass.remove();
 					chestElement.style.backgroundImage = `url(SVGLibrary/chest/chestOpen.svg)`;
 					chestElement.style.pointerEvents = `none`;
@@ -409,7 +409,7 @@ function createChest() {
 				}
 
 				function notTakeItem() {
-					modalWindowChest.remove();
+					windowChest.remove();
 					modalGlass.remove();
 					chestElement.style.backgroundImage = `url(SVGLibrary/chest/chestClosedWithLoot.svg)`
 				}
@@ -516,7 +516,7 @@ function menu() {
 		//---------------------------------------------------------------------------------------------------------------------
 		let menuElement = document.createElement(`div`);
 		menuElement.style.cssText = `width: 80vw; height: 80%; background-color: black; position: absolute; z-index: 6; margin: 5% 10%; padding: 2%;
-	display: flex; border-radius: 2vw`
+	display: flex; border-radius: 2vw; animation: animationForMenu 0.5s;`
 		menuElement.id = `menu`;
 		body.appendChild(menuElement);
 		//---------------------------------------------------------------------------------------------------------------------
@@ -592,6 +592,3 @@ if (window.matchMedia('(orientation: landscape)').matches) {
 	body.appendChild(orientationModalGlass);
 	menu()
 }
-
-
-menu()
