@@ -1,15 +1,5 @@
 import { player, playerElement, enemyArray, enemyElArray, gameStatus, floor, room, currentLevel, body } from './model.js';
 
-//слоты инвентаря
-//текущее оружие 
-let currentWeapon = document.getElementById(`weaponSlot`)
-//текущее сапоги
-let currentBoots = document.getElementById(`bootsSlot`)
-//текущий нагрудник
-let currentBodyArmor = document.getElementById(`bodyArmorSlot`)
-//текущий шлем 
-let currentHelmet = document.getElementById(`helmetSlot`)
-
 //текущее здоровье (красная полоска)
 let healsbarCurrentHP = document.getElementById(`HP`);
 //счетчик здоровья(белая цифра в хелсбаре)
@@ -55,12 +45,40 @@ export function HealsbarIsZero() {
 //обновляет внешнее отображение инвентаря и дальности игрока
 export function checkViewInventory() {
 	playerElement.style.backgroundImage = player.weapon.playerView;
-	currentWeapon.style.backgroundImage = player.weapon.view;
-	currentHelmet.style.backgroundImage = player.helmet.view;
-	currentBoots.style.backgroundImage = player.boots.view;
-	currentBodyArmor.style.backgroundImage = player.bodyArmor.view;
+	document.getElementById(`weaponSlot`).style.backgroundImage = player.weapon.view;
+	document.getElementById(`helmetSlot`).style.backgroundImage = player.helmet.view;
+	document.getElementById(`bootsSlot`).style.backgroundImage = player.boots.view;
+	document.getElementById(`bodyArmorSlot`).style.backgroundImage = player.bodyArmor.view;
 	checkPlayerDamageRange()
 }
+
+//Создать или обновить круг урона игрока (Функция срабатывает при checkInventory())
+function checkPlayerDamageRange() {
+	let playerDamageRange = document.getElementById(`playerDamageRange`)
+	//Удаление старого круга урона, если он есть
+	if (playerDamageRange) {
+		document.getElementById(`playerDamageRange`).remove();
+	}
+	playerDamageRange = document.createElementNS("http://www.w3.org/2000/svg", `svg`);
+	playerDamageRange.id = `playerDamageRange`;
+	playerDamageRange.style.cssText = `position: absolute; left: -${450}%; top: -${450}%; pointer-events: none; z-index: 0`;
+	playerDamageRange.setAttribute(`width`, 1000 + `%`);
+	playerDamageRange.setAttribute(`height`, 1000 + `%`);
+	playerElement.appendChild(playerDamageRange);
+	let damageRange = document.createElementNS("http://www.w3.org/2000/svg", `rect`);
+	damageRange.id = `damageRange`;
+	damageRange.setAttribute(`width`, player.range + `%`);
+	damageRange.setAttribute(`height`, player.range + `%`);
+	damageRange.setAttribute("stroke", `white`);
+	damageRange.setAttribute(`stroke-width`, "0.2vw")
+	damageRange.setAttribute("stroke-opacity", `0.2`);
+	damageRange.setAttribute("stroke-dasharray", `1vw,1.1vw`);
+	damageRange.setAttribute(`fill`, "none")
+	damageRange.setAttribute("x", 50 - player.range / 2 + `%`);
+	damageRange.setAttribute("y", 50 - player.range / 2 + `%`);
+	playerDamageRange.appendChild(damageRange);
+}
+
 
 //стилизовать врага (в аргументах: сам элемент, его id)
 export function enemyView(el, id) {
@@ -135,33 +153,6 @@ export function enemyView(el, id) {
 		radialGradient.appendChild(stop2);
 		enemyView.appendChild(radialGradient);
 	}
-}
-
-//Создать или обновить круг урона игрока (Функция срабатывает при checkInventory())
-function checkPlayerDamageRange() {
-	let playerDamageRange = document.getElementById(`playerDamageRange`)
-	//Удаление старого круга урона, если он есть
-	if (playerDamageRange) {
-		document.getElementById(`playerDamageRange`).remove();
-	}
-	playerDamageRange = document.createElementNS("http://www.w3.org/2000/svg", `svg`);
-	playerDamageRange.id = `playerDamageRange`;
-	playerDamageRange.style.cssText = `position: absolute; left: -${450}%; top: -${450}%; pointer-events: none; z-index: 0`;
-	playerDamageRange.setAttribute(`width`, 1000 + `%`);
-	playerDamageRange.setAttribute(`height`, 1000 + `%`);
-	playerElement.appendChild(playerDamageRange);
-	let damageRange = document.createElementNS("http://www.w3.org/2000/svg", `rect`);
-	damageRange.id = `damageRange`;
-	damageRange.setAttribute(`width`, player.range + `%`);
-	damageRange.setAttribute(`height`, player.range + `%`);
-	damageRange.setAttribute("stroke", `white`);
-	damageRange.setAttribute(`stroke-width`, "0.2vw")
-	damageRange.setAttribute("stroke-opacity", `0.2`);
-	damageRange.setAttribute("stroke-dasharray", `1vw,1.1vw`);
-	damageRange.setAttribute(`fill`, "none")
-	damageRange.setAttribute("x", 50 - player.range / 2 + `%`);
-	damageRange.setAttribute("y", 50 - player.range / 2 + `%`);
-	playerDamageRange.appendChild(damageRange);
 }
 
 //изменение пола и стен в заввисимости от уровня

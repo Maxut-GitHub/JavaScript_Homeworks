@@ -1,12 +1,5 @@
-* {
-	box-sizing: border-box;
-	margin: 0;
-	padding: 0;
-}
-
-html {
-	background-color: rgb(30, 30, 30);
-}
+@import "_interface_styles.scss";
+@import "_room_styles.scss";
 
 #levelText {
 	position: absolute;
@@ -16,11 +9,6 @@ html {
 	font-size: 1.5vw;
 	z-index: 1;
 	color: white;
-}
-
-body {
-	overflow: hidden;
-	user-select: none;
 }
 
 #gameField {

@@ -2,10 +2,6 @@
 //импорт всех предметов
 import allItemsArray from './items.js';
 import * as view from './view.js';
-
-//Таймер (60фпс)
-setInterval(tick, 1000 / 60);
-
 function tick() {
 	//Передвижение игрока
 	view.playerPositionUpdate()
@@ -222,6 +218,7 @@ function checkInventory() {
 	console.log(`дальность игрока: ` + player.range)
 	console.log(`скорость игрока: ` + player.speed)
 }
+
 
 //добавление игрока в комнату
 function playerInRoom() {
@@ -450,7 +447,6 @@ function checkHealsbar() {
 		player.canMove = false;
 		player.speedX = 0;
 		player.speedY = 0;
-		player.damage = 0;
 		player.HP = undefined;
 		menu();
 	}
@@ -501,12 +497,19 @@ function enterTheDoor() {
 	}
 }
 
-checkInventory();
-playerInRoom();
-createArrayEnemy();
-createChest();
-view.locationView();
-nextRoom();
+let timer;
+//Начать игру заного
+export default function startGame() {
+	currentLevel = 1;
+	checkInventory();
+	playerInRoom();
+	createArrayEnemy();
+	createChest();
+	view.locationView();
+	nextRoom();
+	//Таймер (60фпс)
+	timer = setInterval(tick, 1000 / 60);
+}
 
 function menu() {
 	if (!document.getElementById(`menu`)) {
@@ -530,14 +533,14 @@ function menu() {
 		returnGame.style.cssText = `width: 80%; height:  20%; background-color: rgb(113, 113, 113); margin: 0 0 5% 0; font-size: 2vw;
 	border: solid black`
 		returnGame.textContent = `Вернуться в игру`;
-		returnGame.onclick = function () { gameStatus = pastGameStatus; modalGlass.remove(); menuElement.remove() };
+		returnGame.onclick = function () { gameStatus = pastGameStatus; modalGlass.remove(); menuElement.remove(); };
 		if (pastGameStatus === `defeat` || pastGameStatus === `win`) {
 			returnGame.disabled = `true`;
 		}
 
 		let records = document.createElement(`button`);
 		menuButtons.appendChild(records);
-		records.style.cssText = `width: 80%; height:  20%; background-color: rgb(113, 113, 113); margin: 0 0 5% 0;; font-size: 2vw;
+		records.style.cssText = `width: 80%; height:  20%; background-color: rgb(113, 113, 113); margin: 0 0 5% 0; font-size: 2vw;
 		border: solid black`
 		records.textContent = `Записать мой результат в рекорды`;
 		records.disabled = `true`;
@@ -551,7 +554,12 @@ function menu() {
 		mainMenu.style.cssText = `width: 80%; height:  20%; background-color: rgb(113, 113, 113); font-size: 2vw;
 		border: solid black`
 		mainMenu.textContent = `Главное меню`;
-		mainMenu.onclick = function () { };
+		mainMenu.onclick = function () {
+			window.dispatchEvent(new Event('popstate'))
+			if (exit) {
+				modalGlass.remove(); menuElement.remove(); window.location.hash = `#MainMenu`;
+			}
+		};
 
 		//---------------------------------------------------------------------------------------------------------------------
 		let menuStats = document.createElement(`div`);
@@ -566,29 +574,16 @@ function menu() {
 	Противников побеждено: ${allkillsCount}`
 	}
 }
+startGame()
 
-
-
-//ПРОВЕРКА НА ОРИЕНТАЦИЮ ЭКРАНА ДЛЯ МОБИЛЬНЫХ УСТРООЙСТВ (при просьбе перевернуть экран - вызывается меню)
-window.addEventListener(`orientationchange`, orientationMobileChange);
-//Темное модальнео стекло с сообщением перевернуть экран
-let orientationModalGlass = document.createElement(`div`);
-orientationModalGlass.style.cssText = `position: fixed; width: 100%; height: 100%; background-color: black; z-index: 7; color: white;
-font-size: 8vw; display: flex; justify-content: center; align-items: center;`
-orientationModalGlass.id = `orientationModalGlass`
-orientationModalGlass.textContent = `Переверните экран`
-function orientationMobileChange() {
-	if (window.matchMedia('(orientation: landscape)').matches) {
-		body.appendChild(orientationModalGlass);
-		menu()
-	} else {
-		if (document.getElementById(`orientationModalGlass`)) {
-			orientationModalGlass.remove()
-		}
+//К соожалению, не знаю как сделать так, чтобы нормальноо рабоотало и при нажатии кнопки "назад"
+//exit - true Если пользователь подтвердил (в окне confirm), что хочет уйти, false если нажал "отмена"
+let exit;
+window.addEventListener('popstate', exitGame)
+function exitGame(event) {
+	exit = confirm(`Ваш прогресс не сохранится! Вы уверены?`);
+	if (exit || window.location.hash != `#Game`) {
+		clearInterval(timer);
+		window.removeEventListener('popstate', exitGame);
 	}
-}
-if (window.matchMedia('(orientation: landscape)').matches) {
-} else {
-	body.appendChild(orientationModalGlass);
-	menu()
 }
