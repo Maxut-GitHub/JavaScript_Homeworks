@@ -88,8 +88,15 @@ function tick() {
 	}
 }
 
+let recordData =
+{
+	playerName: `name`,
+	killCount: 0,
+	roomPast: 0
+}
+
 //текущий уровень комнаты (все скейлы зависят ОТ ЭТОГО ЧИСЛА)
-export let currentLevel = 1;
+export let currentLevel = 20;
 //текущий уровень (тег) показывается в левом верхнем углу экрана
 let currentLevelElement = document.getElementById(`levelText`);
 currentLevelElement.textContent = `level ` + currentLevel + ` Работа над выпускным проектом Максима Б. группа FD2-140-23-12`;
@@ -449,6 +456,8 @@ function checkHealsbar() {
 		player.speedY = 0;
 		player.HP = undefined;
 		menu();
+		recordData.killCount = allkillsCount;
+		recordData.roomPast = currentLevel === 30 ? 30 : currentLevel - 1
 	}
 }
 
@@ -527,7 +536,7 @@ function menu() {
 		menuElement.appendChild(menuButtons);
 		menuButtons.style.cssText = `width: 70%; height:  100%; background-color: rgb(113, 113, 113); margin: 0 1vw 0 0; padding: 2% 0;
 	display: flex; align-items: center;  border-radius: 2vw; flex-direction: column;`
-
+		//---------------------------------------------------------------------------------------------------------------------
 		let returnGame = document.createElement(`button`);
 		menuButtons.appendChild(returnGame);
 		returnGame.style.cssText = `width: 80%; height:  20%; background-color: rgb(113, 113, 113); margin: 0 0 5% 0; font-size: 2vw;
@@ -535,27 +544,46 @@ function menu() {
 		returnGame.textContent = `Вернуться в игру`;
 		returnGame.onclick = function () { gameStatus = pastGameStatus; modalGlass.remove(); menuElement.remove(); };
 		if (pastGameStatus === `defeat` || pastGameStatus === `win`) {
-			returnGame.disabled = `true`;
+			returnGame.disabled = true;
 		}
-
+		//---------------------------------------------------------------------------------------------------------------------
 		let records = document.createElement(`button`);
 		menuButtons.appendChild(records);
 		records.style.cssText = `width: 80%; height:  20%; background-color: rgb(113, 113, 113); margin: 0 0 5% 0; font-size: 2vw;
 		border: solid black`
 		records.textContent = `Записать мой результат в рекорды`;
-		records.disabled = `true`;
-		if (pastGameStatus === `win`) {
-			returnGame.disabled = `false`;
+		records.disabled = true;
+		if (pastGameStatus === `defeat`) {
+			records.disabled = false;
 		}
-		records.onclick = function () { };
-
+		records.onclick = function () {
+			let playerName = prompt(`Введите ваше имя
+Максимум 10 символов, не менее 3 симолов`).trim()
+			if (playerName.length > 10 || playerName.length < 3) {
+				alert(`Не пойдет, введите другое имя`)
+			} else {
+				recordData.playerName = playerName;
+				alert(`Готово!
+В списке рекордов отображаються только 10 лучших.`)
+				records.disabled = true;
+				console.log(`%c \\/ ДАННЫЕ ИГРОКА`, `color: Lime`);
+				console.log(recordData)
+				updateRecords(recordData)
+			}
+		};
+		//---------------------------------------------------------------------------------------------------------------------
 		let mainMenu = document.createElement(`button`);
 		menuButtons.appendChild(mainMenu);
 		mainMenu.style.cssText = `width: 80%; height:  20%; background-color: rgb(113, 113, 113); font-size: 2vw;
 		border: solid black`
 		mainMenu.textContent = `Главное меню`;
 		mainMenu.onclick = function () {
-			window.dispatchEvent(new Event('popstate'))
+			if (pastGameStatus != `defeat`) {
+				window.dispatchEvent(new Event('popstate'))
+			} else {
+				window.removeEventListener('popstate', exitGame);
+				exit = true;
+			}
 			if (exit) {
 				modalGlass.remove(); menuElement.remove(); window.location.hash = `#MainMenu`;
 			}
@@ -585,5 +613,51 @@ function exitGame(event) {
 	if (exit || window.location.hash != `#Game`) {
 		clearInterval(timer);
 		window.removeEventListener('popstate', exitGame);
+	}
+}
+
+const ajaxHandlerScript = "https://fe.it-academy.by/AjaxStringStorage2.php";
+//Сохранить новый рекорд (взять массив с AJAXStringStorage и сохранить его)
+async function updateRecords(newRecordData) {
+	let currentRecords;
+	let password = Math.random();
+
+	console.log(`РАБОТАЕТ LOCKGET:`)
+	// отдельно создаём набор POST-параметров запроса
+	let LOCKGET = new URLSearchParams();
+	LOCKGET.append('f', 'LOCKGET');
+	LOCKGET.append('n', 'MAXIM_DUNGEON_TABLEOFRECORDS');
+	LOCKGET.append('p', password);
+	try {
+		const response = await fetch(ajaxHandlerScript, { method: 'post', body: LOCKGET });
+		const previousRecord = await response.json();
+		//получаем массив
+		currentRecords = JSON.parse(previousRecord.result);
+		//суем новый рекорд в полученный массив
+		currentRecords.push(newRecordData)
+	}
+	catch (error) {
+		console.error(error);
+	}
+
+	//jsonим его и отправляем
+	let recordsArrayJSON = JSON.stringify(currentRecords)
+	if (recordsArrayJSON) {
+		console.log(`РАБОТАЕТ UPDATE:`)
+		let UPDATE = new URLSearchParams();
+		UPDATE.append('f', 'UPDATE');
+		UPDATE.append('n', 'MAXIM_DUNGEON_TABLEOFRECORDS');
+		UPDATE.append('p', password);
+		UPDATE.append('v', recordsArrayJSON);
+		try {
+			const response = await fetch(ajaxHandlerScript, { method: 'post', body: UPDATE });
+			const updateIsReady = await response.json();
+			console.log(updateIsReady);
+		}
+		catch (error) {
+			console.error(error);
+		}
+	} else {
+		console.log(`что-то не так с recordsArrayJSON`)
 	}
 }

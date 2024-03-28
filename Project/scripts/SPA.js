@@ -1,9 +1,5 @@
-
-//временно
-let nickName = `10_SYMBOLS_NAME`;
-let killCount = 999;
-let roomPast = 99;
-
+let recordsArray; //Массив рекордов
+const ajaxHandlerScript = "https://fe.it-academy.by/AjaxStringStorage2.php";
 
 // в закладке УРЛа будем хранить разделённые подчёркиваниями слова
 // #MainMenu - главное меню
@@ -49,6 +45,8 @@ function switchToStateFromURLHash() {
 	let scriptsAndOther = [];
 	switch (SPAState.pagename) {
 		case 'MainMenu':
+			//заранее читаем рекорды
+			readRecords()
 			pageHTML = ``;
 			let mainMenu = document.createElement('div');
 			mainMenu.classList = "main-menu";
@@ -71,16 +69,16 @@ function switchToStateFromURLHash() {
 			pageHTML += `<div class="records-section">
 			<div class="records-section__name">Таблица рекордов</div>
 			<div class="records-section__table">
-				<div class="records-section__slot">1. `+ nickName + ` (` + killCount + `kills) (` + roomPast + `room)</div>
-				<div class="records-section__slot">2. `+ nickName + ` (` + killCount + `kills) (` + roomPast + `room)</div>
-				<div class="records-section__slot">3. `+ nickName + ` (` + killCount + `kills) (` + roomPast + `room)</div>
-				<div class="records-section__slot">4. `+ nickName + ` (` + killCount + `kills) (` + roomPast + `room)</div>
-				<div class="records-section__slot">5. `+ nickName + ` (` + killCount + `kills) (` + roomPast + `room)</div>
-				<div class="records-section__slot">6. `+ nickName + ` (` + killCount + `kills) (` + roomPast + `room)</div>
-				<div class="records-section__slot">7. `+ nickName + ` (` + killCount + `kills) (` + roomPast + `room)</div>
-				<div class="records-section__slot">8. `+ nickName + ` (` + killCount + `kills) (` + roomPast + `room)</div>
-				<div class="records-section__slot">9. `+ nickName + ` (` + killCount + `kills) (` + roomPast + `room)</div>
-				<div class="records-section__slot">10. `+ nickName + ` (` + killCount + ` kills) (` + roomPast + ` room)</div>
+				<div class="records-section__slot">1. `+ recordsArray[0].playerName + ` (` + recordsArray[0].killCount + `kills) (` + recordsArray[0].roomPast + `room)</div>
+				<div class="records-section__slot">2. `+ recordsArray[1].playerName + ` (` + recordsArray[1].killCount + `kills) (` + recordsArray[1].roomPast + `room)</div>
+				<div class="records-section__slot">3. `+ recordsArray[2].playerName + ` (` + recordsArray[2].killCount + `kills) (` + recordsArray[2].roomPast + `room)</div>
+				<div class="records-section__slot">4. `+ recordsArray[3].playerName + ` (` + recordsArray[3].killCount + `kills) (` + recordsArray[3].roomPast + `room)</div>
+				<div class="records-section__slot">5. `+ recordsArray[4].playerName + ` (` + recordsArray[4].killCount + `kills) (` + recordsArray[4].roomPast + `room)</div>
+				<div class="records-section__slot">6. `+ recordsArray[5].playerName + ` (` + recordsArray[5].killCount + `kills) (` + recordsArray[5].roomPast + `room)</div>
+				<div class="records-section__slot">7. `+ recordsArray[6].playerName + ` (` + recordsArray[6].killCount + `kills) (` + recordsArray[6].roomPast + `room)</div>
+				<div class="records-section__slot">8. `+ recordsArray[7].playerName + ` (` + recordsArray[7].killCount + `kills) (` + recordsArray[7].roomPast + `room)</div>
+				<div class="records-section__slot">9. `+ recordsArray[8].playerName + ` (` + recordsArray[8].killCount + `kills) (` + recordsArray[8].roomPast + `room)</div>
+				<div class="records-section__slot">10. `+ recordsArray[9].playerName + ` (` + recordsArray[9].killCount + ` kills) (` + recordsArray[9].roomPast + ` room)</div>
 			</div>
 		</div>
 		<div class="description">Автор выпускного проекта: ЖЖЖЖЖЖЖ ЖЖЖЖЖЖЖЖ. Группа Md-FD2-140-23.<br> Преподаватель: ЖЖЖЖЖЖЖ ЖЖЖЖЖЖ.<br>
@@ -182,8 +180,103 @@ function switchToGamePage() {
 // переключаемся в состояние, которое сейчас прописано в закладке УРЛ
 switchToStateFromURLHash();
 
-let body = document.getElementsByTagName(`body`)[0];
-let page = document.getElementById(`Page`);
+
+//Чтение рекордов
+async function readRecords() {
+	// отдельно создаём набор POST-параметров запроса
+	let readRecord = new URLSearchParams();
+	readRecord.append('f', 'READ');
+	readRecord.append('n', 'MAXIM_DUNGEON_TABLEOFRECORDS');
+	try {
+		const response = await fetch(ajaxHandlerScript, { method: 'post', body: readRecord });
+		recordsArray = await response.json();
+		recordsArray = JSON.parse(recordsArray.result);
+		recordsArray = sortRecordsArray(recordsArray);
+		recordsArray = morePlayersForRecordTable(recordsArray);
+	}
+	catch (error) {
+		console.error(error);
+	}
+}
+
+
+// recordsArray = [
+// 	{
+// 		"playerName": "ВтораяДата",
+// 		"killCount": 23,
+// 		"roomPast": 10
+// 	},
+// 	{
+// 		"playerName": "ДРУГАЯДата",
+// 		"killCount": 20,
+// 		"roomPast": 3
+// 	},
+// 	{
+// 		"playerName": "Максимус",
+// 		"killCount": 47,
+// 		"roomPast": 13
+// 	},
+// 	{
+// 		"playerName": "ТУтутутут",
+// 		"killCount": 40,
+// 		"roomPast": 13
+// 	},
+// 	{
+// 		"playerName": "траляля",
+// 		"killCount": 45,
+// 		"roomPast": 13
+// 	},
+// 	{
+// 		"playerName": "трал12яля",
+// 		"killCount": 45,
+// 		"roomPast": 13
+// 	},
+// 	{
+// 		"playerName": "траля555ля",
+// 		"killCount": 9,
+// 		"roomPast": 13
+// 	},
+// 	{
+// 		"playerName": "тр114321аляля",
+// 		"killCount": 22,
+// 		"roomPast": 10
+// 	},
+// 	{
+// 		"playerName": "тр114321аля1111ля",
+// 		"killCount": 201,
+// 		"roomPast": 9
+// 	},
+// 	{
+// 		"playerName": "тр11432132аляля",
+// 		"killCount": 1,
+// 		"roomPast": 30
+// 	},
+// ]
+
+//Сортировка массива рекордов для таблицы рекордов (Лучшие те, что прошли больше комнат. Если проойденные комнаты одинаковы, то сортируем по кол-ву убитых врагов за забег)
+function sortRecordsArray(recordsArray) {
+	return recordsArray
+		.sort((player1, player2) => player1.roomPast > player2.roomPast ? -1 : 1)
+		.sort((player1, player2) => {
+			if (player1.roomPast === player2.roomPast) {
+				return player1.killCount > player2.killCount ? -1 : 1
+			}
+		});;
+}
+
+//Эта функция берет массив рекордов и заполняет его пустыми слотами, если массив имеет меньше 10 позиций (тк. в таблице всего 10 позиций)
+function morePlayersForRecordTable(recordsArray) {
+	let count = 0;
+	if (recordsArray.length < 10) {
+		for (let i = 1; i <= Math.abs(recordsArray.length - 10); i++) {
+			count++;
+		}
+		for (count; count > 0; count--) {
+			recordsArray.push({ "playerName": "-", "killCount": "-", "roomPast": "-" })
+		}
+	}
+	return recordsArray;
+}
 
 //ПРОВЕРКА НА ОРИЕНТАЦИЮ ЭКРАНА ДЛЯ МОБИЛЬНЫХ УСТРООЙСТВ (при просьбе перевернуть экран - вызывается меню)
 window.addEventListener(`orientationchange`, orientationMobileChange);
