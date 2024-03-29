@@ -220,10 +220,6 @@ function checkInventory() {
 	player.range <= 0 ? player.range = 1 : ``;
 	player.speed < 0.1 ? player.speed = 0.1 : ``;
 	view.checkViewInventory()
-	console.log(`урон игрока: ` + player.damage)
-	console.log(`броня игрока: ` + player.armor)
-	console.log(`дальность игрока: ` + player.range)
-	console.log(`скорость игрока: ` + player.speed)
 }
 
 
@@ -285,12 +281,11 @@ function createArrayEnemy() {
 				enemyCorpse.appendChild(path);
 				enemyElArray[this.id].appendChild(enemyCorpse);
 				enemyElArray[this.id].style.zIndex = 1;
-
+				deathSound();
 				this.damage = 0;
 				this.speedX = 0,
 					this.speedY = 0,
-					console.log(`противник убит`)
-				roomKillsCount++;
+					roomKillsCount++;
 				allkillsCount++;
 				if (roomKillsCount === enemyArray.length) {
 					playerWin();
@@ -608,7 +603,7 @@ startGame()
 //exit - true Если пользователь подтвердил (в окне confirm), что хочет уйти, false если нажал "отмена"
 let exit;
 window.addEventListener('popstate', exitGame)
-function exitGame(event) {
+function exitGame() {
 	exit = confirm(`Ваш прогресс не сохранится! Вы уверены?`);
 	if (exit || window.location.hash != `#Game`) {
 		clearInterval(timer);
@@ -659,5 +654,18 @@ async function updateRecords(newRecordData) {
 		}
 	} else {
 		console.log(`что-то не так с recordsArrayJSON`)
+	}
+}
+
+//Звуки при смерти врага. (2 разновидности)
+const deathAudioOne = new Audio("sounds/deathAudioOne.mp3");
+const deathAudioTwo = new Audio("sounds/deathAudioTwo.mp3");
+function deathSound() {
+	if (Math.round(Math.random())) {
+		deathAudioOne.currentTime = 0;
+		deathAudioOne.play();
+	} else {
+		deathAudioTwo.currentTime = 0;
+		deathAudioTwo.play();
 	}
 }

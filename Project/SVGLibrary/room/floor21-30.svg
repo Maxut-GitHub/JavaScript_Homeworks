@@ -83,10 +83,4 @@
   <circle cx="31.88" cy="85.84" fill="url(#svg_7)" id="svg_11" opacity="0.15" r="36.24" transform="matrix(1 0 0 1 0 0)"/>
   <circle cx="47.88" cy="190.59" fill="url(#svg_7)" id="svg_12" opacity="0.1" r="29.62" transform="matrix(1 0 0 1 0 0)"/>
  </g>
- <defs>
-  <radialGradient id="svg_7" spreadMethod="pad">
-   <stop id="jq_stop_8408" offset="0" stop-color="#ce2929" stop-opacity="1"/>
-   <stop id="jq_stop_3944" offset="1" stop-color="#000000" stop-opacity="0"/>
-  </radialGradient>
- </defs>
 </svg>

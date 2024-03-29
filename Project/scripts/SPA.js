@@ -1,20 +1,10 @@
 let recordsArray; //Массив рекордов
 const ajaxHandlerScript = "https://fe.it-academy.by/AjaxStringStorage2.php";
 
-// в закладке УРЛа будем хранить разделённые подчёркиваниями слова
-// #MainMenu - главное меню
-// #Records - рекорды
-// #Game - сама игра
-
 // отслеживаем изменение закладки в УРЛе
-// оно происходит при любом виде навигации
-// в т.ч. при нажатии кнопок браузера ВПЕРЁД/НАЗАД
 window.onhashchange = switchToStateFromURLHash;
-
 // текущее состояние приложения
-// это Model из MVC
 var SPAState = {};
-
 // вызывается при изменении закладки УРЛа
 // а также при первом открытии страницы
 // читает новое состояние приложения из закладки УРЛа
@@ -27,21 +17,14 @@ function switchToStateFromURLHash() {
 	var URLHash = window.location.hash;
 	// убираем из закладки УРЛа решётку
 	var stateStr = URLHash.substr(1);
-
 	if (stateStr != "") { // если закладка непустая, читаем из неё состояние и отображаем
 		var parts = stateStr.split("_")
 		SPAState = { pagename: parts[0] }; // первая часть закладки - номер страницы
 	}
 	else
 		SPAState = { pagename: 'MainMenu' }; // иначе показываем главную страницу
-
-	console.log('Новое состояние приложения:');
-	console.log(SPAState);
-
 	// обновляем вариабельную часть страницы под текущее состояние
-	// это реализация View из MVC - отображение состояния модели в HTML-код
 	var pageHTML = "";
-
 	let scriptsAndOther = [];
 	switch (SPAState.pagename) {
 		case 'MainMenu':
@@ -149,37 +132,24 @@ function switchToStateFromURLHash() {
 			break;
 	}
 }
-
+switchToStateFromURLHash();
 
 // устанавливает в закладке УРЛа новое состояние приложения
 // и затем устанавливает+отображает это состояние
 function switchToState(newState) {
 	// устанавливаем закладку УРЛа
-	// нужно для правильной работы кнопок навигации браузера
-	// (т.к. записывается новый элемент истории просмотренных страниц)
-	// и для возможности передачи УРЛа другим лицам
 	var stateStr = newState.pagename;
 	location.hash = stateStr;
-	// АВТОМАТИЧЕСКИ вызовется switchToStateFromURLHash()
-	// т.к. закладка УРЛа изменилась (ЕСЛИ она действительно изменилась)
 }
-
-
 function switchToMainMenuPage() {
 	switchToState({ pagename: 'MainMenu' });
 }
-
 function switchToRecordsPage() {
 	switchToState({ pagename: 'Records' });
 }
-
 function switchToGamePage() {
 	switchToState({ pagename: 'Game' });
 }
-
-// переключаемся в состояние, которое сейчас прописано в закладке УРЛ
-switchToStateFromURLHash();
-
 
 //Чтение рекордов
 async function readRecords() {
@@ -278,7 +248,8 @@ function morePlayersForRecordTable(recordsArray) {
 	return recordsArray;
 }
 
-//ПРОВЕРКА НА ОРИЕНТАЦИЮ ЭКРАНА ДЛЯ МОБИЛЬНЫХ УСТРООЙСТВ (при просьбе перевернуть экран - вызывается меню)
+//ПРОВЕРКА НА ОРИЕНТАЦИЮ ЭКРАНА ДЛЯ МОБИЛЬНЫХ УСТРООЙСТВ
+let body = document.getElementsByTagName(`body`)[0];
 window.addEventListener(`orientationchange`, orientationMobileChange);
 //Темное модальнео стекло с сообщением перевернуть экран
 let orientationModalGlass = document.createElement(`div`);
