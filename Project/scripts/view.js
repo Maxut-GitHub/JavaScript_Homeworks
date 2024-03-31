@@ -158,14 +158,14 @@ export function enemyView(el, id) {
 //изменение пола и стен в заввисимости от уровня
 export function locationView() {
 	if (currentLevel >= 1 && currentLevel <= 10) {
-		floor.style.backgroundImage = `url(../Project/SVGLibrary/room/floor1-10.svg)`;
-		room.style.borderImage = `url(../Project/SVGLibrary/room/walls1-10.svg) 40 round`;
+		floor.style.backgroundImage = `url(SVGLibrary/room/floor1-10.svg)`;
+		room.style.borderImage = `url(SVGLibrary/room/walls1-10.svg) 40 round`;
 	} else if (currentLevel >= 11 && currentLevel <= 20) {
-		floor.style.backgroundImage = `url(../Project/SVGLibrary/room/floor11-20.svg)`;
-		room.style.borderImage = `url(../Project/SVGLibrary/room/walls11-20.svg) 40 round`;
+		floor.style.backgroundImage = `url(SVGLibrary/room/floor11-20.svg)`;
+		room.style.borderImage = `url(SVGLibrary/room/walls11-20.svg) 40 round`;
 	} else if (currentLevel >= 21 && currentLevel <= 30) {
-		floor.style.backgroundImage = `url(../Project/SVGLibrary/room/floor21-30.svg)`;
-		room.style.borderImage = `url(../Project/SVGLibrary/room/walls21-30.svg) 40 round`;
+		floor.style.backgroundImage = `url(SVGLibrary/room/floor21-30.svg)`;
+		room.style.borderImage = `url(SVGLibrary/room/walls21-30.svg) 40 round`;
 	}
 }
 
