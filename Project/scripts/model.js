@@ -450,6 +450,7 @@ function checkHealsbar() {
 		player.speedX = 0;
 		player.speedY = 0;
 		player.HP = undefined;
+		vibro();
 		menu();
 		recordData.killCount = allkillsCount;
 		recordData.roomPast = currentLevel === 30 ? 30 : currentLevel - 1
@@ -667,5 +668,13 @@ function deathSound() {
 	} else {
 		deathAudioTwo.currentTime = 0;
 		deathAudioTwo.play();
+	}
+}
+
+//Вибрация
+function vibro() {
+	if (navigator.vibrate) {
+		// вибрация 50мс
+		window.navigator.vibrate(50);
 	}
 }
